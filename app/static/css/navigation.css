@@ -1,0 +1,440 @@
+/*
+==========================================================================
+NAVIGATION.CSS — Nav Bar, Dropdowns, Hamburger
+Mobile-first. Sticky. Dark background.
+Hamburger on mobile and tablet up to 50rem (800px).
+Full horizontal nav at 50rem+.
+No colours hardcoded — all via var().
+==========================================================================
+*/
+
+
+/* ==========================================================================
+   NAV WRAPPER
+   ========================================================================== */
+
+.nav {
+    position: sticky;
+    top: 0;
+    z-index: var(--z-nav);
+    width: 100%;
+    background-color: var(--color-nav-bg);
+    border-bottom: 0.0625rem solid var(--color-border-dark);
+}
+
+.nav-container {
+    width: 100%;
+    max-width: var(--max-width-wide);
+    margin-inline: auto;
+    padding: 0 var(--section-padding-x);
+    height: var(--nav-height);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-md);
+}
+
+
+/* ==========================================================================
+   NAV LOGO
+   ========================================================================== */
+
+.nav-logo {
+    font-family: var(--font-display);
+    font-size: clamp(1.25rem, 3vw, 1.75rem);
+    color: var(--color-beige);
+    text-decoration: none;
+    line-height: 1;
+    letter-spacing: var(--tracking-tight);
+    white-space: nowrap;
+    flex-shrink: 0;
+    transition: color var(--transition-base);
+}
+
+.nav-logo:hover {
+    color: var(--color-light-green);
+    text-decoration: none;
+}
+
+
+/* ==========================================================================
+   NAV LINKS — Mobile: slides down from nav bar, auto height, sits over content
+   ========================================================================== */
+
+.nav-links {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    position: absolute;
+    top: var(--nav-height);
+    left: 0;
+    right: 0;
+    background-color: var(--color-nav-bg);
+    border-bottom: 0.0625rem solid var(--color-border-dark);
+    box-shadow: var(--shadow-lg);
+    overflow: hidden;
+    max-height: 0;
+    opacity: 0;
+    pointer-events: none;
+    transition: max-height 0.35s ease,
+                opacity var(--transition-base);
+    z-index: var(--z-nav);
+    display: flex;
+    flex-direction: column;
+}
+
+.nav-links.is-open {
+    max-height: 100vh;
+    opacity: 1;
+    pointer-events: all;
+}
+
+
+/* ==========================================================================
+   NAV ITEMS
+   ========================================================================== */
+
+.nav-item {
+    position: relative;
+    width: 100%;
+    margin-bottom: 0;
+}
+
+
+/* ==========================================================================
+   NAV DROPDOWN TRIGGER — Mobile
+   Arrow on left, label text after it
+   ========================================================================== */
+
+.nav-dropdown-trigger {
+    display: flex;
+    align-items: center;
+    flex-direction: row;
+    gap: var(--space-xs);
+    width: 100%;
+    padding: var(--space-sm) var(--section-padding-x);
+    color: var(--color-nav-text);
+    font-family: var(--font-display);
+    font-size: var(--text-sm);
+    font-weight: var(--weight-black);
+    letter-spacing: var(--tracking-normal);
+    text-transform: none;
+    background: none;
+    border: none;
+    border-bottom: 0.0625rem solid var(--color-border-dark);
+    cursor: pointer;
+    text-align: left;
+    min-height: 2.75rem;
+    transition: color var(--transition-fast),
+                background-color var(--transition-fast);
+    line-height: var(--leading-tight);
+}
+
+.nav-dropdown-trigger:hover,
+.nav-item--dropdown.is-open > .nav-dropdown-trigger {
+    color: var(--color-nav-hover);
+    background-color: rgba(255, 255, 255, 0.05);
+    text-decoration: none;
+}
+
+/* Arrow — left side, rotates when open */
+.nav-dropdown-trigger::before {
+    content: '▸';
+    font-size: var(--text-xs);
+    flex-shrink: 0;
+    transition: transform var(--transition-base);
+    color: var(--color-hillside-green);
+}
+
+.nav-item--dropdown.is-open > .nav-dropdown-trigger::before {
+    transform: rotate(90deg);
+}
+
+
+/* ==========================================================================
+   DROPDOWN MENUS — Mobile: accordion
+   ========================================================================== */
+
+.nav-dropdown {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    background-color: rgba(0, 0, 0, 0.25);
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height var(--transition-base);
+}
+
+.nav-item--dropdown.is-open > .nav-dropdown {
+    max-height: 20rem;
+}
+
+.nav-dropdown li {
+    margin-bottom: 0;
+}
+
+.nav-dropdown-link {
+    display: flex;
+    align-items: center;
+    padding: var(--space-xs) var(--space-2xl);
+    color: #D8E6C8;
+    text-decoration: none;
+    font-family: var(--font-display);
+    font-size: var(--text-xs);
+    letter-spacing: var(--tracking-normal);
+    min-height: 2rem;
+    transition: color var(--transition-fast),
+                background-color var(--transition-fast);
+}
+
+.nav-dropdown-link:hover {
+    color: var(--color-beige);
+    background-color: rgba(255, 255, 255, 0.05);
+    text-decoration: none;
+}
+
+
+/* ==========================================================================
+   NAV ACTIONS — Cart icon, hamburger
+   ========================================================================== */
+
+.nav-actions {
+    display: flex;
+    align-items: center;
+    gap: var(--space-xs);
+    flex-shrink: 0;
+}
+
+.nav-action-btn {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.75rem;
+    height: 2.75rem;
+    color: var(--color-nav-text);
+    text-decoration: none;
+    border-radius: var(--radius-md);
+    transition: color var(--transition-fast),
+                background-color var(--transition-fast);
+}
+
+.nav-action-btn:hover {
+    color: var(--color-nav-hover);
+    background-color: rgba(255, 255, 255, 0.08);
+    text-decoration: none;
+}
+
+.nav-action-btn svg {
+    width: 1.375rem;
+    height: 1.375rem;
+}
+
+.nav-cart-count {
+    position: absolute;
+    top: 0.25rem;
+    right: 0.25rem;
+    background-color: var(--color-burnt-orange);
+    color: var(--color-beige);
+    font-size: 0.625rem;
+    font-weight: var(--weight-bold);
+    line-height: 1;
+    min-width: 1rem;
+    height: 1rem;
+    border-radius: var(--radius-pill);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 0.25rem;
+}
+
+
+/* ==========================================================================
+   HAMBURGER BUTTON
+   ========================================================================== */
+
+.nav-hamburger {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 0.3125rem;
+    width: 2.75rem;
+    height: 2.75rem;
+    padding: 0.5rem;
+    background: none;
+    border: none;
+    cursor: pointer;
+    flex-shrink: 0;
+    border-radius: var(--radius-md);
+    transition: background-color var(--transition-fast);
+}
+
+.nav-hamburger:hover {
+    background-color: rgba(255, 255, 255, 0.08);
+}
+
+.nav-hamburger-bar {
+    display: block;
+    width: 100%;
+    height: 0.125rem;
+    background-color: var(--color-beige);
+    border-radius: var(--radius-pill);
+    transition: transform var(--transition-base),
+                opacity var(--transition-base);
+    transform-origin: center;
+}
+
+.nav-hamburger.is-active .nav-hamburger-bar:nth-child(1) {
+    transform: translateY(0.4375rem) rotate(45deg);
+}
+
+.nav-hamburger.is-active .nav-hamburger-bar:nth-child(2) {
+    opacity: 0;
+    transform: scaleX(0);
+}
+
+.nav-hamburger.is-active .nav-hamburger-bar:nth-child(3) {
+    transform: translateY(-0.4375rem) rotate(-45deg);
+}
+
+
+/* ==========================================================================
+   DESKTOP NAV — 50rem (800px) and up
+   Full horizontal nav, hamburger hidden
+   ========================================================================== */
+
+@media (min-width: 50rem) {
+
+    .nav-hamburger {
+        display: none;
+    }
+
+    /* Grid: logo col1 | 1fr gap col2 | nav-right col3 */
+    .nav-container {
+        display: grid;
+        grid-template-columns: auto 1fr auto;
+        align-items: start;
+        gap: 0;
+    }
+
+    /* nav-right must explicitly occupy column 3 */
+    .nav-right {
+        grid-column: 3;
+        display: flex;
+        flex-direction: row;
+        align-items: flex-start;
+        gap: 0;
+    }
+
+    .nav-links {
+        position: static;
+        flex-direction: row;
+        align-items: flex-start;
+        background-color: transparent;
+        overflow: visible;
+        max-height: none;
+        opacity: 1;
+        pointer-events: all;
+        height: var(--nav-height);
+        gap: 0;
+        flex: 0 1 auto;
+        justify-content: flex-end;
+        border-bottom: none;
+        box-shadow: none;
+        padding: 0;
+    }
+
+    .nav-item {
+        position: relative;
+        width: auto;
+        height: 100%;
+        display: flex;
+        align-items: flex-start;
+        align-self: flex-start;
+        margin-bottom: 0;
+    }
+
+    .nav-dropdown-trigger {
+        width: auto;
+        height: var(--nav-height);
+        padding: var(--space-md) var(--space-sm) 0;
+        justify-content: flex-start;
+        align-items: flex-start;
+        align-self: flex-start;
+        border-bottom: 0.1875rem solid transparent;
+        font-size: var(--text-xs);
+        text-align: center;
+        flex-direction: column;
+        gap: 0;
+    }
+
+    /* Remove left arrow on desktop */
+    .nav-dropdown-trigger::before {
+        display: none;
+    }
+
+    .nav-dropdown-trigger:hover,
+    .nav-item--dropdown.is-open > .nav-dropdown-trigger,
+    .nav-item--dropdown:hover > .nav-dropdown-trigger {
+        border-bottom-color: var(--color-light-green);
+        background-color: transparent;
+    }
+
+    .nav-logo {
+        align-self: center;
+    }
+
+    /* Cart flush right of nav-links, icon top-aligned with nav text */
+    .nav-actions {
+        display: flex;
+        align-items: flex-start;
+        gap: 0;
+        flex-shrink: 0;
+        padding-top: var(--space-md);
+        padding-left: var(--space-sm);
+    }
+
+    /* Desktop dropdown panel */
+    .nav-dropdown {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        min-width: 12rem;
+        background-color: var(--color-dark-section);
+        border: 0.0625rem solid var(--color-border-dark);
+        border-top: none;
+        border-radius: 0 0 var(--radius-md) var(--radius-md);
+        box-shadow: var(--shadow-lg);
+        max-height: 0;
+        overflow: hidden;
+        z-index: var(--z-dropdown);
+        transition: max-height var(--transition-base);
+    }
+
+    .nav-item--dropdown:hover > .nav-dropdown,
+    .nav-item--dropdown.is-open > .nav-dropdown {
+        max-height: 20rem;
+    }
+
+    .nav-dropdown-link {
+        padding: var(--space-sm) var(--space-lg);
+        white-space: nowrap;
+        font-size: var(--text-xs);
+        min-height: 2.25rem;
+    }
+}
+
+@media (min-width: 64rem) {
+
+    .nav-dropdown-trigger {
+        /* Only change font size and horizontal padding — preserve padding-top */
+        padding-top: var(--space-md);
+        padding-left: var(--space-md);
+        padding-right: var(--space-md);
+        font-size: var(--text-sm);
+    }
+
+    .nav-dropdown-link {
+        font-size: var(--text-sm);
+    }
+}

@@ -1,0 +1,114 @@
+{% extends 'base.html' %}
+
+{% block title %}Home{% endblock %}
+
+{% block meta_description %}Green Fire — the Midwest's Premier Functional Glass Gallery. American-made heady glass and production pieces. University Place, Lincoln, Nebraska.{% endblock %}
+
+{% block canonical %}{{ url_for('routes.index', _external=True) }}{% endblock %}
+
+{% block schema %}
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "LocalBusiness",
+    "name": "Green Fire",
+    "description": "The Midwest's Premier Functional Glass Gallery. American-made heady glass and production pieces.",
+    "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "2401 N 48th St",
+        "addressLocality": "Lincoln",
+        "addressRegion": "NE",
+        "addressCountry": "US"
+    },
+    "url": "{{ url_for('routes.index', _external=True) }}"
+}
+</script>
+{% endblock %}
+
+{% block content %}
+
+<section class="hero-section">
+    <div class="hero-inner">
+        <div class="hero-text hero-text--padded">
+            <h1 class="hero-headline">Green Fire</h1>
+            <p class="hero-subheadline">The Midwest's Premier Functional Glass Gallery</p>
+            <p class="hero-tagline">American-made. Artist-direct. Lincoln, Nebraska.</p>
+        </div>
+        <div class="hero-image-wrap">
+            <img src="{{ url_for('static', filename='images/edited/landing_hero.png') }}"
+                 alt="Handblown heady glass piece by an American glass artist"
+                 class="hero-glass-img">
+        </div>
+        <div class="hero-buttons">
+            <div class="hero-btn-pane">
+                <a href="{{ url_for('routes.prodos') }}" class="btn btn-light-orange btn-lg">Shop Prodo Glass</a>
+            </div>
+            <div class="hero-btn-pane">
+                <a href="{{ url_for('routes.headies') }}" class="btn btn-secondary btn-lg">Shop Heady Glass</a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="split-section split-section--light">
+    <div class="split-inner split-inner--reversed">
+        <div class="split-text">
+            <h2 class="split-heading">Heady Glass</h2>
+            <p class="split-body">Heady is a standard of craft, not a category. A heady piece is a decorated vessel — worked with color, pattern, and technique that elevates it beyond the functional. It may be one of a kind or part of a small run. What defines it is the level of artistry on it.</p>
+            <p class="split-body">Functional glass at this level is a serious art form. The color theory, the fuming, the sandblasting, the inside-out techniques — these are skills developed over years by artists who have dedicated themselves to their craft.</p>
+        </div>
+        <div class="split-image-wrap">
+            <img src="{{ url_for('static', filename='images/edited/landing_heady.png') }}"
+                 alt="Heady handblown glass art piece by an American glass artist"
+                 class="split-glass-img">
+        </div>
+    </div>
+    <div class="split-footer split-footer--light">
+        <a href="{{ url_for('routes.headies') }}" class="btn btn-primary">Shop Heady Glass</a>
+    </div>
+</section>
+
+<section class="split-section split-section--dark">
+    <div class="split-inner">
+        <div class="split-text split-text--padded">
+            <h2 class="split-heading">Production Glass &amp; Vapes</h2>
+            <p class="split-body">Prodo denotes a piece's place in a regularly produced series. A production line means consistency — the same joint size, the same thickness, the same reliable performance every time. Many of our prodo pieces come from the same artists who make our heady work. The difference is the blueprint, not the maker.</p>
+            <p class="split-body">We carry a small, deliberate selection of production pipes, rigs, and vaporizers. Nothing that doesn't earn its place.</p>
+        </div>
+        <div class="split-image-wrap">
+            <img src="{{ url_for('static', filename='images/edited/landing_prodo.png') }}"
+                 alt="Production glass pipe, American-made borosilicate"
+                 class="split-glass-img">
+        </div>
+    </div>
+    <div class="split-footer split-footer--dark">
+        <a href="{{ url_for('routes.prodos') }}" class="btn btn-secondary">Shop Production Glass</a>
+    </div>
+</section>
+
+<section class="split-section split-section--light">
+    <div class="split-inner split-inner--reversed">
+        <div class="split-text">
+            <h2 class="split-heading">Find Us in University Place</h2>
+            <p class="split-body">Green Fire is at 2401 N 48th St, Lincoln — in the University Place Creative District, situated between the University of Nebraska–Lincoln and Nebraska Wesleyan University. This is Lincoln's arts neighborhood: independent studios, working artists, and a community that takes craft seriously.</p>
+            <p class="split-body">Every first Friday of the month, University Place comes alive with the First Fridays Art Walk — galleries open late, artists show new work, and the neighborhood fills with people who care about what things are made of and how.</p>
+            <p class="split-body">Come in. We keep a curated floor of heady glass and production pieces, and we're happy to talk through any of it.</p>
+            <p class="split-address">2401 N 48th St, Lincoln, NE &mdash; University Place Creative District</p>
+        </div>
+        <div class="split-image-wrap">
+            <img src="{{ url_for('static', filename='images/edited/landing_store.png') }}"
+                 alt="Green Fire glass gallery, University Place, Lincoln Nebraska"
+                 class="split-glass-img">
+        </div>
+    </div>
+    <div class="split-footer split-footer--light">
+        <a href="https://maps.google.com/?q=2401+N+48th+St,+Lincoln,+NE"
+           class="btn btn-primary"
+           target="_blank"
+           rel="noopener noreferrer">Get Directions</a>
+    </div>
+</section>
+
+<div id="cannabis-menu-placeholder" style="display: none;"></div>
+
+{% endblock %}

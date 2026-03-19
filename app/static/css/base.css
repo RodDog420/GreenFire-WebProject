@@ -1,0 +1,816 @@
+/*
+==========================================================================
+BASE.CSS — Reset, Typography, Global Defaults
+No page-specific rules. No colours hardcoded — all via var().
+All font declarations live here and nowhere else.
+Mobile-first: base styles target 320px. Scale up via min-width queries.
+==========================================================================
+*/
+
+
+/* ==========================================================================
+   GOOGLE FONTS IMPORT
+   Cooper Black — display / headlines
+   DM Sans — body / UI
+   ========================================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Cooper+Black&family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&display=swap');
+
+
+/* ==========================================================================
+   BOX SIZING RESET
+   ========================================================================== */
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+
+/* ==========================================================================
+   ROOT & BODY
+   ========================================================================== */
+
+html {
+    font-size: 100%;
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+}
+
+body {
+    font-family: var(--font-body);
+    font-size: var(--text-base);
+    font-weight: var(--weight-regular);
+    line-height: var(--leading-normal);
+    color: var(--color-text-primary);
+    background-color: var(--color-bg-primary);
+    min-height: 100vh;
+    overflow-x: hidden;
+}
+
+
+/* ==========================================================================
+   TYPOGRAPHY — Headings
+   All headings use Cooper Black. Fluid sizing via clamp().
+   ========================================================================== */
+
+h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-display);
+    font-weight: var(--weight-black);
+    line-height: var(--leading-tight);
+    letter-spacing: var(--tracking-tight);
+    color: var(--color-text-primary);
+    overflow-wrap: break-word;
+}
+
+h1 {
+    font-size: clamp(2rem, 6vw, var(--text-5xl));
+}
+
+h2 {
+    font-size: clamp(1.625rem, 4.5vw, var(--text-4xl));
+}
+
+h3 {
+    font-size: clamp(1.375rem, 3.5vw, var(--text-3xl));
+}
+
+h4 {
+    font-size: clamp(1.125rem, 2.5vw, var(--text-2xl));
+}
+
+h5 {
+    font-size: clamp(1rem, 2vw, var(--text-xl));
+}
+
+h6 {
+    font-size: var(--text-lg);
+}
+
+
+/* ==========================================================================
+   TYPOGRAPHY — Body & Inline
+   ========================================================================== */
+
+p {
+    font-size: clamp(var(--text-base), 2vw, var(--text-lg));
+    line-height: var(--leading-normal);
+    overflow-wrap: break-word;
+    max-width: 70ch;
+}
+
+p + p {
+    margin-top: var(--space-md);
+}
+
+strong, b {
+    font-weight: var(--weight-bold);
+}
+
+em, i {
+    font-style: italic;
+}
+
+small {
+    font-size: var(--text-sm);
+    line-height: var(--leading-snug);
+}
+
+/* ==========================================================================
+   LINKS
+   ========================================================================== */
+
+a {
+    color: var(--color-text-link);
+    text-decoration: underline;
+    text-decoration-thickness: 0.0625rem;
+    text-underline-offset: 0.2em;
+    transition: var(--transition-property) var(--transition-base);
+}
+
+a:hover,
+a:focus-visible {
+    color: var(--color-text-link-hover);
+    text-decoration-thickness: 0.125rem;
+}
+
+a:focus-visible {
+    outline: 0.1875rem solid var(--color-forest-green);
+    outline-offset: 0.125rem;
+    border-radius: var(--radius-sm);
+}
+
+
+/* ==========================================================================
+   LISTS
+   ========================================================================== */
+
+ul, ol {
+    padding-left: var(--space-lg);
+    line-height: var(--leading-normal);
+}
+
+li {
+    margin-bottom: var(--space-xs);
+    overflow-wrap: break-word;
+}
+
+/* Unstyled utility — used frequently for nav, card lists, etc. */
+.list-unstyled {
+    list-style: none;
+    padding-left: 0;
+    margin: 0;
+}
+
+
+/* ==========================================================================
+   IMAGES & MEDIA
+   ========================================================================== */
+
+img, video, svg {
+    display: block;
+    max-width: 100%;
+    height: auto;
+}
+
+img {
+    object-fit: cover;
+}
+
+figure {
+    margin: 0;
+}
+
+figcaption {
+    font-size: var(--text-sm);
+    color: var(--color-text-muted);
+    margin-top: var(--space-xs);
+    font-style: italic;
+}
+
+
+/* ==========================================================================
+   HORIZONTAL RULE
+   ========================================================================== */
+
+hr {
+    border: none;
+    border-top: 0.0625rem solid var(--color-border);
+    margin: var(--space-xl) 0;
+}
+
+
+/* ==========================================================================
+   TABLES
+   ========================================================================== */
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    overflow-wrap: break-word;
+}
+
+th, td {
+    text-align: left;
+    padding: var(--space-sm) var(--space-md);
+    border-bottom: 0.0625rem solid var(--color-border);
+    min-width: 0;
+    overflow-wrap: break-word;
+}
+
+th {
+    font-weight: var(--weight-semibold);
+    font-size: var(--text-sm);
+    letter-spacing: var(--tracking-wide);
+    text-transform: uppercase;
+    color: var(--color-text-muted);
+}
+
+
+/* ==========================================================================
+   FORMS — Base resets (detailed styles in forms.css)
+   ========================================================================== */
+
+input, textarea, select, button {
+    font-family: var(--font-body);
+    font-size: var(--text-base);
+    line-height: var(--leading-normal);
+}
+
+button {
+    cursor: pointer;
+    border: none;
+    background: none;
+}
+
+
+/* ==========================================================================
+   LAYOUT UTILITIES
+   ========================================================================== */
+
+/* Content wrapper — centres content with consistent horizontal padding */
+.container {
+    width: 100%;
+    max-width: var(--max-width-content);
+    margin-inline: auto;
+    padding-inline: var(--section-padding-x);
+}
+
+.container--wide {
+    max-width: var(--max-width-wide);
+}
+
+.container--narrow {
+    max-width: var(--max-width-narrow);
+}
+
+/* Section vertical rhythm */
+.section {
+    padding-block: var(--section-padding-y);
+}
+
+.section--dark {
+    background-color: var(--color-bg-dark);
+    color: var(--color-text-on-dark);
+}
+
+.section--dark h1,
+.section--dark h2,
+.section--dark h3,
+.section--dark h4,
+.section--dark h5,
+.section--dark h6 {
+    color: var(--color-text-on-dark);
+}
+
+.section--accent {
+    background-color: var(--color-bg-accent);
+}
+
+/* Offset for sticky nav */
+.nav-offset {
+    padding-top: var(--nav-height);
+}
+
+
+/* ==========================================================================
+   FLEX & GRID UTILITIES
+   ========================================================================== */
+
+.flex {
+    display: flex;
+}
+
+.flex-wrap {
+    flex-wrap: wrap;
+}
+
+.flex-center {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.flex-between {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.grid-auto {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+    gap: var(--space-lg);
+}
+
+
+/* ==========================================================================
+   TEXT UTILITIES
+   ========================================================================== */
+
+.text-center   { text-align: center; }
+.text-muted    { color: var(--color-text-muted); }
+.text-sm       { font-size: var(--text-sm); }
+.text-lg       { font-size: var(--text-lg); }
+.text-display  { font-family: var(--font-display); }
+
+/* Visually hidden — accessible only to screen readers */
+.sr-only {
+    position: absolute;
+    width: 0.0625rem;
+    height: 0.0625rem;
+    padding: 0;
+    margin: -0.0625rem;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+
+/* ==========================================================================
+   OVERFLOW & CONTAINER INTEGRITY
+   All user-generated or dynamic content must use these
+   ========================================================================== */
+
+.ugc {
+    overflow-wrap: break-word;
+    word-break: break-word;
+    min-width: 0;
+}
+
+/* Prevent grid/flex children with text from overflowing */
+.grid-child,
+.flex-child {
+    min-width: 0;
+    overflow-wrap: break-word;
+}
+
+
+/* ==========================================================================
+   RESPONSIVE — Scale up from mobile base
+   ========================================================================== */
+
+/* Tablet: 768px */
+@media (min-width: 48rem) {
+    body {
+        font-size: var(--text-base);
+    }
+}
+
+/* Desktop: 1024px */
+@media (min-width: 64rem) {
+    .grid-auto {
+        gap: var(--space-xl);
+    }
+}
+
+/* Wide: 1440px */
+@media (min-width: 90rem) {
+    .grid-auto {
+        gap: var(--space-2xl);
+    }
+}
+
+
+
+
+
+/* ==========================================================================
+   PAGE-SPECIFIC STYLES
+   Appended below global styles. One clearly labelled section per page.
+   ========================================================================== */
+
+
+/* ==========================================================================
+   INDEX.HTML — Homepage
+   ========================================================================== */
+
+/* --- Hero Section --- */
+
+.hero-section {
+    background-color: var(--color-dark-section);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    padding: var(--space-2xl) var(--section-padding-x) 0;
+}
+
+.hero-inner {
+    width: 100%;
+    max-width: var(--max-width-content);
+    margin-inline: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-2xl);
+    flex: 1;
+    padding-bottom: var(--space-2xl);
+}
+
+.hero-text {
+    text-align: center;
+    max-width: 40rem;
+    order: 1;
+}
+
+.hero-headline {
+    font-family: var(--font-display);
+    font-size: clamp(3rem, 10vw, 6rem);
+    color: var(--color-beige);
+    line-height: var(--leading-tight);
+    letter-spacing: var(--tracking-tight);
+    margin-bottom: var(--space-md);
+}
+
+.hero-subheadline {
+    font-family: var(--font-body);
+    font-size: clamp(1.125rem, 3vw, 1.5rem);
+    color: var(--color-light-green);
+    font-weight: var(--weight-medium);
+    line-height: var(--leading-snug);
+    margin-bottom: var(--space-sm);
+    max-width: none;
+}
+
+.hero-tagline {
+    font-family: var(--font-body);
+    font-size: var(--text-base);
+    font-weight: var(--weight-medium);
+    color: var(--color-hillside-green);
+    margin-bottom: var(--space-xl);
+    max-width: none;
+}
+
+.hero-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-md);
+    justify-content: center;
+    order: 3;
+    width: 100%;
+}
+
+.hero-image-wrap {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    max-width: 32rem;
+    min-height: 20rem;
+    order: 2;
+}
+
+.hero-glass-img {
+    width: 100%;
+    height: auto;
+    max-height: 80vh;
+    object-fit: contain;
+    filter: drop-shadow(0 1.5rem 3rem rgba(0, 0, 0, 0.6));
+}
+
+/* --- Split Sections --- */
+
+.split-section {
+    padding: var(--section-padding-y) var(--section-padding-x) 0;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+}
+
+.split-section--light {
+    background-color: var(--color-beige);
+}
+
+.split-section--dark {
+    background-color: var(--color-dark-section);
+}
+
+.split-inner {
+    width: 100%;
+    max-width: var(--max-width-content);
+    margin-inline: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-xl);
+}
+
+.split-text {
+    width: 100%;
+}
+
+.split-image-wrap {
+    width: 100%;
+    max-width: 28rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    isolation: isolate;
+}
+
+.split-heading {
+    font-family: var(--font-display);
+    font-size: clamp(2rem, 5vw, 3rem);
+    line-height: var(--leading-tight);
+    margin-bottom: var(--space-lg);
+}
+
+.split-section--light .split-heading {
+    color: var(--color-dark-section);
+}
+
+.split-section--dark .split-heading {
+    color: var(--color-beige);
+}
+
+.split-body {
+    font-size: clamp(var(--text-base), 2vw, var(--text-lg));
+    line-height: var(--leading-normal);
+    margin-bottom: var(--space-md);
+    max-width: 60ch;
+}
+
+.split-section--light .split-body {
+    color: var(--color-text-primary);
+}
+
+.split-section--dark .split-body {
+    color: var(--color-beige);
+}
+
+.split-address {
+    font-size: var(--text-sm);
+    letter-spacing: var(--tracking-wide);
+    text-transform: uppercase;
+    margin-top: var(--space-lg);
+    max-width: none;
+}
+
+.split-section--light .split-address {
+    color: var(--color-text-muted);
+}
+
+.split-section--dark .split-address {
+    color: var(--color-hillside-green);
+}
+
+.split-glass-img {
+    width: 100%;
+    height: auto;
+    max-height: 60vh;
+    object-fit: contain;
+    display: block;
+    background: transparent;
+    mix-blend-mode: normal;
+}
+
+.split-section--light .split-glass-img {
+    filter: drop-shadow(0 1rem 2rem rgba(0, 0, 0, 0.15));
+}
+
+.split-section--dark .split-glass-img {
+    filter: drop-shadow(0 1rem 2rem rgba(0, 0, 0, 0.45));
+}
+
+.split-text .btn {
+    margin-top: var(--space-lg);
+}
+
+/* --- Split Footer — full width button bar, same bg as parent section --- */
+
+.split-footer {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: var(--space-md);
+    flex-wrap: wrap;
+    padding: var(--space-xl) var(--section-padding-x) var(--space-2xl);
+}
+
+.split-footer--light {
+    background-color: var(--color-beige);
+}
+
+.split-footer--dark {
+    background-color: var(--color-dark-section);
+}
+
+/* Mobile: buttons stack centered, panes invisible */
+.hero-btn-pane {
+    display: contents;
+}
+
+/* --- Index Responsive --- */
+
+@media (min-width: 48rem) {
+
+    .hero-inner {
+        flex-direction: row;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .hero-text {
+        text-align: left;
+        flex: 1;
+        padding-left: calc(var(--space-lg) * 2);
+        padding-right: 0;
+        order: 0;
+    }
+
+    .hero-image-wrap {
+        flex: 1;
+        max-width: none;
+        min-height: 0;
+        justify-content: flex-end;
+        order: 0;
+    }
+
+    /* Buttons span full width below text and image on desktop */
+    .hero-buttons {
+        flex-basis: 100%;
+        order: 0;
+        justify-content: stretch;
+        padding-top: var(--space-lg);
+        gap: 0;
+    }
+
+    .hero-btn-pane {
+        display: flex;
+        flex: 1;
+        justify-content: center;
+        align-items: center;
+        padding: var(--space-md);
+    }
+
+    .hero-glass-img {
+        max-height: 90vh;
+        width: 100%;
+    }
+
+    .split-inner {
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+        gap: var(--space-3xl);
+    }
+
+    .split-inner--reversed {
+        flex-direction: row-reverse;
+    }
+
+    .split-text {
+        flex: 1;
+    }
+
+    /* Left-side text only — switch padding to left side, doubled */
+    .split-text--padded {
+        padding-left: calc(var(--space-lg) * 2);
+        padding-right: 0;
+    }
+
+    .split-image-wrap {
+        flex: 1;
+        max-width: none;
+    }
+}
+
+@media (min-width: 64rem) {
+
+    .hero-glass-img {
+        max-height: 95vh;
+        width: clamp(25rem, 50vw, 48rem);
+    }
+}
+
+
+/* ==========================================================================
+   FOOTER.HTML — Site Footer
+   ========================================================================== */
+
+.footer {
+    background-color: var(--color-dark-section);
+    padding: var(--space-3xl) var(--section-padding-x) var(--space-xl);
+}
+
+.footer-brand {
+    text-align: center;
+    margin-bottom: var(--space-2xl);
+    padding-bottom: var(--space-xl);
+    border-bottom: 0.0625rem solid var(--color-border-dark);
+}
+
+.footer-logo {
+    font-family: var(--font-display);
+    font-size: clamp(1.5rem, 4vw, 2.25rem);
+    color: var(--color-beige);
+    line-height: var(--leading-tight);
+    margin-bottom: var(--space-xs);
+}
+
+.footer-tagline {
+    font-size: var(--text-base);
+    color: var(--color-hillside-green);
+    letter-spacing: var(--tracking-wide);
+    margin-bottom: var(--space-2xs);
+    max-width: none;
+}
+
+.footer-location {
+    font-size: var(--text-sm);
+    color: var(--color-hillside-green);
+    letter-spacing: var(--tracking-wide);
+    max-width: none;
+}
+
+.footer-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-xl) var(--space-lg);
+    margin-bottom: var(--space-2xl);
+}
+
+.footer-col {
+    align-self: flex-start;
+}
+
+.footer-col-heading {
+    font-family: var(--font-display);
+    font-size: var(--text-base);
+    color: var(--color-beige);
+    margin-bottom: var(--space-md);
+    letter-spacing: var(--tracking-wide);
+    text-transform: uppercase;
+}
+
+.footer-links {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+}
+
+.footer-link {
+    font-size: var(--text-sm);
+    color: #C8D5B9;
+    text-decoration: none;
+    transition: color var(--transition-fast);
+    line-height: var(--leading-snug);
+}
+
+.footer-link:hover {
+    color: var(--color-beige);
+    text-decoration: none;
+}
+
+.footer-bottom {
+    padding-top: var(--space-xl);
+    border-top: 0.0625rem solid var(--color-border-dark);
+    text-align: center;
+}
+
+.footer-legal {
+    font-size: var(--text-xs);
+    color: var(--color-hillside-green);
+    line-height: var(--leading-normal);
+    max-width: none;
+}
+
+.flash-messages-container {
+    padding-top: var(--space-md);
+}
+
+@media (min-width: 48rem) {
+
+    .footer-grid {
+        grid-template-columns: repeat(4, 1fr);
+        gap: var(--space-xl);
+    }
+}

@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="{% block meta_description %}American Functional Glass — premium handmade glass pipes and art pieces by American artists. Green Fire, University Place, Lincoln, Nebraska.{% endblock %}">
+    <meta name="robots" content="{% block robots %}index, follow{% endblock %}">
+    <link rel="canonical" href="{% block canonical %}{% endblock %}">
+    <title>{% block title %}{% endblock %} | Green Fire — American Functional Glass</title>
+    <meta property="og:site_name" content="Green Fire">
+    <meta property="og:title" content="{% block og_title %}Green Fire — American Functional Glass{% endblock %}">
+    <meta property="og:description" content="{% block og_description %}Premium handmade glass by American artists. University Place, Lincoln, Nebraska.{% endblock %}">
+    <meta property="og:type" content="{% block og_type %}website{% endblock %}">
+    <meta property="og:url" content="{% block og_url %}{% endblock %}">
+    <meta property="og:image" content="{% block og_image %}{% endblock %}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/variables.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/components.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/navigation.css') }}">
+    {% block extra_css %}{% endblock %}
+    {% block schema %}{% endblock %}
+</head>
+<body>
+
+<div class="age-gate" id="age-gate" role="dialog" aria-modal="true" aria-labelledby="age-gate-heading">
+    <div class="age-gate-inner">
+        <div class="age-gate-logo">Green Fire</div>
+        <div class="age-gate-tagline">American Functional Glass</div>
+        <p class="age-gate-prompt" id="age-gate-heading">You must be 21 or older to enter.</p>
+        <div class="age-gate-buttons">
+            <button class="btn btn-primary btn-lg" id="age-gate-yes" onclick="ageGateConfirm()">I am 21+</button>
+            <button class="btn btn-ghost-light btn-lg" id="age-gate-no" onclick="ageGateDeny()">I am under 21</button>
+        </div>
+        <p class="age-gate-disclaimer">
+            By entering this site you agree to our Terms of Service and Privacy Policy.
+            This site contains content intended for adults 21 and older.
+        </p>
+    </div>
+</div>
+
+<nav class="nav" role="navigation" aria-label="Main navigation">
+    <div class="nav-container">
+
+        <a href="{{ url_for('routes.index') }}" class="nav-logo" aria-label="Green Fire — Home">
+            Green Fire
+        </a>
+
+        <div class="nav-right">
+
+        <ul class="nav-links list-unstyled" id="nav-links" role="list">
+
+            <li class="nav-item nav-item--dropdown">
+                <button class="nav-dropdown-trigger" aria-expanded="false" aria-haspopup="true">
+                    Heady<br>Glass
+                </button>
+                <ul class="nav-dropdown list-unstyled">
+                    <li><a href="{{ url_for('routes.headies') }}" class="nav-dropdown-link">In House / For Sale</a></li>
+                    <li><a href="{{ url_for('routes.featured_artist') }}" class="nav-dropdown-link">Featured Artist</a></li>
+                    <li><a href="{{ url_for('routes.archive') }}" class="nav-dropdown-link">Archive</a></li>
+                </ul>
+            </li>
+
+            <li class="nav-item nav-item--dropdown">
+                <button class="nav-dropdown-trigger" aria-expanded="false" aria-haspopup="true">
+                    Production<br>Glass
+                </button>
+                <ul class="nav-dropdown list-unstyled">
+                    <li><a href="{{ url_for('routes.prodos') }}#dry-pipes" class="nav-dropdown-link">Dry Pipes</a></li>
+                    <li><a href="{{ url_for('routes.prodos') }}#bubblers" class="nav-dropdown-link">Bubblers</a></li>
+                    <li><a href="{{ url_for('routes.prodos') }}#beakers" class="nav-dropdown-link">Beakers</a></li>
+                    <li><a href="{{ url_for('routes.prodos') }}#oil-rigs" class="nav-dropdown-link">Oil Rigs</a></li>
+                </ul>
+            </li>
+
+            <li class="nav-item nav-item--dropdown">
+                <button class="nav-dropdown-trigger" aria-expanded="false" aria-haspopup="true">
+                    Vapes &amp;<br>Accessories
+                </button>
+                <ul class="nav-dropdown list-unstyled">
+                    <li><a href="{{ url_for('routes.vapes_accessories') }}#vaporizers" class="nav-dropdown-link">Vaporizers</a></li>
+                    <li><a href="{{ url_for('routes.vapes_accessories') }}#flower-accessories" class="nav-dropdown-link">Flower Accessories</a></li>
+                    <li><a href="{{ url_for('routes.vapes_accessories') }}#oil-accessories" class="nav-dropdown-link">Oil Accessories</a></li>
+                </ul>
+            </li>
+
+            <li class="nav-item nav-item--dropdown">
+                <button class="nav-dropdown-trigger" aria-expanded="false" aria-haspopup="true">
+                    Store<br>Info
+                </button>
+                <ul class="nav-dropdown list-unstyled">
+                    <li><a href="{{ url_for('routes.index') }}" class="nav-dropdown-link">Home</a></li>
+                    <li><a href="{{ url_for('routes.about') }}" class="nav-dropdown-link">About</a></li>
+                    <li><a href="{{ url_for('routes.shipping_returns') }}" class="nav-dropdown-link">Shipping &amp; Returns</a></li>
+                    <li><a href="{{ url_for('routes.contact') }}" class="nav-dropdown-link">Contact</a></li>
+                </ul>
+            </li>
+
+            <li class="nav-item nav-item--dropdown">
+                <button class="nav-link nav-dropdown-trigger" aria-expanded="false" aria-haspopup="true">
+                    Account<br>&nbsp;
+                </button>
+                <ul class="nav-dropdown list-unstyled">
+                    {% if current_user.is_authenticated %}
+                    <li><a href="{{ url_for('routes.account_dashboard') }}" class="nav-dropdown-link">My Account</a></li>
+                    <li><a href="{{ url_for('routes.account_orders') }}" class="nav-dropdown-link">Order History</a></li>
+                    <li><a href="{{ url_for('routes.account_wishlist') }}" class="nav-dropdown-link">Wishlist</a></li>
+                    <li><a href="{{ url_for('routes.logout') }}" class="nav-dropdown-link">Log Out</a></li>
+                    {% else %}
+                    <li><a href="{{ url_for('routes.login') }}" class="nav-dropdown-link">Log In</a></li>
+                    <li><a href="{{ url_for('routes.register') }}" class="nav-dropdown-link">Create Account</a></li>
+                    {% endif %}
+                </ul>
+            </li>
+
+        </ul>
+
+        <div class="nav-actions">
+            <a href="{{ url_for('routes.cart') }}" class="nav-action-btn" aria-label="Shopping cart">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                     stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                     aria-hidden="true">
+                    <circle cx="9" cy="21" r="1"></circle>
+                    <circle cx="20" cy="21" r="1"></circle>
+                    <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+                </svg>
+                {% if session.get('cart_count') %}
+                <span class="nav-cart-count" aria-hidden="true">{{ session.get('cart_count') }}</span>
+                {% endif %}
+            </a>
+            <button class="nav-hamburger" id="nav-hamburger" aria-label="Toggle navigation menu"
+                    aria-expanded="false" aria-controls="nav-links">
+                <span class="nav-hamburger-bar"></span>
+                <span class="nav-hamburger-bar"></span>
+                <span class="nav-hamburger-bar"></span>
+            </button>
+        </div>
+
+        </div>
+
+    </div>
+</nav>
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        <div class="container flash-messages-container">
+            {% for category, message in messages %}
+                <div class="alert alert-{{ category }}" role="alert">{{ message }}</div>
+            {% endfor %}
+        </div>
+    {% endif %}
+{% endwith %}
+
+<main id="main-content">
+    {% block content %}{% endblock %}
+</main>
+
+<footer class="footer" role="contentinfo">
+    <div class="container">
+        <div class="footer-brand">
+            <div class="footer-logo">Green Fire</div>
+            <p class="footer-tagline">American Functional Glass Shop</p>
+            <p class="footer-location">University Place &mdash; Lincoln, Nebraska</p>
+        </div>
+        <div class="footer-grid">
+            <div class="footer-col">
+                <h3 class="footer-col-heading">Shop</h3>
+                <ul class="list-unstyled footer-links">
+                    <li><a href="{{ url_for('routes.headies') }}" class="footer-link">Heady Glass</a></li>
+                    <li><a href="{{ url_for('routes.prodos') }}" class="footer-link">Production Glass &amp; Vapes</a></li>
+                    <li><a href="{{ url_for('routes.vapes_accessories') }}#flower-accessories" class="footer-link">Flower Accessories</a></li>
+                    <li><a href="{{ url_for('routes.vapes_accessories') }}#oil-accessories" class="footer-link">Oil Accessories</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h3 class="footer-col-heading">Artist Info</h3>
+                <ul class="list-unstyled footer-links">
+                    <li><a href="{{ url_for('routes.featured_artist') }}" class="footer-link">Featured Artist</a></li>
+                    <li><a href="{{ url_for('routes.archive') }}" class="footer-link">Archive</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h3 class="footer-col-heading">Store Info</h3>
+                <ul class="list-unstyled footer-links">
+                    <li><a href="{{ url_for('routes.about') }}" class="footer-link">About</a></li>
+                    <li><a href="{{ url_for('routes.shipping_returns') }}" class="footer-link">Shipping &amp; Returns</a></li>
+                    <li><a href="{{ url_for('routes.contact') }}" class="footer-link">Contact</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h3 class="footer-col-heading">Account</h3>
+                <ul class="list-unstyled footer-links">
+                    {% if current_user.is_authenticated %}
+                    <li><a href="{{ url_for('routes.account_dashboard') }}" class="footer-link">My Account</a></li>
+                    <li><a href="{{ url_for('routes.account_orders') }}" class="footer-link">Order History</a></li>
+                    <li><a href="{{ url_for('routes.account_wishlist') }}" class="footer-link">Wishlist</a></li>
+                    <li><a href="{{ url_for('routes.logout') }}" class="footer-link">Log Out</a></li>
+                    {% else %}
+                    <li><a href="{{ url_for('routes.login') }}" class="footer-link">Log In</a></li>
+                    <li><a href="{{ url_for('routes.register') }}" class="footer-link">Create Account</a></li>
+                    {% endif %}
+                    <li><a href="{{ url_for('routes.privacy') }}" class="footer-link">Privacy Policy</a></li>
+                    <li><a href="{{ url_for('routes.terms') }}" class="footer-link">Terms of Service</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p class="footer-legal">
+                &copy; {{ now.year }} Green Fire Cannabis. All rights reserved.
+                Domestic US shipping only. Must be 21+ to purchase.
+            </p>
+        </div>
+    </div>
+</footer>
+
+<button class="chat-bubble-trigger" id="chat-bubble-trigger"
+        aria-label="Open chat assistant" aria-expanded="false" aria-controls="chat-window">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+         stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+         aria-hidden="true">
+        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+    </svg>
+</button>
+
+<div class="chat-window" id="chat-window" role="dialog" aria-modal="true" aria-label="Green Fire chat assistant">
+    <div class="chat-window-header">
+        <span>Ask Green Fire</span>
+        <button class="chat-window-header-close" id="chat-close" aria-label="Close chat">&#x2715;</button>
+    </div>
+    <div class="chat-window-messages" id="chat-messages" role="log" aria-live="polite" aria-label="Chat messages">
+        <div class="chat-message chat-message-agent">
+            Hey — I know glass. Ask me about any piece, technique, artist, or how things work. What can I help you with?
+        </div>
+    </div>
+    <div class="chat-window-input-area">
+        <textarea class="chat-window-input" id="chat-input" placeholder="Ask anything..." rows="1"
+                  aria-label="Type your message"></textarea>
+        <button class="chat-window-send" id="chat-send" aria-label="Send message">Send</button>
+    </div>
+</div>
+
+<script src="{{ url_for('static', filename='js/age-gate.js') }}" defer></script>
+<script src="{{ url_for('static', filename='js/chat.js') }}" defer></script>
+<script src="{{ url_for('static', filename='js/nav.js') }}" defer></script>
+
+{% block extra_js %}{% endblock %}
+
+<!-- ====================  COLOR DICTIONARY  ====================
+     Documentation only. Add all new colours here AND in variables.css.
+
+GREENS
+--color-forest-green:           #3A6B1A    Primary brand, buttons, links
+--color-forest-green-hover:     #406932    Forest green hover state
+--color-hillside-green:         #8F9783    Mid-tone earthy accent
+--color-hillside-green-hover:   #A5AC9C    Hillside green hover state
+--color-light-green:            #D8E6C8    Section backgrounds, subtle fills
+--color-light-green-hover:      #C8DAB4    Light green hover state
+--color-dark-section:           #3E473B    Footer, nav, moody sections
+
+ORANGES
+--color-burnt-orange:           #C4622D    Accent, CTA, warmth
+--color-burnt-orange-hover:     #D4743A    Burnt orange hover state
+--color-burnt-orange-backup:    #D1672E    Backup burnt orange
+
+NAVY & BLUES
+--color-navy:                   #2C3E50    Dark UI, info elements
+--color-navy-hover:             #34495E    Navy hover state
+--color-blue-dark:              #0047AB    Dark blue accent
+--color-blue:                   #3498DB    Standard blue, links
+--color-blue-hover:             #2980B9    Blue hover state
+--color-blue-light:             #89C0E6    Light blue
+--color-blue-light-hover:       #5DADE2    Light blue hover state
+
+BEIGES
+--color-beige:                  #F5F0E8    Primary light background
+--color-beige-hover:            #EDE8DC    Beige hover state
+--color-beige-deep:             #EAE3D2    Deeper beige variant
+
+SEMANTIC
+--color-bg-primary:             var(--color-beige)
+--color-bg-dark:                var(--color-dark-section)
+--color-bg-accent:              var(--color-light-green)
+--color-text-primary:           #1A1A1A
+--color-text-on-dark:           var(--color-beige)
+--color-text-muted:             #5A5A5A
+--color-border:                 #D0CBBF
+--color-border-dark:            #4A5445
+--color-error:                  #C0392B
+--color-nav-bg:                 var(--color-dark-section)
+--color-footer-bg:              var(--color-dark-section)
+============================================================== -->
+
+</body>
+</html>

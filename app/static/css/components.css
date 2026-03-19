@@ -1,0 +1,538 @@
+/*
+==========================================================================
+COMPONENTS.CSS — Shared UI Components
+Buttons, badges, cards, forms, chat bubble, age gate.
+Every component here must conform to the Green Fire aesthetic.
+No colours hardcoded — all via var().
+==========================================================================
+*/
+
+
+/* ==========================================================================
+   BUTTONS
+   ========================================================================== */
+
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-xs);
+    font-family: var(--font-body);
+    font-size: var(--text-base);
+    font-weight: var(--weight-semibold);
+    line-height: 1;
+    text-decoration: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: var(--radius-md);
+    border: 0.125rem solid transparent;
+    cursor: pointer;
+    transition: var(--transition-property) var(--transition-base);
+    white-space: nowrap;
+    min-height: 2.75rem; /* 44px touch target */
+    min-width: 2.75rem;
+}
+
+.btn:focus-visible {
+    outline: 0.1875rem solid var(--color-forest-green);
+    outline-offset: 0.125rem;
+}
+
+/* Primary — forest green, used for main CTAs */
+.btn-primary {
+    background-color: var(--color-btn-primary);
+    color: var(--color-btn-primary-text);
+    border-color: var(--color-btn-primary);
+}
+
+.btn-primary:hover {
+    background-color: var(--color-btn-primary-hover);
+    border-color: var(--color-btn-primary-hover);
+    color: var(--color-btn-primary-text);
+    text-decoration: none;
+}
+
+/* Secondary — burnt orange, used for accent CTAs */
+.btn-secondary {
+    background-color: var(--color-btn-secondary);
+    color: var(--color-btn-secondary-text);
+    border-color: var(--color-btn-secondary);
+}
+
+.btn-secondary:hover {
+    background-color: var(--color-btn-secondary-hover);
+    border-color: var(--color-btn-secondary-hover);
+    color: var(--color-btn-secondary-text);
+    text-decoration: none;
+}
+
+/* Ghost — outline only, transparent background */
+.btn-ghost {
+    background-color: transparent;
+    color: var(--color-forest-green);
+    border-color: var(--color-forest-green);
+}
+
+.btn-ghost:hover {
+    background-color: var(--color-forest-green);
+    color: var(--color-beige);
+    text-decoration: none;
+}
+
+/* Light orange — beige background with burnt orange text */
+.btn-light-orange {
+    background-color: var(--color-beige);
+    color: var(--color-burnt-orange);
+    border-color: var(--color-beige);
+}
+
+.btn-light-orange:hover {
+    background-color: var(--color-beige-hover);
+    border-color: var(--color-beige-hover);
+    color: var(--color-burnt-orange-hover);
+    text-decoration: none;
+}
+
+/* Ghost on dark backgrounds */
+.btn-ghost-light {
+    background-color: transparent;
+    color: var(--color-beige);
+    border-color: var(--color-beige);
+}
+
+.btn-ghost-light:hover {
+    background-color: var(--color-beige);
+    color: var(--color-dark-section);
+    text-decoration: none;
+}
+
+/* Size variants */
+.btn-sm {
+    font-size: var(--text-sm);
+    padding: 0.5rem 1rem;
+    min-height: 2.25rem;
+}
+
+.btn-lg {
+    font-size: var(--text-lg);
+    padding: 1rem 2rem;
+    min-height: 3.25rem;
+}
+
+/* Full width */
+.btn-block {
+    width: 100%;
+}
+
+
+/* ==========================================================================
+   BADGES & TAGS
+   ========================================================================== */
+
+.badge {
+    display: inline-flex;
+    align-items: center;
+    font-size: var(--text-xs);
+    font-weight: var(--weight-semibold);
+    letter-spacing: var(--tracking-wide);
+    text-transform: uppercase;
+    padding: 0.25rem 0.625rem;
+    border-radius: var(--radius-pill);
+    line-height: 1;
+    white-space: nowrap;
+}
+
+.badge-green {
+    background-color: var(--color-light-green);
+    color: var(--color-forest-green);
+}
+
+.badge-orange {
+    background-color: var(--color-burnt-orange);
+    color: var(--color-beige);
+}
+
+.badge-dark {
+    background-color: var(--color-dark-section);
+    color: var(--color-beige);
+}
+
+.badge-muted {
+    background-color: var(--color-border);
+    color: var(--color-text-muted);
+}
+
+
+/* ==========================================================================
+   CARDS — Base card shell
+   Specific card types live in cards.css
+   ========================================================================== */
+
+.card {
+    background-color: var(--color-beige);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-sm);
+    overflow: hidden;
+    transition: box-shadow var(--transition-base),
+                transform var(--transition-base);
+}
+
+.card:hover {
+    box-shadow: var(--shadow-lg);
+    transform: translateY(-0.125rem);
+}
+
+.card-body {
+    padding: var(--space-lg);
+}
+
+.card-footer {
+    padding: var(--space-md) var(--space-lg);
+    border-top: 0.0625rem solid var(--color-border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: var(--space-sm);
+}
+
+.card-img {
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+}
+
+.card-img-square {
+    aspect-ratio: 1 / 1;
+}
+
+.card-img-portrait {
+    aspect-ratio: 3 / 4;
+}
+
+
+/* ==========================================================================
+   FLASH MESSAGES / ALERTS
+   ========================================================================== */
+
+.alert {
+    padding: var(--space-md) var(--space-lg);
+    border-radius: var(--radius-md);
+    border-left: 0.25rem solid transparent;
+    font-size: var(--text-base);
+    margin-bottom: var(--space-md);
+}
+
+.alert-success {
+    background-color: var(--color-light-green);
+    border-color: var(--color-forest-green);
+    color: var(--color-forest-green);
+}
+
+.alert-error {
+    background-color: #FDECEA;
+    border-color: var(--color-error);
+    color: var(--color-error);
+}
+
+.alert-warning {
+    background-color: #FEF3E2;
+    border-color: var(--color-burnt-orange);
+    color: var(--color-burnt-orange);
+}
+
+.alert-info {
+    background-color: #EBF5FB;
+    border-color: var(--color-blue);
+    color: var(--color-blue-dark);
+}
+
+
+/* ==========================================================================
+   AGE GATE — Full screen overlay
+   Must be highest z-index. Styled to Green Fire aesthetic.
+   ========================================================================== */
+
+.age-gate {
+    position: fixed;
+    inset: 0;
+    z-index: var(--z-age-gate);
+    background-color: var(--color-dark-section);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--space-lg);
+}
+
+.age-gate-inner {
+    text-align: center;
+    max-width: 28rem;
+    width: 100%;
+}
+
+.age-gate-logo {
+    font-family: var(--font-display);
+    font-size: clamp(2rem, 8vw, 3.5rem);
+    color: var(--color-beige);
+    margin-bottom: var(--space-lg);
+    line-height: var(--leading-tight);
+}
+
+.age-gate-tagline {
+    font-family: var(--font-body);
+    font-size: var(--text-base);
+    color: var(--color-hillside-green);
+    letter-spacing: var(--tracking-wide);
+    text-transform: uppercase;
+    margin-bottom: var(--space-2xl);
+}
+
+.age-gate-prompt {
+    font-family: var(--font-display);
+    font-size: clamp(1rem, 3vw, var(--text-xl));
+    color: var(--color-beige);
+    margin-bottom: var(--space-xl);
+}
+
+.age-gate-buttons {
+    display: flex;
+    gap: var(--space-md);
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.age-gate-buttons .btn {
+    min-width: 9rem;
+}
+
+.age-gate-disclaimer {
+    font-size: var(--text-xs);
+    color: var(--color-hillside-green);
+    margin-top: var(--space-xl);
+    line-height: var(--leading-normal);
+}
+
+
+/* ==========================================================================
+   CHAT BUBBLE — Floating AI assistant
+   Bottom-right corner, all pages, above most content
+   ========================================================================== */
+
+.chat-bubble-trigger {
+    position: fixed;
+    bottom: var(--space-lg);
+    right: var(--space-lg);
+    z-index: var(--z-chat);
+    width: 3.5rem;
+    height: 3.5rem;
+    border-radius: var(--radius-pill);
+    background-color: var(--color-forest-green);
+    color: var(--color-beige);
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: var(--shadow-lg);
+    transition: background-color var(--transition-base),
+                transform var(--transition-base),
+                box-shadow var(--transition-base);
+}
+
+.chat-bubble-trigger:hover {
+    background-color: var(--color-forest-green-hover);
+    transform: scale(1.05);
+    box-shadow: var(--shadow-xl);
+}
+
+.chat-bubble-trigger svg {
+    width: 1.5rem;
+    height: 1.5rem;
+    pointer-events: none;
+}
+
+/* Chat window panel */
+.chat-window {
+    position: fixed;
+    bottom: calc(var(--space-lg) + 4rem);
+    right: var(--space-lg);
+    z-index: var(--z-chat);
+    width: clamp(18rem, 90vw, 22rem);
+    max-height: 70vh;
+    background-color: var(--color-beige);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-xl);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    border: 0.0625rem solid var(--color-border);
+
+    /* Hidden by default — toggled via JS */
+    opacity: 0;
+    transform: translateY(0.5rem) scale(0.97);
+    pointer-events: none;
+    transition: opacity var(--transition-base),
+                transform var(--transition-base);
+}
+
+.chat-window.is-open {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    pointer-events: all;
+}
+
+.chat-window-header {
+    background-color: var(--color-dark-section);
+    color: var(--color-beige);
+    padding: var(--space-md) var(--space-lg);
+    font-family: var(--font-display);
+    font-size: var(--text-lg);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-shrink: 0;
+}
+
+.chat-window-header-close {
+    background: none;
+    border: none;
+    color: var(--color-beige);
+    cursor: pointer;
+    padding: 0;
+    line-height: 1;
+    opacity: 0.7;
+    transition: opacity var(--transition-fast);
+    font-size: var(--text-xl);
+}
+
+.chat-window-header-close:hover {
+    opacity: 1;
+}
+
+.chat-window-messages {
+    flex: 1;
+    overflow-y: auto;
+    padding: var(--space-md);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+    min-height: 0;
+}
+
+.chat-message {
+    max-width: 85%;
+    padding: var(--space-sm) var(--space-md);
+    border-radius: var(--radius-md);
+    font-size: var(--text-sm);
+    line-height: var(--leading-normal);
+    overflow-wrap: break-word;
+}
+
+.chat-message-agent {
+    background-color: var(--color-light-green);
+    color: var(--color-text-primary);
+    align-self: flex-start;
+    border-bottom-left-radius: var(--radius-sm);
+}
+
+.chat-message-user {
+    background-color: var(--color-forest-green);
+    color: var(--color-beige);
+    align-self: flex-end;
+    border-bottom-right-radius: var(--radius-sm);
+}
+
+.chat-window-input-area {
+    padding: var(--space-sm) var(--space-md);
+    border-top: 0.0625rem solid var(--color-border);
+    display: flex;
+    gap: var(--space-sm);
+    flex-shrink: 0;
+}
+
+.chat-window-input {
+    flex: 1;
+    padding: var(--space-sm) var(--space-md);
+    border: 0.0625rem solid var(--color-border);
+    border-radius: var(--radius-md);
+    font-family: var(--font-body);
+    font-size: var(--text-sm);
+    background-color: white;
+    color: var(--color-text-primary);
+    resize: none;
+    min-width: 0;
+}
+
+.chat-window-input:focus {
+    outline: 0.125rem solid var(--color-forest-green);
+    outline-offset: 0;
+    border-color: var(--color-forest-green);
+}
+
+.chat-window-send {
+    background-color: var(--color-forest-green);
+    color: var(--color-beige);
+    border: none;
+    border-radius: var(--radius-md);
+    padding: var(--space-sm) var(--space-md);
+    cursor: pointer;
+    font-size: var(--text-sm);
+    font-weight: var(--weight-semibold);
+    transition: background-color var(--transition-fast);
+    white-space: nowrap;
+    min-height: 2.75rem;
+}
+
+.chat-window-send:hover {
+    background-color: var(--color-forest-green-hover);
+}
+
+
+/* ==========================================================================
+   MODAL
+   ========================================================================== */
+
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: var(--z-modal);
+    background-color: rgba(0, 0, 0, 0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--space-lg);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity var(--transition-base);
+}
+
+.modal-overlay.is-open {
+    opacity: 1;
+    pointer-events: all;
+}
+
+.modal {
+    background-color: var(--color-beige);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-xl);
+    padding: var(--space-2xl);
+    max-width: 32rem;
+    width: 100%;
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+.modal-header {
+    font-family: var(--font-display);
+    font-size: var(--text-2xl);
+    margin-bottom: var(--space-lg);
+    color: var(--color-text-primary);
+}
+
+
+/* ==========================================================================
+   FLASH MESSAGES CONTAINER
+   ========================================================================== */
+
+.flash-messages-container {
+    padding-top: var(--space-md);
+}
