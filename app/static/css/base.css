@@ -1,9 +1,10 @@
 /*
 ==========================================================================
 BASE.CSS — Reset, Typography, Global Defaults
-No page-specific rules. No colours hardcoded — all via var().
+No page-specific rules except appended at bottom with section headers.
 All font declarations live here and nowhere else.
 Mobile-first: base styles target 320px. Scale up via min-width queries.
+No non-color variables — all values hardcoded directly.
 ==========================================================================
 */
 
@@ -38,17 +39,17 @@ html {
     font-size: 100%;
     scroll-behavior: smooth;
     -webkit-text-size-adjust: 100%;
+    overflow-y: scroll;
 }
 
 body {
-    font-family: var(--font-body);
-    font-size: var(--text-base);
-    font-weight: var(--weight-regular);
-    line-height: var(--leading-normal);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 1rem;
+    font-weight: 400;
+    line-height: 1.6;
     color: var(--color-text-primary);
     background-color: var(--color-bg-primary);
     min-height: 100vh;
-    overflow-x: hidden;
 }
 
 
@@ -58,37 +59,20 @@ body {
    ========================================================================== */
 
 h1, h2, h3, h4, h5, h6 {
-    font-family: var(--font-display);
-    font-weight: var(--weight-black);
-    line-height: var(--leading-tight);
-    letter-spacing: var(--tracking-tight);
+    font-family: 'Cooper Black', serif;
+    font-weight: 900;
+    line-height: 1.2;
+    letter-spacing: -0.02em;
     color: var(--color-text-primary);
     overflow-wrap: break-word;
 }
 
-h1 {
-    font-size: clamp(2rem, 6vw, var(--text-5xl));
-}
-
-h2 {
-    font-size: clamp(1.625rem, 4.5vw, var(--text-4xl));
-}
-
-h3 {
-    font-size: clamp(1.375rem, 3.5vw, var(--text-3xl));
-}
-
-h4 {
-    font-size: clamp(1.125rem, 2.5vw, var(--text-2xl));
-}
-
-h5 {
-    font-size: clamp(1rem, 2vw, var(--text-xl));
-}
-
-h6 {
-    font-size: var(--text-lg);
-}
+h1 { font-size: clamp(2rem, 6vw, 3rem); }
+h2 { font-size: clamp(1.625rem, 4.5vw, 2.25rem); }
+h3 { font-size: clamp(1.375rem, 3.5vw, 1.875rem); }
+h4 { font-size: clamp(1.125rem, 2.5vw, 1.5rem); }
+h5 { font-size: clamp(1rem, 2vw, 1.25rem); }
+h6 { font-size: 1.125rem; }
 
 
 /* ==========================================================================
@@ -96,18 +80,18 @@ h6 {
    ========================================================================== */
 
 p {
-    font-size: clamp(var(--text-base), 2vw, var(--text-lg));
-    line-height: var(--leading-normal);
+    font-size: clamp(1rem, 2vw, 1.125rem);
+    line-height: 1.6;
     overflow-wrap: break-word;
     max-width: 70ch;
 }
 
 p + p {
-    margin-top: var(--space-md);
+    margin-top: 1rem;
 }
 
 strong, b {
-    font-weight: var(--weight-bold);
+    font-weight: 700;
 }
 
 em, i {
@@ -115,9 +99,10 @@ em, i {
 }
 
 small {
-    font-size: var(--text-sm);
-    line-height: var(--leading-snug);
+    font-size: 0.875rem;
+    line-height: 1.35;
 }
+
 
 /* ==========================================================================
    LINKS
@@ -128,7 +113,7 @@ a {
     text-decoration: underline;
     text-decoration-thickness: 0.0625rem;
     text-underline-offset: 0.2em;
-    transition: var(--transition-property) var(--transition-base);
+    transition: color 250ms ease;
 }
 
 a:hover,
@@ -140,7 +125,7 @@ a:focus-visible {
 a:focus-visible {
     outline: 0.1875rem solid var(--color-forest-green);
     outline-offset: 0.125rem;
-    border-radius: var(--radius-sm);
+    border-radius: 0.25rem;
 }
 
 
@@ -149,16 +134,15 @@ a:focus-visible {
    ========================================================================== */
 
 ul, ol {
-    padding-left: var(--space-lg);
-    line-height: var(--leading-normal);
+    padding-left: 1.5rem;
+    line-height: 1.6;
 }
 
 li {
-    margin-bottom: var(--space-xs);
+    margin-bottom: 0.5rem;
     overflow-wrap: break-word;
 }
 
-/* Unstyled utility — used frequently for nav, card lists, etc. */
 .list-unstyled {
     list-style: none;
     padding-left: 0;
@@ -185,9 +169,9 @@ figure {
 }
 
 figcaption {
-    font-size: var(--text-sm);
+    font-size: 0.875rem;
     color: var(--color-text-muted);
-    margin-top: var(--space-xs);
+    margin-top: 0.5rem;
     font-style: italic;
 }
 
@@ -199,7 +183,7 @@ figcaption {
 hr {
     border: none;
     border-top: 0.0625rem solid var(--color-border);
-    margin: var(--space-xl) 0;
+    margin: 2rem 0;
 }
 
 
@@ -215,29 +199,29 @@ table {
 
 th, td {
     text-align: left;
-    padding: var(--space-sm) var(--space-md);
+    padding: 0.75rem 1rem;
     border-bottom: 0.0625rem solid var(--color-border);
     min-width: 0;
     overflow-wrap: break-word;
 }
 
 th {
-    font-weight: var(--weight-semibold);
-    font-size: var(--text-sm);
-    letter-spacing: var(--tracking-wide);
+    font-weight: 600;
+    font-size: 0.875rem;
+    letter-spacing: 0.05em;
     text-transform: uppercase;
     color: var(--color-text-muted);
 }
 
 
 /* ==========================================================================
-   FORMS — Base resets (detailed styles in forms.css)
+   FORMS — Base resets
    ========================================================================== */
 
 input, textarea, select, button {
-    font-family: var(--font-body);
-    font-size: var(--text-base);
-    line-height: var(--leading-normal);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 1rem;
+    line-height: 1.6;
 }
 
 button {
@@ -251,25 +235,23 @@ button {
    LAYOUT UTILITIES
    ========================================================================== */
 
-/* Content wrapper — centres content with consistent horizontal padding */
 .container {
     width: 100%;
-    max-width: var(--max-width-content);
+    max-width: 75rem;
     margin-inline: auto;
-    padding-inline: var(--section-padding-x);
+    padding-inline: clamp(1rem, 4vw, 4rem);
 }
 
 .container--wide {
-    max-width: var(--max-width-wide);
+    max-width: 90rem;
 }
 
 .container--narrow {
-    max-width: var(--max-width-narrow);
+    max-width: 50rem;
 }
 
-/* Section vertical rhythm */
 .section {
-    padding-block: var(--section-padding-y);
+    padding-block: clamp(3rem, 6vw, 6rem);
 }
 
 .section--dark {
@@ -290,7 +272,6 @@ button {
     background-color: var(--color-bg-accent);
 }
 
-/* Offset for sticky nav */
 .nav-offset {
     padding-top: var(--nav-height);
 }
@@ -300,13 +281,8 @@ button {
    FLEX & GRID UTILITIES
    ========================================================================== */
 
-.flex {
-    display: flex;
-}
-
-.flex-wrap {
-    flex-wrap: wrap;
-}
+.flex         { display: flex; }
+.flex-wrap    { flex-wrap: wrap; }
 
 .flex-center {
     display: flex;
@@ -323,7 +299,7 @@ button {
 .grid-auto {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
-    gap: var(--space-lg);
+    gap: 1.5rem;
 }
 
 
@@ -333,11 +309,10 @@ button {
 
 .text-center   { text-align: center; }
 .text-muted    { color: var(--color-text-muted); }
-.text-sm       { font-size: var(--text-sm); }
-.text-lg       { font-size: var(--text-lg); }
-.text-display  { font-family: var(--font-display); }
+.text-sm       { font-size: 0.875rem; }
+.text-lg       { font-size: 1.125rem; }
+.text-display  { font-family: 'Cooper Black', serif; }
 
-/* Visually hidden — accessible only to screen readers */
 .sr-only {
     position: absolute;
     width: 0.0625rem;
@@ -353,7 +328,6 @@ button {
 
 /* ==========================================================================
    OVERFLOW & CONTAINER INTEGRITY
-   All user-generated or dynamic content must use these
    ========================================================================== */
 
 .ugc {
@@ -362,7 +336,6 @@ button {
     min-width: 0;
 }
 
-/* Prevent grid/flex children with text from overflowing */
 .grid-child,
 .flex-child {
     min-width: 0;
@@ -374,29 +347,13 @@ button {
    RESPONSIVE — Scale up from mobile base
    ========================================================================== */
 
-/* Tablet: 768px */
-@media (min-width: 48rem) {
-    body {
-        font-size: var(--text-base);
-    }
-}
-
-/* Desktop: 1024px */
 @media (min-width: 64rem) {
-    .grid-auto {
-        gap: var(--space-xl);
-    }
+    .grid-auto { gap: 2rem; }
 }
 
-/* Wide: 1440px */
 @media (min-width: 90rem) {
-    .grid-auto {
-        gap: var(--space-2xl);
-    }
+    .grid-auto { gap: 3rem; }
 }
-
-
-
 
 
 /* ==========================================================================
@@ -417,19 +374,19 @@ button {
     display: flex;
     flex-direction: column;
     align-items: stretch;
-    padding: var(--space-2xl) var(--section-padding-x) 0;
+    padding: 3rem clamp(1rem, 4vw, 4rem) 0;
 }
 
 .hero-inner {
     width: 100%;
-    max-width: var(--max-width-content);
+    max-width: 75rem;
     margin-inline: auto;
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: var(--space-2xl);
+    gap: 3rem;
     flex: 1;
-    padding-bottom: var(--space-2xl);
+    padding-bottom: 3rem;
 }
 
 .hero-text {
@@ -439,37 +396,37 @@ button {
 }
 
 .hero-headline {
-    font-family: var(--font-display);
+    font-family: 'Cooper Black', serif;
     font-size: clamp(3rem, 10vw, 6rem);
     color: var(--color-beige);
-    line-height: var(--leading-tight);
-    letter-spacing: var(--tracking-tight);
-    margin-bottom: var(--space-md);
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+    margin-bottom: 1rem;
 }
 
 .hero-subheadline {
-    font-family: var(--font-body);
+    font-family: 'DM Sans', sans-serif;
     font-size: clamp(1.125rem, 3vw, 1.5rem);
     color: var(--color-light-green);
-    font-weight: var(--weight-medium);
-    line-height: var(--leading-snug);
-    margin-bottom: var(--space-sm);
+    font-weight: 500;
+    line-height: 1.35;
+    margin-bottom: 0.75rem;
     max-width: none;
 }
 
 .hero-tagline {
-    font-family: var(--font-body);
-    font-size: var(--text-base);
-    font-weight: var(--weight-medium);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 1rem;
+    font-weight: 500;
     color: var(--color-hillside-green);
-    margin-bottom: var(--space-xl);
+    margin-bottom: 2rem;
     max-width: none;
 }
 
 .hero-buttons {
     display: flex;
     flex-wrap: wrap;
-    gap: var(--space-md);
+    gap: 1rem;
     justify-content: center;
     order: 3;
     width: 100%;
@@ -496,7 +453,7 @@ button {
 /* --- Split Sections --- */
 
 .split-section {
-    padding: var(--section-padding-y) var(--section-padding-x) 0;
+    padding: clamp(3rem, 6vw, 6rem) clamp(1rem, 4vw, 4rem) 0;
     display: flex;
     flex-direction: column;
     align-items: stretch;
@@ -512,12 +469,12 @@ button {
 
 .split-inner {
     width: 100%;
-    max-width: var(--max-width-content);
+    max-width: 75rem;
     margin-inline: auto;
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: var(--space-xl);
+    gap: 2rem;
 }
 
 .split-text {
@@ -535,10 +492,10 @@ button {
 }
 
 .split-heading {
-    font-family: var(--font-display);
+    font-family: 'Cooper Black', serif;
     font-size: clamp(2rem, 5vw, 3rem);
-    line-height: var(--leading-tight);
-    margin-bottom: var(--space-lg);
+    line-height: 1.2;
+    margin-bottom: 1.5rem;
 }
 
 .split-section--light .split-heading {
@@ -550,9 +507,9 @@ button {
 }
 
 .split-body {
-    font-size: clamp(var(--text-base), 2vw, var(--text-lg));
-    line-height: var(--leading-normal);
-    margin-bottom: var(--space-md);
+    font-size: clamp(1rem, 2vw, 1.125rem);
+    line-height: 1.6;
+    margin-bottom: 1rem;
     max-width: 60ch;
 }
 
@@ -565,10 +522,10 @@ button {
 }
 
 .split-address {
-    font-size: var(--text-sm);
-    letter-spacing: var(--tracking-wide);
+    font-size: 0.875rem;
+    letter-spacing: 0.05em;
     text-transform: uppercase;
-    margin-top: var(--space-lg);
+    margin-top: 1.5rem;
     max-width: none;
 }
 
@@ -599,7 +556,7 @@ button {
 }
 
 .split-text .btn {
-    margin-top: var(--space-lg);
+    margin-top: 1.5rem;
 }
 
 /* --- Split Footer — full width button bar, same bg as parent section --- */
@@ -609,9 +566,9 @@ button {
     display: flex;
     justify-content: center;
     align-items: center;
-    gap: var(--space-md);
+    gap: 1rem;
     flex-wrap: wrap;
-    padding: var(--space-xl) var(--section-padding-x) var(--space-2xl);
+    padding: 2rem clamp(1rem, 4vw, 4rem) 3rem;
 }
 
 .split-footer--light {
@@ -641,7 +598,7 @@ button {
     .hero-text {
         text-align: left;
         flex: 1;
-        padding-left: calc(var(--space-lg) * 2);
+        padding-left: 3rem;
         padding-right: 0;
         order: 0;
     }
@@ -654,12 +611,11 @@ button {
         order: 0;
     }
 
-    /* Buttons span full width below text and image on desktop */
     .hero-buttons {
         flex-basis: 100%;
         order: 0;
         justify-content: stretch;
-        padding-top: var(--space-lg);
+        padding-top: 1.5rem;
         gap: 0;
     }
 
@@ -668,7 +624,7 @@ button {
         flex: 1;
         justify-content: center;
         align-items: center;
-        padding: var(--space-md);
+        padding: 1rem;
     }
 
     .hero-glass-img {
@@ -680,7 +636,7 @@ button {
         flex-direction: row;
         align-items: center;
         justify-content: space-between;
-        gap: var(--space-3xl);
+        gap: 4rem;
     }
 
     .split-inner--reversed {
@@ -691,9 +647,8 @@ button {
         flex: 1;
     }
 
-    /* Left-side text only — switch padding to left side, doubled */
     .split-text--padded {
-        padding-left: calc(var(--space-lg) * 2);
+        padding-left: 3rem;
         padding-right: 0;
     }
 
@@ -718,44 +673,44 @@ button {
 
 .footer {
     background-color: var(--color-dark-section);
-    padding: var(--space-3xl) var(--section-padding-x) var(--space-xl);
+    padding: 4rem clamp(1rem, 2vw, 3rem) 2rem;
 }
 
 .footer-brand {
     text-align: center;
-    margin-bottom: var(--space-2xl);
-    padding-bottom: var(--space-xl);
+    margin-bottom: 3rem;
+    padding-bottom: 2rem;
     border-bottom: 0.0625rem solid var(--color-border-dark);
 }
 
 .footer-logo {
-    font-family: var(--font-display);
+    font-family: 'Cooper Black', serif;
     font-size: clamp(1.5rem, 4vw, 2.25rem);
     color: var(--color-beige);
-    line-height: var(--leading-tight);
-    margin-bottom: var(--space-xs);
+    line-height: 1.2;
+    margin-bottom: 0.5rem;
 }
 
 .footer-tagline {
-    font-size: var(--text-base);
+    font-size: 1rem;
     color: var(--color-hillside-green);
-    letter-spacing: var(--tracking-wide);
-    margin-bottom: var(--space-2xs);
+    letter-spacing: 0.05em;
+    margin-bottom: 0.25rem;
     max-width: none;
 }
 
 .footer-location {
-    font-size: var(--text-sm);
+    font-size: 0.875rem;
     color: var(--color-hillside-green);
-    letter-spacing: var(--tracking-wide);
+    letter-spacing: 0.05em;
     max-width: none;
 }
 
 .footer-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: var(--space-xl) var(--space-lg);
-    margin-bottom: var(--space-2xl);
+    gap: 2rem 1.5rem;
+    margin-bottom: 3rem;
 }
 
 .footer-col {
@@ -763,26 +718,26 @@ button {
 }
 
 .footer-col-heading {
-    font-family: var(--font-display);
-    font-size: var(--text-base);
+    font-family: 'Cooper Black', serif;
+    font-size: 1rem;
     color: var(--color-beige);
-    margin-bottom: var(--space-md);
-    letter-spacing: var(--tracking-wide);
+    margin-bottom: 1rem;
+    letter-spacing: 0.05em;
     text-transform: uppercase;
 }
 
 .footer-links {
     display: flex;
     flex-direction: column;
-    gap: var(--space-sm);
+    gap: 0.75rem;
 }
 
 .footer-link {
-    font-size: var(--text-sm);
+    font-size: 0.875rem;
     color: #C8D5B9;
     text-decoration: none;
-    transition: color var(--transition-fast);
-    line-height: var(--leading-snug);
+    transition: color 150ms ease;
+    line-height: 1.35;
 }
 
 .footer-link:hover {
@@ -791,26 +746,26 @@ button {
 }
 
 .footer-bottom {
-    padding-top: var(--space-xl);
+    padding-top: 2rem;
     border-top: 0.0625rem solid var(--color-border-dark);
     text-align: center;
 }
 
 .footer-legal {
-    font-size: var(--text-xs);
+    font-size: 0.75rem;
     color: var(--color-hillside-green);
-    line-height: var(--leading-normal);
+    line-height: 1.6;
     max-width: none;
 }
 
 .flash-messages-container {
-    padding-top: var(--space-md);
+    padding-top: 1rem;
 }
 
 @media (min-width: 48rem) {
 
     .footer-grid {
         grid-template-columns: repeat(4, 1fr);
-        gap: var(--space-xl);
+        gap: 2rem;
     }
 }
