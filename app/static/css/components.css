@@ -44,29 +44,29 @@ No non-color variables — all values hardcoded directly.
 
 /* Primary — forest green */
 .btn-primary {
-    background-color: var(--color-btn-primary);
-    color: var(--color-btn-primary-text);
-    border-color: var(--color-btn-primary);
+    background-color: var(--color-forest-green);
+    color: var(--color-beige);
+    border-color: var(--color-forest-green);
 }
 
 .btn-primary:hover {
-    background-color: var(--color-btn-primary-hover);
-    border-color: var(--color-btn-primary-hover);
-    color: var(--color-btn-primary-text);
+    background-color: var(--color-forest-green-hover);
+    border-color: var(--color-forest-green-hover);
+    color: var(--color-beige);
     text-decoration: none;
 }
 
 /* Secondary — burnt orange */
 .btn-secondary {
-    background-color: var(--color-btn-secondary);
-    color: var(--color-btn-secondary-text);
-    border-color: var(--color-btn-secondary);
+    background-color: var(--color-burnt-orange);
+    color: var(--color-beige);
+    border-color: var(--color-burnt-orange);
 }
 
 .btn-secondary:hover {
-    background-color: var(--color-btn-secondary-hover);
-    border-color: var(--color-btn-secondary-hover);
-    color: var(--color-btn-secondary-text);
+    background-color: var(--color-burnt-orange-hover);
+    border-color: var(--color-burnt-orange-hover);
+    color: var(--color-beige);
     text-decoration: none;
 }
 
@@ -163,7 +163,7 @@ No non-color variables — all values hardcoded directly.
 
 .badge-muted {
     background-color: var(--color-border);
-    color: var(--color-text-muted);
+    color: #5A5A5A;
 }
 
 
@@ -331,7 +331,7 @@ No non-color variables — all values hardcoded directly.
     width: 3.5rem;
     height: 3.5rem;
     border-radius: 9999px;
-    background-color: var(--color-forest-green);
+    background-color: var(--color-burnt-orange);
     color: var(--color-beige);
     border: none;
     cursor: pointer;
@@ -346,7 +346,7 @@ No non-color variables — all values hardcoded directly.
 }
 
 .chat-bubble-trigger:hover {
-    background-color: var(--color-forest-green-hover);
+    background-color: var(--color-burnt-orange-hover);
     transform: scale(1.05);
     box-shadow: 0 1.25rem 1.5625rem rgba(0, 0, 0, 0.12),
                 0 0.625rem 0.625rem rgba(0, 0, 0, 0.06);
@@ -435,7 +435,7 @@ No non-color variables — all values hardcoded directly.
 
 .chat-message-agent {
     background-color: var(--color-light-green);
-    color: var(--color-text-primary);
+    color: #1A1A1A;
     align-self: flex-start;
     border-bottom-left-radius: 0.25rem;
 }
@@ -463,7 +463,7 @@ No non-color variables — all values hardcoded directly.
     font-family: 'DM Sans', sans-serif;
     font-size: 0.875rem;
     background-color: white;
-    color: var(--color-text-primary);
+    color: #1A1A1A;
     resize: none;
     min-width: 0;
 }
@@ -532,7 +532,7 @@ No non-color variables — all values hardcoded directly.
     font-family: 'Cooper Black', serif;
     font-size: 1.5rem;
     margin-bottom: 1.5rem;
-    color: var(--color-text-primary);
+    color: #1A1A1A;
 }
 
 

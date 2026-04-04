@@ -1,4 +1,5 @@
 from flask import Blueprint, render_template, request, jsonify
+from flask_login import login_required
 
 routes_bp = Blueprint('routes', __name__)
 
@@ -109,14 +110,17 @@ def cart():
 # ==========================================================================
 
 @routes_bp.route('/account')
+@login_required
 def account_dashboard():
     return render_template('account_dashboard.html')
 
 @routes_bp.route('/account/orders')
+@login_required
 def account_orders():
     return render_template('account_orders.html')
 
 @routes_bp.route('/account/wishlist')
+@login_required
 def account_wishlist():
     return render_template('account_wishlist.html')
 

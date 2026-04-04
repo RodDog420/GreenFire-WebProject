@@ -1,9 +1,9 @@
 /*
 ==========================================================================
 VARIABLES.CSS — Green Fire Colour System
-Colour variables only. All other values are hardcoded in their respective
-CSS files. --nav-height kept as a coupling agent — the mobile dropdown
-panel must always match the nav bar height exactly.
+Colour variables only. No semantic roles — all values referenced directly.
+--nav-height kept as a coupling agent — the mobile dropdown panel must
+always match the nav bar height exactly.
 Import order: variables.css → base.css → components.css → navigation.css
 ==========================================================================
 */
@@ -11,7 +11,7 @@ Import order: variables.css → base.css → components.css → navigation.css
 :root {
 
     /* ==========================================================================
-       COLOURS — Primary Palette
+       COLOURS — Full Palette
        ========================================================================== */
 
     /* Forest Green — primary brand colour, buttons, links, key UI */
@@ -26,75 +26,43 @@ Import order: variables.css → base.css → components.css → navigation.css
     --color-light-green:            #D8E6C8;
     --color-light-green-hover:      #C8DAB4;
 
-    /* Dark Section — footer, nav bar, moody hero sections */
+    /* Dark Section — hero, prodo sections, dark split sections and footers */
     --color-dark-section:           #3E473B;
 
-    /* Burnt Orange — accent, warmth, energy, CTAs */
+    /* Nav Dark — nav bar, footer, dropdown panels. Darker than content sections. */
+    --color-nav-dark:               #2A302A;
+
+    /* Burnt Orange — accent, warmth, energy, CTAs, chat bubble */
     --color-burnt-orange:           #C4622D;
     --color-burnt-orange-hover:     #D4743A;
 
-    /* Navy Blue — dark UI elements */
+    /* Navy Blue */
     --color-navy:                   #2C3E50;
     --color-navy-hover:             #34495E;
 
-    /* Blues — links, info, interactive states */
+    /* Blues */
     --color-blue-dark:              #0047AB;
     --color-blue:                   #3498DB;
     --color-blue-hover:             #2980B9;
     --color-blue-light:             #89C0E6;
     --color-blue-light-hover:       #5DADE2;
 
-    /* Beige — light section backgrounds, replaces white throughout */
+    /* Beige — light section backgrounds */
     --color-beige:                  #F5F0E8;
     --color-beige-hover:            #EDE8DC;
     --color-beige-deep:             #EAE3D2;
 
-
-    /* ==========================================================================
-       COLOURS — Semantic Roles
-       ========================================================================== */
-
-    --color-bg-primary:             var(--color-beige);
-    --color-bg-dark:                var(--color-dark-section);
-    --color-bg-accent:              var(--color-light-green);
-
-    --color-text-primary:           #1A1A1A;
-    --color-text-on-dark:           var(--color-beige);
-    --color-text-muted:             #5A5A5A;
-    --color-text-muted-hover:       #3A3A3A;
-    --color-text-link:              var(--color-forest-green);
-    --color-text-link-hover:        var(--color-forest-green-hover);
-
+    /* Borders */
     --color-border:                 #D0CBBF;
     --color-border-dark:            #4A5445;
 
+    /* States */
     --color-error:                  #C0392B;
     --color-error-hover:            #A93226;
-    --color-success:                var(--color-forest-green);
-    --color-success-hover:          var(--color-forest-green-hover);
-    --color-warning:                var(--color-burnt-orange);
-    --color-warning-hover:          var(--color-burnt-orange-hover);
-    --color-info:                   var(--color-blue);
-    --color-info-hover:             var(--color-blue-hover);
-
-    --color-btn-primary:            var(--color-forest-green);
-    --color-btn-primary-hover:      var(--color-forest-green-hover);
-    --color-btn-primary-text:       var(--color-beige);
-    --color-btn-secondary:          var(--color-burnt-orange);
-    --color-btn-secondary-hover:    var(--color-burnt-orange-hover);
-    --color-btn-secondary-text:     var(--color-beige);
-
-    --color-nav-bg:                 var(--color-dark-section);
-    --color-nav-text:               var(--color-beige);
-    --color-nav-hover:              var(--color-light-green);
-    --color-footer-bg:              var(--color-dark-section);
-    --color-footer-text:            var(--color-beige);
 
 
     /* ==========================================================================
        LAYOUT — Coupling Agent
-       --nav-height is kept as a variable because the mobile dropdown panel
-       must always match the nav bar height exactly. Change here, both update.
        ========================================================================== */
 
     --nav-height: 4rem;

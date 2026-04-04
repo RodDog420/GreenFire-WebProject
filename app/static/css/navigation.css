@@ -18,8 +18,9 @@ No non-color variables — all values hardcoded directly.
     top: 0;
     z-index: 300;
     width: 100%;
-    background-color: var(--color-nav-bg);
+    background-color: var(--color-nav-dark);
     border-bottom: 0.0625rem solid var(--color-border-dark);
+    overflow-x: clip;
 }
 
 .nav-container {
@@ -69,7 +70,7 @@ No non-color variables — all values hardcoded directly.
     top: var(--nav-height);
     left: 0;
     right: 0;
-    background-color: var(--color-nav-bg);
+    background-color: var(--color-nav-dark);
     border-bottom: 0.0625rem solid var(--color-border-dark);
     box-shadow: 0 0.625rem 0.9375rem rgba(0, 0, 0, 0.10),
                 0 0.25rem 0.375rem rgba(0, 0, 0, 0.07);
@@ -114,7 +115,7 @@ No non-color variables — all values hardcoded directly.
     gap: 0.5rem;
     width: 100%;
     padding: 0.75rem clamp(1rem, 4vw, 4rem);
-    color: var(--color-nav-text);
+    color: var(--color-beige);
     font-family: 'Cooper Black', serif;
     font-size: 0.875rem;
     font-weight: 900;
@@ -133,7 +134,7 @@ No non-color variables — all values hardcoded directly.
 
 .nav-dropdown-trigger:hover,
 .nav-item--dropdown.is-open > .nav-dropdown-trigger {
-    color: var(--color-nav-hover);
+    color: var(--color-light-green);
     background-color: rgba(255, 255, 255, 0.05);
     text-decoration: none;
 }
@@ -213,7 +214,7 @@ No non-color variables — all values hardcoded directly.
     justify-content: center;
     width: 2.75rem;
     height: 2.75rem;
-    color: var(--color-nav-text);
+    color: var(--color-beige);
     text-decoration: none;
     border-radius: 0.5rem;
     transition: color 150ms ease,
@@ -221,7 +222,7 @@ No non-color variables — all values hardcoded directly.
 }
 
 .nav-action-btn:hover {
-    color: var(--color-nav-hover);
+    color: var(--color-light-green);
     background-color: rgba(255, 255, 255, 0.08);
     text-decoration: none;
 }
@@ -310,22 +311,20 @@ No non-color variables — all values hardcoded directly.
         display: none;
     }
 
-    /* Grid: logo col1 | 1fr gap col2 | nav-right col3 */
+    /* Flex: logo left | nav-right pushed to far right */
     .nav-container {
-        display: grid;
-        grid-template-columns: auto 1fr auto;
-        align-items: stretch;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
         gap: 0;
     }
 
-    /* nav-right must explicitly occupy column 3 */
     .nav-right {
-        grid-column: 3;
         display: flex;
         flex-direction: row;
         align-items: flex-start;
         gap: 0;
-        height: 100%;
     }
 
     .nav-links {
@@ -405,7 +404,7 @@ No non-color variables — all values hardcoded directly.
         top: 100%;
         left: 0;
         min-width: 12rem;
-        background-color: var(--color-dark-section);
+        background-color: var(--color-nav-dark);
         border: 0.0625rem solid var(--color-border-dark);
         border-top: none;
         border-radius: 0 0 0.5rem 0.5rem;

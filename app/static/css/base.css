@@ -47,8 +47,8 @@ body {
     font-size: 1rem;
     font-weight: 400;
     line-height: 1.6;
-    color: var(--color-text-primary);
-    background-color: var(--color-bg-primary);
+    color: #1A1A1A;
+    background-color: var(--color-beige);
     min-height: 100vh;
 }
 
@@ -63,7 +63,7 @@ h1, h2, h3, h4, h5, h6 {
     font-weight: 900;
     line-height: 1.2;
     letter-spacing: -0.02em;
-    color: var(--color-text-primary);
+    color: #1A1A1A;
     overflow-wrap: break-word;
 }
 
@@ -109,7 +109,7 @@ small {
    ========================================================================== */
 
 a {
-    color: var(--color-text-link);
+    color: var(--color-forest-green);
     text-decoration: underline;
     text-decoration-thickness: 0.0625rem;
     text-underline-offset: 0.2em;
@@ -118,7 +118,7 @@ a {
 
 a:hover,
 a:focus-visible {
-    color: var(--color-text-link-hover);
+    color: var(--color-forest-green-hover);
     text-decoration-thickness: 0.125rem;
 }
 
@@ -170,7 +170,7 @@ figure {
 
 figcaption {
     font-size: 0.875rem;
-    color: var(--color-text-muted);
+    color: #5A5A5A;
     margin-top: 0.5rem;
     font-style: italic;
 }
@@ -210,7 +210,7 @@ th {
     font-size: 0.875rem;
     letter-spacing: 0.05em;
     text-transform: uppercase;
-    color: var(--color-text-muted);
+    color: #5A5A5A;
 }
 
 
@@ -255,8 +255,8 @@ button {
 }
 
 .section--dark {
-    background-color: var(--color-bg-dark);
-    color: var(--color-text-on-dark);
+    background-color: var(--color-dark-section);
+    color: var(--color-beige);
 }
 
 .section--dark h1,
@@ -265,11 +265,11 @@ button {
 .section--dark h4,
 .section--dark h5,
 .section--dark h6 {
-    color: var(--color-text-on-dark);
+    color: var(--color-beige);
 }
 
 .section--accent {
-    background-color: var(--color-bg-accent);
+    background-color: var(--color-light-green);
 }
 
 .nav-offset {
@@ -308,7 +308,7 @@ button {
    ========================================================================== */
 
 .text-center   { text-align: center; }
-.text-muted    { color: var(--color-text-muted); }
+.text-muted    { color: #5A5A5A; }
 .text-sm       { font-size: 0.875rem; }
 .text-lg       { font-size: 1.125rem; }
 .text-display  { font-family: 'Cooper Black', serif; }
@@ -418,7 +418,7 @@ button {
     font-family: 'DM Sans', sans-serif;
     font-size: 1rem;
     font-weight: 500;
-    color: var(--color-hillside-green);
+    color: var(--color-light-green);
     margin-bottom: 2rem;
     max-width: none;
 }
@@ -514,7 +514,7 @@ button {
 }
 
 .split-section--light .split-body {
-    color: var(--color-text-primary);
+    color: #1A1A1A;
 }
 
 .split-section--dark .split-body {
@@ -530,7 +530,7 @@ button {
 }
 
 .split-section--light .split-address {
-    color: var(--color-text-muted);
+    color: #5A5A5A;
 }
 
 .split-section--dark .split-address {
@@ -557,6 +557,27 @@ button {
 
 .split-text .btn {
     margin-top: 1.5rem;
+}
+
+/* --- Split Full Text — full width text bar, same bg as parent section --- */
+
+.split-full-text {
+    width: 100%;
+    max-width: 75rem;
+    margin-inline: auto;
+    padding: 0 clamp(1rem, 4vw, 4rem);
+}
+
+.split-full-text--light {
+    background-color: var(--color-beige);
+}
+
+.split-full-text--dark {
+    background-color: var(--color-dark-section);
+}
+
+.split-full-text .split-body {
+    max-width: none;
 }
 
 /* --- Split Footer — full width button bar, same bg as parent section --- */
@@ -672,7 +693,7 @@ button {
    ========================================================================== */
 
 .footer {
-    background-color: var(--color-dark-section);
+    background-color: var(--color-nav-dark);
     padding: 4rem clamp(1rem, 2vw, 3rem) 2rem;
 }
 

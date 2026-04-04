@@ -6,7 +6,13 @@ load_dotenv()
 
 class Config:
     # Security
-    SECRET_KEY = os.environ.get('SECRET_KEY') or 'dev-key-replace-in-production'
+    SECRET_KEY = os.environ.get('SECRET_KEY')
+    if not SECRET_KEY:
+        raise ValueError('SECRET_KEY environment variable is not set.')
+
+    SESSION_COOKIE_SECURE   = True
+    SESSION_COOKIE_HTTPONLY = True
+    SESSION_COOKIE_SAMESITE = 'Lax'
 
     # Database — PostgreSQL on Render
     # SQLite is NOT used — Render has an ephemeral filesystem
