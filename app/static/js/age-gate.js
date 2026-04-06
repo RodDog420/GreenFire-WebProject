@@ -26,6 +26,11 @@ Cookie expires after 1 year — user never sees gate again on same device.
 })();
 
 
+const yesBtn = document.getElementById('age-gate-yes');
+const noBtn  = document.getElementById('age-gate-no');
+if (yesBtn) yesBtn.addEventListener('click', ageGateConfirm);
+if (noBtn)  noBtn.addEventListener('click', ageGateDeny);
+
 function ageGateConfirm() {
     // Set cookie — expires in 1 year
     const expires = new Date();

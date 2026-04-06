@@ -1,5 +1,6 @@
 from flask import Blueprint, render_template, request, jsonify
 from flask_login import login_required
+from app import limiter
 
 routes_bp = Blueprint('routes', __name__)
 
@@ -84,6 +85,7 @@ def product_detail(slug):
 # ==========================================================================
 
 @routes_bp.route('/login')
+@limiter.limit('10 per minute')
 def login():
     return render_template('login.html')
 
@@ -134,3 +136,12 @@ def chat():
     data = request.get_json()
     user_message = data.get('message', '')
     return jsonify({'reply': 'Chat agent coming soon.'})
+
+
+# ==========================================================================
+# HEALTH CHECK
+# ==========================================================================
+
+@routes_bp.route('/health')
+def health():
+    return jsonify({'status': 'ok'})
