@@ -76,8 +76,8 @@ class Product(db.Model):
     slug            = db.Column(db.String(256), unique=True, nullable=False, index=True)
     description     = db.Column(db.Text, nullable=False)
 
-    # 'fine_art' = one-of-a-kind attributed pieces
-    # 'everyday'  = production models, always in stock
+    # 'heady' = one-of-a-kind artistic pieces
+    # 'prodo' = production models, regularly produced series
     product_type    = db.Column(db.String(16), nullable=False, index=True)
 
     # Prices stored in cents to avoid float precision issues
@@ -86,10 +86,11 @@ class Product(db.Model):
     discount_start       = db.Column(db.DateTime, nullable=True)
     discount_end         = db.Column(db.DateTime, nullable=True)
 
-    # Artist — required for fine art, optional for everyday
+    # Artist — optional for both heady and prodo (unknown/unsigned pieces have no artist)
     artist_id       = db.Column(db.Integer, db.ForeignKey('artists.id'), nullable=True, index=True)
 
     # Glass details
+    height          = db.Column(db.String(32), nullable=True)
     technique       = db.Column(db.String(256), nullable=True)
     glass_type      = db.Column(db.String(64), nullable=True)
     joint_size      = db.Column(db.String(16), nullable=True)
@@ -147,7 +148,7 @@ class Product(db.Model):
 
     @property
     def reviews_enabled(self):
-        return self.product_type == 'everyday'
+        return self.product_type == 'prodo'
 
     def __repr__(self):
         return f'<Product {self.name}>'
