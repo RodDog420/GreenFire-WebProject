@@ -1,11 +1,503 @@
 {% extends 'base.html' %}
-{% block title %}Product{% endblock %}
-{% block meta_description %}Product detail — Green Fire American Functional Glass, Lincoln Nebraska.{% endblock %}
+
+{% block title %}{{ product.name }}{% endblock %}
+
+{% block meta_description %}{{ meta_desc }}{% endblock %}
+
+{% block robots %}index, follow{% endblock %}
+
+{% block canonical %}
+{{- url_for('routes.product_detail', slug=product.slug, _external=True) -}}
+{% endblock %}
+
+{% block og_title %}{{ product.name }} — Green Fire{% endblock %}
+
+{% block og_description %}{{ meta_desc }}{% endblock %}
+
+{% block og_type %}product{% endblock %}
+
+{% block og_url %}
+{{- url_for('routes.product_detail', slug=product.slug, _external=True) -}}
+{% endblock %}
+
+{% block og_image %}
+{%- if product.primary_image -%}
+{{- url_for('static', filename=product.primary_image, _external=True) -}}
+{%- endif -%}
+{% endblock %}
+
 {% block content %}
+
+{%- if product.product_type == 'heady' and product.is_sold -%}
+    {%- set back_url   = url_for('routes.archive') -%}
+    {%- set back_label = 'Archive' -%}
+{%- elif product.product_type == 'heady' -%}
+    {%- set back_url   = url_for('routes.headies') -%}
+    {%- set back_label = 'Heady Glass' -%}
+{%- elif product.product_type == 'prodo' -%}
+    {%- set back_url   = url_for('routes.prodos')
+                         ~ '#' ~ (product.subcategory or '') -%}
+    {%- set back_label = 'Production Glass' -%}
+{%- else -%}
+    {%- set back_url   = url_for('routes.vapes_accessories')
+                         ~ '#' ~ (product.subcategory or '') -%}
+    {%- set back_label = 'Vapes &amp; Accessories' -%}
+{%- endif -%}
+
 <section class="section">
     <div class="container">
-        <h1>Product Detail</h1>
-        <p class="text-muted">This page is under construction.</p>
+
+        <div class="product-layout">
+
+            <div class="product-gallery">
+
+                <div class="product-gallery__main" id="product-img-wrap">
+
+                    {% if product.primary_image %}
+                    <img id="product-main-img"
+                         src="{{ url_for('static',
+                                         filename=product.primary_image) }}"
+                         alt="{{ product.name }}
+                              {%- if product.credit
+                              %} by {{ product.credit }}{% endif %}"
+                         class="product-gallery__main-img"
+                         width="600"
+                         height="800"
+                         loading="eager">
+                    {% else %}
+                    <div id="product-main-img"
+                         class="product-gallery__main-img
+                                product-card__img--placeholder"
+                         role="img"
+                         aria-label="{{ product.name }}
+                                     — no image available">
+                    </div>
+                    {% endif %}
+
+                    {% if product.is_sold %}
+                    <span class="product-card__sold-badge">Sold</span>
+                    {% endif %}
+
+                    <div class="product-zoom-lens"
+                         id="product-zoom-lens"
+                         aria-hidden="true"></div>
+
+                </div>
+
+                {% if product.images | length > 1 %}
+                <div class="product-gallery__thumbs"
+                     role="list"
+                     aria-label="Product images">
+
+                    {% if product.primary_image %}
+                    <button class="product-thumb product-thumb--active"
+                            data-src="{{ url_for('static',
+                                                 filename=product.primary_image) }}"
+                            data-alt="{{ product.name }}
+                                      {%- if product.credit
+                                      %} by {{ product.credit }}{% endif %}"
+                            aria-pressed="true"
+                            aria-label="Image 1"
+                            role="listitem">
+                        <img src="{{ url_for('static',
+                                             filename=product.primary_image) }}"
+                             alt=""
+                             loading="lazy">
+                    </button>
+                    {% endif %}
+
+                    {% for img in product.images[1:] %}
+                    <button class="product-thumb"
+                            data-src="{{ url_for('static',
+                                                 filename=img.image_url) }}"
+                            data-alt="{{ product.name }}
+                                      {%- if product.credit
+                                      %} by {{ product.credit }}{% endif %}
+                                      — image {{ loop.index + 1 }}"
+                            aria-pressed="false"
+                            aria-label="Image {{ loop.index + 1 }}"
+                            role="listitem">
+                        <img src="{{ url_for('static', filename=img.image_url) }}"
+                             alt=""
+                             loading="lazy">
+                    </button>
+                    {% endfor %}
+
+                </div>
+                {% endif %}
+
+            </div>
+
+            <div class="product-info">
+
+                <h1 class="product-info__name">{{ product.name }}</h1>
+
+                {% if product.series %}
+                <p class="product-info__series">{{ product.series }}</p>
+                {% endif %}
+
+                {% if product.credit %}
+                <p class="product-info__credit">
+                    <span class="product-info__credit-label">
+                        {{ product.credit_label or 'By' }}:
+                    </span>
+                    {{ product.credit }}
+                </p>
+                {% endif %}
+
+                {% if product.instagram %}
+                <a href="{{ product.instagram }}"
+                   class="product-info__instagram"
+                   target="_blank"
+                   rel="noopener noreferrer"
+                   aria-label="View on Instagram">
+                    <svg xmlns="http://www.w3.org/2000/svg"
+                         viewBox="0 0 24 24"
+                         fill="none"
+                         stroke="currentColor"
+                         stroke-width="2"
+                         stroke-linecap="round"
+                         stroke-linejoin="round"
+                         aria-hidden="true">
+                        <rect x="2" y="2" width="20" height="20"
+                              rx="5" ry="5"></rect>
+                        <circle cx="12" cy="12" r="4"></circle>
+                        <circle cx="17.5" cy="6.5" r="1"
+                                fill="currentColor"
+                                stroke="none"></circle>
+                    </svg>
+                    Instagram
+                </a>
+                {% endif %}
+
+                <div class="product-info__meta">
+                    {% if product.technique %}
+                    <div class="product-info__meta-row">
+                        <span class="product-info__meta-label">
+                            Technique
+                        </span>
+                        <span class="product-info__meta-value">
+                            {{ product.technique }}
+                        </span>
+                    </div>
+                    {% endif %}
+                    {% if product.glass_color %}
+                    <div class="product-info__meta-row">
+                        <span class="product-info__meta-label">Color</span>
+                        <span class="product-info__meta-value">
+                            {{ product.glass_color }}
+                            {%- if product.glass_color_company
+                            %} ({{ product.glass_color_company }}){%- endif %}
+                        </span>
+                    </div>
+                    {% endif %}
+                    {% if product.gemstones %}
+                    <div class="product-info__meta-row">
+                        <span class="product-info__meta-label">
+                            Gemstones
+                        </span>
+                        <span class="product-info__meta-value">Yes</span>
+                    </div>
+                    {% endif %}
+                    {% if product.electroform %}
+                    <div class="product-info__meta-row">
+                        <span class="product-info__meta-label">
+                            Electroform
+                        </span>
+                        <span class="product-info__meta-value">Yes</span>
+                    </div>
+                    {% endif %}
+                    {% if product.fume %}
+                    <div class="product-info__meta-row">
+                        <span class="product-info__meta-label">Fumed</span>
+                        <span class="product-info__meta-value">Yes</span>
+                    </div>
+                    {% endif %}
+                    {% if product.collab %}
+                    <div class="product-info__meta-row">
+                        <span class="product-info__meta-label">
+                            Collab
+                        </span>
+                        <span class="product-info__meta-value">
+                            {{ product.collab }}
+                        </span>
+                    </div>
+                    {% endif %}
+                    {% if product.perc %}
+                    <div class="product-info__meta-row">
+                        <span class="product-info__meta-label">Perc</span>
+                        <span class="product-info__meta-value">
+                            {{ product.perc }}
+                        </span>
+                    </div>
+                    {% endif %}
+                    {% if product.attributes %}
+                    <div class="product-info__meta-row">
+                        <span class="product-info__meta-label">
+                            Features
+                        </span>
+                        <span class="product-info__meta-value">
+                            {{ product.attributes | join(', ') }}
+                        </span>
+                    </div>
+                    {% endif %}
+                    {% if product.metal_type %}
+                    <div class="product-info__meta-row">
+                        <span class="product-info__meta-label">Metal</span>
+                        <span class="product-info__meta-value">
+                            {{ product.metal_type }}
+                        </span>
+                    </div>
+                    {% endif %}
+                    {% if product.reclaimer %}
+                    <div class="product-info__meta-row">
+                        <span class="product-info__meta-label">
+                            Reclaimer
+                        </span>
+                        <span class="product-info__meta-value">
+                            Included
+                        </span>
+                    </div>
+                    {% endif %}
+                    {% if product.includes %}
+                    <div class="product-info__meta-row">
+                        <span class="product-info__meta-label">
+                            Includes
+                        </span>
+                        <span class="product-info__meta-value">
+                            {{ product.includes }}
+                        </span>
+                    </div>
+                    {% endif %}
+                    {% if product.height %}
+                    <div class="product-info__meta-row">
+                        <span class="product-info__meta-label">Height</span>
+                        <span class="product-info__meta-value">
+                            {{ product.height }}
+                        </span>
+                    </div>
+                    {% endif %}
+                    {% if product.joint_size %}
+                    <div class="product-info__meta-row">
+                        <span class="product-info__meta-label">Joint</span>
+                        <span class="product-info__meta-value">
+                            {{ product.joint_size }}
+                        </span>
+                    </div>
+                    {% endif %}
+                </div>
+
+                {% if product.description %}
+                <p class="product-info__description">
+                    {{ product.description }}
+                </p>
+                {% endif %}
+
+                <div class="product-info__price-row">
+                    <p class="product-info__price">
+                        ${{ "{:,}".format(product.price_cents // 100) }}
+                    </p>
+                    {% if product.is_sold %}
+                    <span class="product-info__sold-label">Sold</span>
+                    {% endif %}
+                </div>
+
+                {% if product.product_type == 'heady' and product.is_sold %}
+
+                <p class="product-info__notify-label">
+                    Interested in more work from this artist?
+                </p>
+                <form action="{{ url_for('routes.notify_me') }}"
+                      method="POST">
+                    <input type="hidden"
+                           name="csrf_token"
+                           value="{{ csrf_token() }}">
+                    <input type="hidden"
+                           name="product_slug"
+                           value="{{ product.slug }}">
+                    <input type="hidden"
+                           name="artist_credit"
+                           value="{{ product.credit or '' }}">
+                    <div class="product-info__actions">
+                        <input type="email"
+                               name="email"
+                               placeholder="Your email address"
+                               required
+                               autocomplete="email"
+                               class="form-input">
+                        <button type="submit"
+                                class="btn btn-secondary">
+                            Notify Me
+                        </button>
+                    </div>
+                </form>
+
+                {% else %}
+
+                <div class="product-info__actions">
+                    <form action="{{ url_for('routes.add_to_cart') }}"
+                          method="POST">
+                        <input type="hidden"
+                               name="csrf_token"
+                               value="{{ csrf_token() }}">
+                        <input type="hidden"
+                               name="product_slug"
+                               value="{{ product.slug }}">
+                        <input type="hidden"
+                               name="product_name"
+                               value="{{ product.name }}">
+                        <input type="hidden"
+                               name="price_cents"
+                               value="{{ product.price_cents }}">
+                        {% if product.variants %}
+                        <div class="product-variants">
+                            <p class="product-variants__label">
+                                Select Color
+                            </p>
+                            <div class="product-variants__options"
+                                 role="group"
+                                 aria-label="Select color">
+                                {% for variant in product.variants %}
+                                <label class="product-variant-option">
+                                    <input type="radio"
+                                           name="variant"
+                                           value="{{ variant }}"
+                                           {% if loop.first %}checked{% endif %}>
+                                    <span class="product-variant-option__label">
+                                        {{ variant }}
+                                    </span>
+                                </label>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        {% endif %}
+                        <button type="submit"
+                                class="btn btn-primary">
+                            Add to Cart
+                        </button>
+                    </form>
+
+                    {% if current_user.is_authenticated %}
+                    <form action="{{ url_for('routes.add_to_wishlist') }}"
+                          method="POST">
+                        <input type="hidden"
+                               name="csrf_token"
+                               value="{{ csrf_token() }}">
+                        <input type="hidden"
+                               name="product_slug"
+                               value="{{ product.slug }}">
+                        <button type="submit"
+                                class="btn btn-ghost">
+                            Save to Wish List
+                        </button>
+                    </form>
+                    {% endif %}
+
+                </div>
+
+                {% if not current_user.is_authenticated %}
+                <p class="product-info__wishlist-prompt">
+                    <a href="{{ url_for('routes.login') }}">
+                        Log in
+                    </a> to save to your wish list.
+                </p>
+                {% endif %}
+
+                {% endif %}
+
+                <div class="product-zoom-panel"
+                     id="product-zoom-panel"
+                     aria-hidden="true"></div>
+
+            </div>
+
+        </div>
+
+        <div class="product-nav">
+            <div class="product-nav__top">
+                <a href="{{ back_url }}"
+                   class="product-nav__back"
+                   aria-label="Back to {{ back_label }}">
+                    &larr; {{ back_label }}
+                </a>
+                <button class="product-nav__share"
+                        id="product-share-btn"
+                        type="button">
+                    Share
+                </button>
+            </div>
+
+            {% if prev_product or next_product %}
+            <nav class="product-nav__pager"
+                 aria-label="Product navigation">
+                {% if prev_product %}
+                <a href="{{ url_for('routes.product_detail',
+                                    slug=prev_product.slug) }}"
+                   class="btn btn-ghost btn-sm">
+                    &larr; Previous
+                </a>
+                {% endif %}
+                {% if next_product %}
+                <a href="{{ url_for('routes.product_detail',
+                                    slug=next_product.slug) }}"
+                   class="btn btn-ghost btn-sm">
+                    Next &rarr;
+                </a>
+                {% endif %}
+            </nav>
+            {% endif %}
+
+        </div>
+
     </div>
 </section>
+
+<div id="product-lightbox"
+     class="lightbox"
+     role="dialog"
+     aria-modal="true"
+     aria-label="Product image viewer"
+     hidden>
+
+    <button class="lightbox__close"
+            id="lightbox-close"
+            type="button"
+            aria-label="Close image viewer">
+        &times;
+    </button>
+
+    <button class="lightbox__prev"
+            id="lightbox-prev"
+            type="button"
+            aria-label="Previous image">
+        &larr;
+    </button>
+
+    <div class="lightbox__img-wrap" id="lightbox-img-wrap">
+        <img id="lightbox-img"
+             class="lightbox__img"
+             src=""
+             alt=""
+             draggable="false">
+    </div>
+
+    <button class="lightbox__next"
+            id="lightbox-next"
+            type="button"
+            aria-label="Next image">
+        &rarr;
+    </button>
+
+    <p class="lightbox__counter"
+       id="lightbox-counter"
+       aria-live="polite"
+       hidden></p>
+
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/product.js') }}"
+        defer></script>
 {% endblock %}

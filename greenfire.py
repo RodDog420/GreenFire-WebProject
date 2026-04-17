@@ -23,7 +23,7 @@ def make_shell_context():
         'OrderItem': OrderItem,
         'Review': Review,
         'WishlistItem': WishlistItem,
-        'DiscountCode': DiscountCode
+        'DiscountCode': DiscountCode,
     }
 
 

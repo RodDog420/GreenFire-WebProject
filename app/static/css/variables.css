@@ -32,9 +32,13 @@ Import order: variables.css → base.css → components.css → navigation.css
     /* Nav Dark — nav bar, footer, dropdown panels. Darker than content sections. */
     --color-nav-dark:               #2A302A;
 
-    /* Burnt Orange — accent, warmth, energy, CTAs, chat bubble */
+    /* Burnt Orange — primary button, CTAs, chat bubble */
     --color-burnt-orange:           #C4622D;
     --color-burnt-orange-hover:     #D4743A;
+
+    /* Earthy Brown — secondary button, destructive actions */
+    --color-brown:                  #5C5828;
+    --color-brown-hover:            #424018;
 
     /* Navy Blue */
     --color-navy:                   #2C3E50;
@@ -42,7 +46,7 @@ Import order: variables.css → base.css → components.css → navigation.css
 
     /* Blues */
     --color-blue-dark:              #0047AB;
-    --color-blue:                   #3498DB;
+    --color-blue:                   #3498D8;
     --color-blue-hover:             #2980B9;
     --color-blue-light:             #89C0E6;
     --color-blue-light-hover:       #5DADE2;
@@ -55,6 +59,10 @@ Import order: variables.css → base.css → components.css → navigation.css
     /* Borders */
     --color-border:                 #D0CBBF;
     --color-border-dark:            #4A5445;
+
+    /* Maroon — Turn off / destructive stop action */
+    --color-maroon:                 #800000;
+    --color-maroon-hover:           #3C0008;
 
     /* States */
     --color-error:                  #C0392B;

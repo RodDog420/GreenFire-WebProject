@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+
+{% block title %}Log Out{% endblock %}
+
+{% block meta_description %}Log out of your Green Fire account.{% endblock %}
+
+{% block robots %}noindex, nofollow{% endblock %}
+
+{% block content %}
+<section class="section">
+    <div class="container container--narrow">
+
+        <h1>Log Out</h1>
+        <p>Are you sure you want to log out?</p>
+
+        <form action="{{ url_for('routes.logout') }}"
+              method="POST">
+            <input type="hidden"
+                   name="csrf_token"
+                   value="{{ csrf_token() }}">
+            <button type="submit" class="btn btn-secondary">
+                Log Out
+            </button>
+        </form>
+
+    </div>
+</section>
+{% endblock %}

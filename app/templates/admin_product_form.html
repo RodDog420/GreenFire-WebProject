@@ -1,0 +1,645 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    {{ 'Edit: ' ~ product.name if product else 'Add Product' }} — Admin
+{% endblock %}
+
+{% block meta_description %}Admin product form.{% endblock %}
+
+{% block robots %}noindex, nofollow{% endblock %}
+
+{% block content %}
+<section class="section">
+    <div class="container container--narrow">
+
+        <div class="admin-page-header">
+            <h1>{{ 'Edit: ' ~ product.name if product else 'Add Product' }}</h1>
+            <a href="{{ url_for('admin.products') }}"
+               class="btn btn-ghost btn-sm">
+                &larr; All Products
+            </a>
+        </div>
+
+        <form action="{{ url_for('admin.product_edit', product_id=product.id)
+                         if product
+                         else url_for('admin.product_new') }}"
+              method="POST"
+              enctype="multipart/form-data">
+
+            <input type="hidden"
+                   name="csrf_token"
+                   value="{{ csrf_token() }}">
+
+            <!-- ============================================================
+                 CORE INFO
+                 ============================================================ -->
+            <div class="admin-form-section">
+                <h2 class="admin-form-section__heading">Core Info</h2>
+
+                <div class="admin-form-group">
+                    <label class="admin-form-label" for="name">
+                        Name <span class="admin-form-required">*</span>
+                    </label>
+                    <input type="text"
+                           id="name"
+                           name="name"
+                           class="form-input"
+                           value="{{ product.name if product else '' }}"
+                           required
+                           autocomplete="off">
+                </div>
+
+                <div class="admin-form-group">
+                    <label class="admin-form-label" for="slug">
+                        Slug <span class="admin-form-required">*</span>
+                    </label>
+                    <input type="text"
+                           id="slug"
+                           name="slug"
+                           class="form-input"
+                           value="{{ product.slug if product else '' }}"
+                           {% if product %}readonly{% endif %}
+                           required
+                           autocomplete="off"
+                           placeholder="auto-generated from name">
+                    {% if not product %}
+                    <p class="admin-form-hint">
+                        Auto-filled from name. Edit if needed.
+                        Used in the product URL: /product/your-slug
+                    </p>
+                    {% else %}
+                    <p class="admin-form-hint">
+                        Slug cannot be changed after creation.
+                    </p>
+                    {% endif %}
+                </div>
+
+                <div class="admin-form-row">
+                    <div class="admin-form-group">
+                        <label class="admin-form-label" for="product_type">
+                            Product Type <span class="admin-form-required">*</span>
+                        </label>
+                        <select id="product_type"
+                                name="product_type"
+                                class="form-input">
+                            <option value="heady"
+                                {{ 'selected' if product and
+                                   product.product_type == 'heady' }}>
+                                Heady
+                            </option>
+                            <option value="prodo"
+                                {{ 'selected' if product and
+                                   product.product_type == 'prodo' }}>
+                                Prodo
+                            </option>
+                            <option value="vape"
+                                {{ 'selected' if product and
+                                   product.product_type == 'vape' }}>
+                                Vape / Accessory
+                            </option>
+                        </select>
+                    </div>
+
+                    <div class="admin-form-group">
+                        <label class="admin-form-label" for="subcategory">
+                            Subcategory
+                        </label>
+                        <select id="subcategory"
+                                name="subcategory"
+                                class="form-input">
+                            <option value="">— None —</option>
+                            <optgroup label="Production Glass"
+                                      class="subcategory-prodo">
+                                <option value="dry-pipes"
+                                    {{ 'selected' if product and
+                                       product.subcategory == 'dry-pipes' }}>
+                                    Dry Pipes
+                                </option>
+                                <option value="bubblers"
+                                    {{ 'selected' if product and
+                                       product.subcategory == 'bubblers' }}>
+                                    Bubblers
+                                </option>
+                                <option value="beakers"
+                                    {{ 'selected' if product and
+                                       product.subcategory == 'beakers' }}>
+                                    Beakers
+                                </option>
+                                <option value="oil-rigs"
+                                    {{ 'selected' if product and
+                                       product.subcategory == 'oil-rigs' }}>
+                                    Oil Rigs
+                                </option>
+                            </optgroup>
+                            <optgroup label="Vapes &amp; Accessories"
+                                      class="subcategory-vape">
+                                <option value="vaporizers"
+                                    {{ 'selected' if product and
+                                       product.subcategory == 'vaporizers' }}>
+                                    Vaporizers
+                                </option>
+                                <option value="flower-accessories"
+                                    {{ 'selected' if product and
+                                       product.subcategory == 'flower-accessories' }}>
+                                    Flower Accessories
+                                </option>
+                                <option value="oil-accessories"
+                                    {{ 'selected' if product and
+                                       product.subcategory == 'oil-accessories' }}>
+                                    Oil Accessories
+                                </option>
+                            </optgroup>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="admin-form-group">
+                    <label class="admin-form-label" for="price_dollars">
+                        Price <span class="admin-form-required">*</span>
+                    </label>
+                    <div class="admin-input-prefix-wrap">
+                        <span class="admin-input-prefix">$</span>
+                        <input type="number"
+                               id="price_dollars"
+                               name="price_dollars"
+                               class="form-input admin-input--prefixed"
+                               value="{{ '%.2f' | format(product.price_cents / 100)
+                                         if product else '' }}"
+                               min="0"
+                               step="0.01"
+                               required>
+                    </div>
+                </div>
+
+            </div>
+
+
+            <!-- ============================================================
+                 STATUS
+                 ============================================================ -->
+            <div class="admin-form-section">
+                <h2 class="admin-form-section__heading">Status</h2>
+
+                <div class="admin-checkbox-row">
+                    <label class="admin-checkbox-label">
+                        <input type="checkbox"
+                               name="is_active"
+                               {{ 'checked' if not product or product.is_active }}>
+                        Active — visible on the site
+                    </label>
+                    <label class="admin-checkbox-label">
+                        <input type="checkbox"
+                               name="is_sold"
+                               {{ 'checked' if product and product.is_sold }}>
+                        Sold
+                    </label>
+                </div>
+
+                <div class="admin-form-row">
+                    <div class="admin-form-group">
+                        <label class="admin-form-label"
+                               for="acquisition_type">
+                            Acquisition
+                        </label>
+                        <select id="acquisition_type"
+                                name="acquisition_type"
+                                class="form-input">
+                            <option value="outright"
+                                {{ 'selected' if not product or
+                                   product.acquisition_type == 'outright' }}>
+                                Outright Purchase
+                            </option>
+                            <option value="consignment"
+                                {{ 'selected' if product and
+                                   product.acquisition_type == 'consignment' }}>
+                                Consignment
+                            </option>
+                        </select>
+                    </div>
+
+                    <div class="admin-form-group">
+                        <label class="admin-form-label"
+                               for="consignment_rate">
+                            Consignment Rate (%)
+                        </label>
+                        <input type="number"
+                               id="consignment_rate"
+                               name="consignment_rate"
+                               class="form-input"
+                               value="{{ product.consignment_rate if product and
+                                         product.consignment_rate else '' }}"
+                               min="0"
+                               max="100"
+                               step="0.01"
+                               placeholder="e.g. 40">
+                    </div>
+                </div>
+
+            </div>
+
+
+            <!-- ============================================================
+                 ATTRIBUTION
+                 ============================================================ -->
+            <div class="admin-form-section">
+                <h2 class="admin-form-section__heading">Attribution</h2>
+
+                <div class="admin-form-row">
+                    <div class="admin-form-group">
+                        <label class="admin-form-label" for="credit_label">
+                            Credit Label
+                        </label>
+                        <input type="text"
+                               id="credit_label"
+                               name="credit_label"
+                               class="form-input"
+                               value="{{ product.credit_label if product else '' }}"
+                               placeholder="Artist / Brand / Studio">
+                    </div>
+
+                    <div class="admin-form-group">
+                        <label class="admin-form-label" for="credit">
+                            Credit
+                        </label>
+                        <input type="text"
+                               id="credit"
+                               name="credit"
+                               class="form-input"
+                               value="{{ product.credit if product else '' }}"
+                               placeholder="Display name">
+                    </div>
+                </div>
+
+                <div class="admin-form-group">
+                    <label class="admin-form-label" for="instagram">
+                        Instagram URL
+                    </label>
+                    <input type="url"
+                           id="instagram"
+                           name="instagram"
+                           class="form-input"
+                           value="{{ product.instagram if product else '' }}"
+                           placeholder="https://www.instagram.com/username/">
+                </div>
+
+            </div>
+
+
+            <!-- ============================================================
+                 SPECS
+                 ============================================================ -->
+            <div class="admin-form-section">
+                <h2 class="admin-form-section__heading">Specs</h2>
+
+                <div class="admin-form-row">
+                    <div class="admin-form-group">
+                        <label class="admin-form-label" for="height">
+                            Height
+                        </label>
+                        <input type="text"
+                               id="height"
+                               name="height"
+                               class="form-input"
+                               value="{{ product.height if product else '' }}"
+                               placeholder="e.g. 8 inches">
+                    </div>
+
+                    <div class="admin-form-group">
+                        <label class="admin-form-label" for="joint_size">
+                            Joint Size
+                        </label>
+                        <input type="text"
+                               id="joint_size"
+                               name="joint_size"
+                               class="form-input"
+                               value="{{ product.joint_size if product else '' }}"
+                               placeholder="e.g. 14mm">
+                    </div>
+                </div>
+
+                <div class="admin-form-group">
+                    <label class="admin-form-label" for="technique">
+                        Technique
+                    </label>
+                    <input type="text"
+                           id="technique"
+                           name="technique"
+                           class="form-input"
+                           value="{{ product.technique if product else '' }}"
+                           placeholder="e.g. Worked, fumed">
+                </div>
+
+            </div>
+
+
+            <!-- ============================================================
+                 HEADY-SPECIFIC FIELDS
+                 ============================================================ -->
+            <div class="admin-form-section admin-fields-heady">
+                <h2 class="admin-form-section__heading">Heady Details</h2>
+
+                <div class="admin-form-row">
+                    <div class="admin-form-group">
+                        <label class="admin-form-label" for="series">
+                            Series
+                        </label>
+                        <input type="text"
+                               id="series"
+                               name="series"
+                               class="form-input"
+                               value="{{ product.series if product else '' }}"
+                               placeholder="Named series or collection">
+                    </div>
+
+                    <div class="admin-form-group">
+                        <label class="admin-form-label" for="collab">
+                            Collab Artist
+                        </label>
+                        <input type="text"
+                               id="collab"
+                               name="collab"
+                               class="form-input"
+                               value="{{ product.collab if product else '' }}">
+                    </div>
+                </div>
+
+                <div class="admin-form-row">
+                    <div class="admin-form-group">
+                        <label class="admin-form-label" for="glass_color">
+                            Glass Color
+                        </label>
+                        <input type="text"
+                               id="glass_color"
+                               name="glass_color"
+                               class="form-input"
+                               value="{{ product.glass_color if product else '' }}"
+                               placeholder="e.g. Cobalt">
+                    </div>
+
+                    <div class="admin-form-group">
+                        <label class="admin-form-label"
+                               for="glass_color_company">
+                            Color Company
+                        </label>
+                        <input type="text"
+                               id="glass_color_company"
+                               name="glass_color_company"
+                               class="form-input"
+                               value="{{ product.glass_color_company
+                                         if product else '' }}"
+                               placeholder="e.g. Northstar">
+                    </div>
+                </div>
+
+                <div class="admin-checkbox-row">
+                    <label class="admin-checkbox-label">
+                        <input type="checkbox"
+                               name="gemstones"
+                               {{ 'checked' if product and product.gemstones }}>
+                        Gemstone Accents
+                    </label>
+                    <label class="admin-checkbox-label">
+                        <input type="checkbox"
+                               name="electroform"
+                               {{ 'checked' if product and product.electroform }}>
+                        Electroformed
+                    </label>
+                    <label class="admin-checkbox-label">
+                        <input type="checkbox"
+                               name="fume"
+                               {{ 'checked' if product and product.fume }}>
+                        Fumed
+                    </label>
+                </div>
+
+            </div>
+
+
+            <!-- ============================================================
+                 PRODO-SPECIFIC FIELDS
+                 ============================================================ -->
+            <div class="admin-form-section admin-fields-prodo">
+                <h2 class="admin-form-section__heading">
+                    Production Glass Details
+                </h2>
+
+                <div class="admin-form-row">
+                    <div class="admin-form-group">
+                        <label class="admin-form-label" for="perc">
+                            Percolator
+                        </label>
+                        <input type="text"
+                               id="perc"
+                               name="perc"
+                               class="form-input"
+                               value="{{ product.perc if product else '' }}"
+                               placeholder="e.g. Showerhead">
+                    </div>
+
+                    <div class="admin-form-group">
+                        <label class="admin-form-label" for="includes">
+                            Includes
+                        </label>
+                        <input type="text"
+                               id="includes"
+                               name="includes"
+                               class="form-input"
+                               value="{{ product.includes if product else '' }}"
+                               placeholder="e.g. Quartz nail">
+                    </div>
+                </div>
+
+                <div class="admin-checkbox-row">
+                    <label class="admin-checkbox-label">
+                        <input type="checkbox"
+                               name="reclaimer"
+                               {{ 'checked' if product and product.reclaimer }}>
+                        Reclaimer Included
+                    </label>
+                    <label class="admin-checkbox-label">
+                        <input type="checkbox"
+                               name="fume"
+                               {{ 'checked' if product and product.fume }}>
+                        Fumed
+                    </label>
+                </div>
+
+                <div class="admin-form-group">
+                    <label class="admin-form-label" for="variants">
+                        Variants
+                    </label>
+                    <input type="text"
+                           id="variants"
+                           name="variants"
+                           class="form-input"
+                           value="{{ product.variants | join(', ')
+                                     if product and product.variants else '' }}"
+                           placeholder="Comma-separated: Red, Blue, Green">
+                    <p class="admin-form-hint">
+                        Selectable options shown to the customer.
+                    </p>
+                </div>
+
+            </div>
+
+
+            <!-- ============================================================
+                 VAPE / ACCESSORY-SPECIFIC FIELDS
+                 ============================================================ -->
+            <div class="admin-form-section admin-fields-vape">
+                <h2 class="admin-form-section__heading">
+                    Vape / Accessory Details
+                </h2>
+
+                <div class="admin-form-row">
+                    <div class="admin-form-group">
+                        <label class="admin-form-label" for="metal_type">
+                            Metal Type
+                        </label>
+                        <input type="text"
+                               id="metal_type"
+                               name="metal_type"
+                               class="form-input"
+                               value="{{ product.metal_type if product else '' }}"
+                               placeholder="e.g. Titanium">
+                    </div>
+
+                    <div class="admin-form-group admin-checkbox-group">
+                        <label class="admin-checkbox-label">
+                            <input type="checkbox"
+                                   name="is_premium"
+                                   {{ 'checked' if product
+                                      and product.is_premium }}>
+                            Premium Tier
+                        </label>
+                    </div>
+                </div>
+
+                <div class="admin-form-group">
+                    <label class="admin-form-label" for="attributes">
+                        Attributes
+                    </label>
+                    <input type="text"
+                           id="attributes"
+                           name="attributes"
+                           class="form-input"
+                           value="{{ product.attributes | join(', ')
+                                     if product and product.attributes else '' }}"
+                           placeholder="Comma-separated: 510 thread, 900 mAh">
+                </div>
+
+            </div>
+
+
+            <!-- ============================================================
+                 IMAGES
+                 ============================================================ -->
+            <div class="admin-form-section">
+                <h2 class="admin-form-section__heading">Images</h2>
+
+                {% if existing_images %}
+                <div class="admin-image-grid">
+                    {% for img in existing_images %}
+                    <div class="admin-image-item">
+                        <img src="{{ url_for('static',
+                                             filename=img.image_url) }}"
+                             alt="{{ img.alt_text }}"
+                             class="admin-image-thumb">
+                        <form action="{{ url_for(
+                                  'admin.product_image_delete',
+                                  product_id=product.id,
+                                  image_id=img.id) }}"
+                              method="POST"
+                              class="form-inline-action">
+                            <input type="hidden"
+                                   name="csrf_token"
+                                   value="{{ csrf_token() }}">
+                            <button type="submit"
+                                    class="btn btn-sm admin-image-delete"
+                                    onclick="return confirm(
+                                        'Delete this image?')">
+                                Delete
+                            </button>
+                        </form>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+
+                <div class="admin-form-group">
+                    <label class="admin-form-label" for="images">
+                        {{ 'Add More Images' if existing_images
+                           else 'Upload Images' }}
+                    </label>
+                    <input type="file"
+                           id="images"
+                           name="images"
+                           class="form-input admin-file-input"
+                           multiple
+                           accept=".jpg,.jpeg,.png,.webp">
+                    <p class="admin-form-hint">
+                        JPG, PNG, or WebP. First image becomes the primary.
+                    </p>
+                </div>
+
+            </div>
+
+
+            <!-- ============================================================
+                 DESCRIPTION & SEO
+                 ============================================================ -->
+            <div class="admin-form-section">
+                <h2 class="admin-form-section__heading">
+                    Description &amp; SEO
+                </h2>
+
+                <div class="admin-form-group">
+                    <label class="admin-form-label" for="description">
+                        Description
+                    </label>
+                    <textarea id="description"
+                              name="description"
+                              class="form-input admin-textarea"
+                              rows="4"
+                              placeholder="Shown on the product detail page.
+                              Leave blank to omit.">{{ product.description
+                                  if product else '' }}</textarea>
+                </div>
+
+                <div class="admin-form-group">
+                    <label class="admin-form-label" for="meta_description">
+                        Meta Description
+                    </label>
+                    <textarea id="meta_description"
+                              name="meta_description"
+                              class="form-input admin-textarea"
+                              rows="3"
+                              maxlength="155"
+                              placeholder="Leave blank to auto-generate.
+                              Max 155 characters.">{{ product.meta_description
+                                  if product else '' }}</textarea>
+                </div>
+
+            </div>
+
+
+            <div class="admin-form-actions">
+                <button type="submit" class="btn btn-secondary">
+                    {{ 'Save Changes' if product else 'Add Product' }}
+                </button>
+                <a href="{{ url_for('admin.products') }}"
+                   class="btn btn-ghost">
+                    Cancel
+                </a>
+            </div>
+
+        </form>
+
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/admin.js') }}"
+        defer></script>
+{% endblock %}

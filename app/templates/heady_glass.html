@@ -1,0 +1,100 @@
+{% extends 'base.html' %}
+
+{% block title %}Heady Glass{% endblock %}
+
+{% block meta_description %}
+Heady glass for sale — one-of-a-kind artistic pieces by American artists.
+Green Fire, University Place, Lincoln Nebraska.
+{% endblock %}
+
+{% block robots %}index, follow{% endblock %}
+
+{% block canonical %}{{ url_for('routes.headies', _external=True) }}{% endblock %}
+
+{% block og_title %}Heady Glass — Green Fire{% endblock %}
+{% block og_description %}
+One-of-a-kind artistic glass by American artists.
+Green Fire, University Place, Lincoln Nebraska.
+{% endblock %}
+{% block og_url %}{{ url_for('routes.headies', _external=True) }}{% endblock %}
+
+{% block content %}
+<section class="section">
+    <div class="container">
+
+        <div class="catalogue-header">
+            <h1>Heady Glass</h1>
+            <p class="catalogue-intro">
+                One-of-a-kind pieces by American artists. All glass is
+                curated directly from the maker.
+            </p>
+        </div>
+
+        {% if products %}
+        <div class="product-grid">
+
+            {% set ns = namespace(seen_various=false) %}
+            {% for product in products %}
+
+                {% if not product.credit and not ns.seen_various %}
+                    {% if loop.index0 > 0 %}
+                    <div class="product-grid__section-break">
+                        <h2 class="product-grid__section-heading">
+                            Various Artists
+                        </h2>
+                    </div>
+                    {% endif %}
+                    {% set ns.seen_various = true %}
+                {% endif %}
+
+                <a href="{{ url_for('routes.product_detail', slug=product.slug) }}"
+                   class="product-card"
+                   aria-label="{{ product.name }}
+                               {%- if product.credit %} by {{ product.credit }}{% endif %}
+                               {%- if product.is_sold %} — Sold{% endif %}">
+
+                    <div class="product-card__img-wrap">
+                        {% if product.primary_image %}
+                        <img src="{{ url_for('static', filename=product.primary_image) }}"
+                             alt="{{ product.name }}
+                                  {%- if product.credit %} by {{ product.credit }}{% endif %}"
+                             class="product-card__img"
+                             loading="lazy"
+                             width="400"
+                             height="533">
+                        {% else %}
+                        <div class="product-card__img product-card__img--placeholder"
+                             role="img"
+                             aria-label="{{ product.name }} — no image available">
+                        </div>
+                        {% endif %}
+
+                        {% if product.is_sold %}
+                        <span class="product-card__sold-badge">Sold</span>
+                        {% endif %}
+                    </div>
+
+                    <div class="product-card__info">
+                        <p class="product-card__name">{{ product.name }}</p>
+                        {% if product.credit %}
+                        <p class="product-card__credit">{{ product.credit }}</p>
+                        {% endif %}
+                        <p class="product-card__price">
+                            ${{ "{:,}".format(product.price_cents // 100) }}
+                        </p>
+                    </div>
+
+                </a>
+
+            {% endfor %}
+        </div>
+
+        {% else %}
+        <div class="catalogue-empty">
+            <p>No pieces currently in stock. Check back soon.</p>
+        </div>
+        {% endif %}
+
+    </div>
+</section>
+{% endblock %}

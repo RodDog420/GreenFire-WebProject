@@ -4,13 +4,107 @@
 
 ---
 
-# 1.0 Cardinal Rules
+# 1.0 CLAUDE.md Methodology and Tool Criteria
+# ============================================================
+
+## 1.1 Tool Selection — Claude Code vs Chat Interface
+The key insight is that Claude Code's autonomy is an asset when the cost 
+of mistakes is low, and a liability when it isn't.  
+Claude Code through the startup sequence, chat interface once design is live.
+
+The governing principle: Once the design is load-bearing — meaning other 
+decisions depend on it — switch to the chat interface and its propose-then-confirm 
+workflow. Claude Code moves fast and touches real files immediately. The chat 
+interface keeps a human in the loop on every step. 
+Use each for what it is suited for.
+
+## 1.2 Naming Conventions
+
+There are two CLAUDE.md documents in this system. Both are instances of
+CLAUDE.md files — not instances of Claude itself.
+
+**Master-Claude-Template** — the master CLAUDE.md document. Lives at:
+C:\Users\rodkr\FlaskApp Instructions\CLAUDE.MDs\WebDev_Foundations\flask-web-dev-master.md
+This is the global baseline all Project-Instance-Claude documents inherit from.
+Never lives inside any codebase.
+
+**Project-Instance-Claude** — the project-specific CLAUDE.md document. Lives
+inside a specific project folder. Customized for that project to include project-specific configurations, variables, dictionaries, etc. Always listed
+in .gitignore. Never committed. Never pushed to GitHub or any host.
+
+***Project-specific Dictionaries*** - Project Color-Dictionary and complete Z-score Dictionary/Index is always recorded at bottom of project-instance of CLAUD.MD.
+    COLOR DICTIONARY -add all new colours at bottom of project CLAUD.md
+    Z-INDEX DICTIONARY -document all z-index values bottom of project CLAUDE.md>
+
+## 1.3 Why Project-Instance-Claude Is Always Gitignored
+
+CLAUDE.md is a large document. Committing it sends it to GitHub and then to any host (e.g. Render), which loads it on every deploy. Unnecessary overhead.
+
+Add this to .gitignore on every project, as its own category at the bottom:
+
+    # Claude Code
+    CLAUDE.md
+
+## 1.4 Two Types of Updates
+
+**Project-specific** — applies only to the current Project-Instance-Claude.
+**Global** — applies to all future projects and goes into the Master-Claude-Template.
+
+## 1.5 Who Decides What Gets Written and Where
+
+The owner makes all decisions about what gets written and where. Claude never
+writes to the Project-Instance-Claude or the Master-Claude-Template unless the
+owner has explicitly asked for it in that conversation.
+
+Claude may identify an improvement and flag it — but it proposes, it does not
+act. The owner pulls the trigger.
+
+When the owner authorises an update, Claude reads the relevant document, makes
+the change, and confirms what was written.
+
+## 1.6 Any Claude Code Instance Can Reach the Master-Claude-Template
+
+Claude Code is not sandboxed to the project folder it was activated in. Any
+instance can read from and write to the Master-Claude-Template at the path
+above — but only when the owner has explicitly authorised it for that session.
+
+## 1.7 Browser QA — Playwright MCP
+
+Playwright MCP is the standard browser QA tool across all projects.
+Requires Node.js 18+ and is registered once per project:
+
+    claude mcp add playwright npx @playwright/mcp@latest
+
+When invoking Playwright inside a Claude Code session, always say
+"Use Playwright MCP" explicitly — otherwise Claude may default to
+Bash instead.
+
+### Audit Protocol
+
+When asked to audit a site, Claude visits every page accessible
+from the navigation and reports:
+
+- Broken or misaligned layouts
+- Console errors
+- Anything visually incomplete or unfinished
+
+Claude documents only. It never fixes anything found during an
+audit without explicit owner approval in a separate session.
+
+### Port
+
+Default Flask dev server is localhost:5000. Confirm the active
+port at the start of each session if it differs.
+
+# ============================================================
+
+# 2.0 Cardinal Rules
 
 **⚠ Before any work begins:** Confirm the correct file. Ask to see existing code before
 assuming a solution does not exist. Read the ENTIRE file before editing any part of it.
 Never make assumptions — always ask first. This applies every session without exception.
 
-## 1.1 Before Building Anything Structural
+## 2.1 Before Building Anything Structural
 
 Before building any new folder, file, or architectural element, Claude must state explicitly
 what it intends to create, why it is needed, and wait for explicit confirmation before
@@ -19,7 +113,7 @@ touching anything.
 **⚠ This applies to new folders, new files, new routes, new blueprints, and any change to
 the project architecture. Claude proposes. The owner decides.**
 
-## 1.2 Agreed Implementation Approaches Are Binding
+## 2.2 Agreed Implementation Approaches Are Binding
 
 When an implementation approach has been explicitly agreed upon, it cannot be changed without
 flagging the reason and getting explicit confirmation first. Not mid-build. Not silently.
@@ -30,7 +124,7 @@ agreed upon as the mechanism for alternating desktop layouts. Mid-build, Claude 
 silently and introduced a dual-image approach without flagging the change. This caused hours
 of rework.
 
-## 1.3 Do Not Invent Industry-Specific Names or Assumptions
+## 2.3 Do Not Invent Industry-Specific Names or Assumptions
 
 - Never guess at industry-specific terminology, naming conventions, or product categories
 - Ask the owner for naming conventions before creating routes, templates, or database fields
@@ -40,14 +134,14 @@ of rework.
 **⚠ If Claude is uncertain what something should be called: ask. Do not guess and then
 defend the guess.**
 
-## 1.4 Arbitrary Assumptions Are Not Best Practices
+## 2.4 Arbitrary Assumptions Are Not Best Practices
 
 When the owner questions a decision, Claude must honestly assess whether it is a genuine
 best practice or an assumption. If it is an assumption, Claude acknowledges it immediately
 and defers. Claude never suggests the owner may have a memory problem as a way of defending
 an arbitrary choice.
 
-## 1.5 Session Sync Checklist — Required After Every Build Session
+## 2.5 Session Sync Checklist — Required After Every Build Session
 
 At the end of every build session, Claude must produce an explicit sync checklist containing
 every file created or changed, its exact destination path, and confirmation that the owner
@@ -56,13 +150,13 @@ has placed it before proceeding.
 **⚠ Never assume a file was placed. Never proceed to the next feature without confirming
 sync.**
 
-## 1.6 Teaching vs Deferring
+## 2.6 Teaching vs Deferring
 
 - **Code quality, maintainability, standards** → Teach proactively
 - **Personal workflow, naming, organisation** → Ask first
 - **Unclear** → Ask first
 
-## 1.7 When in Doubt, Dig Deep Before Responding
+## 2.7 When in Doubt, Dig Deep Before Responding
 
 When a problem cannot be diagnosed from the surface, Claude must read every relevant file
 completely and reason systematically from what is actually there — before offering any
@@ -80,20 +174,52 @@ If thorough analysis does not yield a diagnosis, say so honestly rather than con
 guess. Do not wait for the owner to express frustration before digging deep. Dig deep
 the first time.
 
+
+## 2.8 Automation Over Manual Entry
+
+Default to automation wherever repetitive manual input would 
+otherwise be required. Do not build manual workflows when a 
+programmatic solution exists.
+
+Examples:
+- SEO blocks (meta description, canonical, robots, title) must 
+  be driven by variables or template logic — never filled in 
+  manually per page
+- Any pattern that repeats across more than two pages is a 
+  candidate for automation — flag it and propose the approach
+  before building it manually
+
+Claude must identify automation opportunities proactively and
+propose them before building the manual version. The owner
+decides whether to automate or not — but Claude must surface
+the option.
+
+## 2.9 Karpathy Guidelines — Invoke on Layout and CSS Work
+
+Before making any CSS layout change, invoke the
+andrej-karpathy-skills:karpathy-guidelines skill.
+This is non-negotiable.
+
+If the skill is not installed, run these commands once:
+
+    /plugin marketplace add forrestchang/andrej-karpathy-skills
+    /plugin install andrej-karpathy-skills@karpathy-skills
+    /reload-plugins
+
 ---
 
-# 2.0 Project Structure, File Naming & Organisation
+# 3.0 Project Structure, File Naming & Organisation
 
-## 2.1 The App Folder
+## 3.1 The App Folder
 
 **⚠ The Flask application package is always named `app`. Never anything else.**
 
-## 2.2 The Entry Point File
+## 3.2 The Entry Point File
 
 **⚠ The Flask entry point is always named after the project (e.g. `greenfire.py`).
 A `.flaskenv` file tells Flask where to find it.**
 
-## 2.3 File Count Philosophy — Fewer Files, Longer Files
+## 3.3 File Count Philosophy — Fewer Files, Longer Files
 
 The default instinct should always be consolidation, not proliferation. Push files out
 vertically (longer), not horizontally (more files).
@@ -108,7 +234,7 @@ vertically (longer), not horizontally (more files).
 **⚠ The owner decides how routes, models, and templates are split. Claude proposes —
 the owner confirms.**
 
-## 2.4 Standard Project Structure
+## 3.4 Standard Project Structure
 
 Claude must present this complete diagram at the start of every new project before creating
 any files. The owner must confirm before any files are built.
@@ -144,12 +270,12 @@ projectname/
 +--- .gitignore                    <- created FIRST
 ```
 
-## 2.5 Ask Before Creating Sub-Folders
+## 3.5 Ask Before Creating Sub-Folders
 
 Sub-folders add navigational complexity. Claude must never create a new sub-folder without
 proposing it first and receiving explicit owner approval.
 
-## 2.6 The .gitignore File
+## 3.6 The .gitignore File
 
 **⚠ Create .gitignore before anything else.**
 
@@ -168,11 +294,11 @@ build/
 _norton_/
 ```
 
-## 2.7 The Two Environment Files
+## 3.7 The Two Environment Files
 
 **.flaskenv — Flask CLI configuration. Safe to commit.**
 ```
-FLASK_APP=greenfire.py
+FLASK_APP=[projectname].py
 FLASK_DEBUG=1
 FLASK_ENV=development
 ```
@@ -183,7 +309,7 @@ FLASK_ENV=development
 
 ---
 
-# 3.0 New Project Startup Order
+# 4.0 New Project Startup Order
 
 - Step 1  — Present complete folder diagram and get confirmation
 - Step 2  — Create `.gitignore` first
@@ -191,7 +317,7 @@ FLASK_ENV=development
 - Step 4  — Create `.flaskenv` and `.env.example`
 - Step 5  — Create `config.py` and entry point
 - Step 6  — Create `app/__init__.py`
-- Step 7  — Create all CSS files in correct order (`variables.css` first)
+- Step 7  — Create all CSS files in correct order 
 - Step 8  — Create `base.html` with nav and footer inline
 - Step 9  — Create route stub files and stub templates
 - Step 10 — Create `models.py`
@@ -203,9 +329,9 @@ never created manually.**
 
 ---
 
-# 4.0 CSS File Architecture
+# 5.0 CSS File Architecture
 
-## 4.1 File Structure
+## 5.1 File Structure
 
 All styling lives in CSS files. Inline styles permitted only in rare cases where genuinely
 better — less than 1% of all styling decisions.
@@ -226,7 +352,7 @@ static/css/
 - Page-specific CSS is appended to the bottom of `base.css` with a clearly labelled
   section header
 
-## 4.2 CSS Variables Philosophy — Colours and Coupling Agents Only
+## 5.2 CSS Variables Philosophy — Colours and Coupling Agents Only
 
 CSS custom properties (variables) are used for two purposes only:
 
@@ -246,22 +372,15 @@ liability the moment one of those 15 places needs to be different. Explicit valu
 maximum control with no hidden dependencies.
 
 **Why not z-index variables?**
-Z-index values are documented in a Z-index dictionary as a commented-out block in `base.html`
-alongside the color dictionary. This provides a readable reference without making z-index
-values into shared dependencies.
+Z-index values need to be aggregated into one single common area so that owner can visually inspect them altogether and compare them visually all at once. Without group them, comparing them is much more difficult. Therefore, class specific styling is affected inside he CSS files, but then ALL Z-scores are subsequently added into this large, project-specific Z-score Dictionary to best facilitate these internal comparisons.
 
-**⚠ Never create spacing, typography, shadow, transition, or z-index variables. If uncertain
-whether a variable is justified, ask: is this a coupling relationship where two separate rules
-must always agree? If yes, a variable may be warranted. If no, hardcode it.**
+**⚠ Never create spacing, typography, shadow, transition, or z-index variables. If uncertain whether a variable is justified, ask owner: is this a coupling relationship where two separate rules must always agree? If yes, a variable may be warranted. If no, hardcode it.**
 
-## 4.3 Colour System — Variables + Dictionary
+## 5.3 Colour System — Variables + Dictionary
 
-All colour variables defined in `variables.css`. Every main colour must have a corresponding
-hover variant. A human-readable colour dictionary lives as a comment at the bottom of
-`base.html`. VS Code shows color swatches next to hex values in this dictionary.
+All colour variables defined in `variables.css`. Every main colour must have a corresponding hover variant. A human-readable colour dictionary lives as a comment at the bottom of the project-specific instance of the `CLAUDE.md` in the project's root folder. This is best because VS Code, which we use to access the file shows color swatches next to hex values in this dictionary.
 
-**⚠ If a new colour is added anywhere in the project, it must be added to BOTH
-`variables.css` AND the `base.html` colour dictionary simultaneously.**
+**⚠ IMPORTANT - If a new colour is added anywhere in the project, it must be added to BOTH `variables.css` AND the `CLAUDE.md` colour dictionary simultaneously.**
 
 **⚠ No semantic alias layer.** Do not create variables like `--color-btn-primary` that
 point to another variable. Reference color variables directly: `var(--color-forest-green)`.
@@ -269,9 +388,30 @@ The double-indirection makes DevTools unreadable and debugging painful.
 
 ---
 
-# 5.0 Mobile-First Development
+## 5.4 Dangerous Properties — Always Paired
 
-## 5.1 Core Philosophy
+Some CSS properties are destructive when used in isolation. They solve one problem while silently creating another. These properties are only permitted when their required safety net is explicitly present in the same rule or the same component.
+
+### white-space: nowrap
+
+Keeps content on a single line regardless of container width. Without a safety net, it will push content through the wall of its container and cause overflow or horizontal scroll.
+
+Required — always pair with all three of the following, no exceptions:
+- Ellipsis — text stays on one line and truncates cleanly:
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+
+This is the only valid use of white-space: nowrap in this project. If the content cannot truncate with ellipsis, do not use white-space: nowrap. 
+"The content is short" and "another element will absorb the overflow" are not safety nets — they are assumptions that will break at runtime.
+---
+### See also below: overflow-x: hidden on body — (Section 6.6 below)
+
+
+# 6.0 Mobile-First Development
+
+
+## 6.1 Core Philosophy
 
 - Design floor: 320px — test every layout at this width
 - Base CSS targets small screens — scale up via min-width breakpoints
@@ -279,7 +419,7 @@ The double-indirection makes DevTools unreadable and debugging painful.
 - No horizontal scroll — test at 320px
 - All dropdown options: left-aligned, never centred
 
-## 5.2 Units — Priority Order
+## 6.2 Units — Priority Order
 
 - `vw` / `vh` — highest preference
 - `rem` — typography and component sizing
@@ -288,7 +428,7 @@ The double-indirection makes DevTools unreadable and debugging painful.
 
 **⚠ Never use `px` for breakpoints — use `rem`.**
 
-## 5.3 Standard Breakpoints
+## 6.3 Standard Breakpoints
 
 Custom breakpoints are permitted when a layout genuinely requires it. Always use rem,
 never px.
@@ -300,7 +440,7 @@ never px.
 @media (min-width: 90rem) { ... }  /* Wide 1440px */
 ```
 
-## 5.4 Baseline Alignment for Grouped Labels
+## 6.4 Baseline Alignment for Grouped Labels
 
 When nav tabs, footer columns, or any grouped headings have different line counts, all items
 must align their first line to a common baseline.
@@ -319,7 +459,7 @@ non-breaking space. This makes all containers structurally equal height.
 NOTE: This is a design decision, not a hack. Apply universally to nav tabs, footer column
 headings, and any grouped label set where line counts vary.
 
-## 5.5 Media Query Override Safety Rule
+## 6.5 Media Query Override Safety Rule
 
 When a wider breakpoint (64rem) overrides a narrower one (48rem), never use the CSS padding
 shorthand. The shorthand resets ALL four sides, wiping out top padding set by the earlier
@@ -335,7 +475,7 @@ padding-left: 1rem;
 padding-right: 1rem;
 ```
 
-## 5.6 Scrollbar and Overflow Rules — Apply to Every Project
+## 6.6 Scrollbar and Overflow Rules — Apply to Every Project
 
 **⚠ Always add `overflow-y: scroll` to the `html` element. Never add `overflow-x: hidden`
 to `body`. Always add `overflow-x: clip` to `.nav`.**
@@ -393,9 +533,9 @@ container and without clipping dropdown menus which extend downward.
 
 ---
 
-# 6.0 The clamp() Function
+# 7.0 The clamp() Function
 
-## 6.1 When TO Use clamp()
+## 7.1 When TO Use clamp()
 
 - Single property scaling smoothly across screen sizes
 - Font sizes, container widths, padding, gap values
@@ -404,7 +544,7 @@ container and without clipping dropdown menus which extend downward.
 font-size: clamp(1rem, 2.5vw, 2rem);
 ```
 
-## 6.2 When NOT to Use clamp()
+## 7.2 When NOT to Use clamp()
 
 When already writing targeted per-side values at specific breakpoints — you already have
 control. Adding `clamp()` creates unnecessary complexity.
@@ -414,25 +554,25 @@ surgical per-side precision.**
 
 ---
 
-# 7.0 CSS Class Reuse — The Balancing Act
+# 8.0 CSS Class Reuse — The Balancing Act
 
 **Err toward creating new classes. The cost of a redundant class is low. The cost of a
 cascading break is high.**
 
-## 7.1 When to Reuse
+## 8.1 When to Reuse
 
 - Same visual intent, same structural role
 - Pages unlikely to diverge visually
 - Reusing would not require overrides
 
-## 7.2 When to Create a New Class
+## 8.2 When to Create a New Class
 
 - Section will evolve differently over time
 - Would require overrides to undo the existing class
 - Page-specific with any chance of diverging
 - Uncertain — always create new
 
-## 7.3 Scoped Overrides
+## 8.3 Scoped Overrides
 
 ```css
 .media-link-card .content-footer { flex-wrap: nowrap; }
@@ -442,14 +582,14 @@ Always document scoped overrides with a comment naming the page or context.
 
 ---
 
-# 8.0 Typography
+# 9.0 Typography
 
 - All font declarations live in `base.css` only
 - The browser must never supply a default font
 - All text is left-aligned by default
 - All sizing is `rem` or `em` — never `px` for font sizes
 
-## 8.1 Fluid Typography with clamp()
+## 9.1 Fluid Typography with clamp()
 
 ```css
 h1 { font-size: clamp(1.75rem, 5vw, 3rem); }
@@ -459,14 +599,14 @@ p  { font-size: clamp(1rem, 2vw, 1.125rem); }
 
 ---
 
-# 9.0 Code Conventions
+# 10.0 Code Conventions
 
-## 9.1 Inline Styling
+## 10.1 Inline Styling
 
 **⚠ ALL styling goes in CSS files. Never put styling inline inside HTML.
 Before violating this rule: always ask first.**
 
-## 9.2 The TRouBLe Shorthand
+## 10.2 The TRouBLe Shorthand
 
 Always use four-value shorthand for margin, padding, border-width, border-radius.
 Order: Top, Right, Bottom, Left.
@@ -476,13 +616,13 @@ margin: 0 0 0.5rem 0;
 ```
 
 NOTE: Exception: at wider breakpoints that override narrower ones, use explicit per-side
-properties to preserve previously set values. See Section 5.5.
+properties to preserve previously set values. See Section 6.5.
 
-## 9.3 No !important
+## 10.3 No !important
 
 **⚠ Never use `!important`. Resolve specificity conflicts at the source.**
 
-## 9.4 CSS Section Headers
+## 10.4 CSS Section Headers
 
 ```css
 /* ==============================================
@@ -490,25 +630,25 @@ properties to preserve previously set values. See Section 5.5.
    ============================================== */
 ```
 
-## 9.5 No HTML Comments
+## 10.5 No HTML Comments
 
 Do not add HTML comments to templates unless genuine complexity warrants it. Comments belong
 in Python and CSS files.
 
-## 9.6 Container Integrity
+## 10.6 Container Integrity
 
 - Content must never break out of its container
 - Always set `overflow-wrap: break-word` on user-generated content
 - Always set `min-width: 0` on grid and flex children that contain text
 - Test all containers at 320px before considering complete
 
-## 9.7 Database & Data Integrity
+## 10.7 Database & Data Integrity
 
 - All queries use SQLAlchemy ORM — never raw SQL unless unavoidable
 - Handle all edge cases: division by zero, empty results, null values
 - Always ensure correct pluralisation
 
-## 9.8 SEO — Applied to Every Page
+## 10.8 SEO — Applied to Every Page
 
 - Every template must include: canonical tag, robots meta tag, meta description
 - Meta descriptions written per page — never auto-generated
@@ -516,13 +656,13 @@ in Python and CSS files.
 - URL slugs clean and descriptive — never expose raw database IDs
 - Schema.org structured data on product and content pages
 
-## 9.9 HTML Line Length
+## 10.9 HTML Line Length
 
 Keep HTML within 80 characters per line. Write vertically, not horizontally.
 
 ---
 
-# 10.0 HTML — Prefer Vertical Layout Over Horizontal
+# 11.0 HTML — Prefer Vertical Layout Over Horizontal
 
 Users interact with Flask applications on narrow screens. Always design HTML structure to be
 vertically aligned first. Horizontal layouts should be exceptions that are explicitly
@@ -536,9 +676,9 @@ ever be long, give each its own vertical block.
 
 ---
 
-# 11.0 CSS Layout — Grid and Flexbox Conventions
+# 12.0 CSS Layout — Grid and Flexbox Conventions
 
-## 11.1 Always Pair max-width with width: 100%
+## 12.1 Always Pair max-width with width: 100%
 
 Any container element that uses `max-width` must always have `width: 100%` alongside it.
 
@@ -550,13 +690,13 @@ Any container element that uses `max-width` must always have `width: 100%` along
 }
 ```
 
-## 11.2 Flexbox + space-between vs Grid
+## 12.2 Flexbox + space-between vs Grid
 
 - `justify-content: space-between` creates inherent tension. If one side must never
   overtake the other → use Grid instead.
 - **Grid = explicit intent.**
 
-## 11.3 CSS Grid — Two-Column Key-Value Layout
+## 12.3 CSS Grid — Two-Column Key-Value Layout
 
 Use case: key-value pairs on mobile, clean and readable at 320px.
 
@@ -577,7 +717,7 @@ Use case: key-value pairs on mobile, clean and readable at 320px.
 - Why `1fr auto` not `auto auto`: `auto auto` splits space unpredictably. Fixed widths break
   at edge cases. `1fr auto` gives the right column exactly what it needs.
 
-## 11.4 CSS Grid — Right-Aligned Content in Far-Right Column
+## 12.4 CSS Grid — Right-Aligned Content in Far-Right Column
 
 Use `justify-self: end` on the cell. Do NOT use `margin-left: auto` on a grid child.
 
@@ -589,41 +729,57 @@ Use `justify-self: end` on the cell. Do NOT use `margin-left: auto` on a grid ch
 }
 ```
 
-## 11.5 Flexbox — Never Use flex-shrink: 0
+## 12.5 Flexbox — flex-shrink and Content Protection --   Two distinct scenarios. 
 
-`flex-shrink: 0` pushes siblings out of the container. When user-defined string content is
-involved it becomes a weapon against layout integrity. Use `min-width` with a specific value
-instead, and let `flex-shrink` default to `1`.
+Unbounded strings — user-defined content with no character ceiling: review text, names, URLs, headlines. flex-shrink: 0 on these is a layout weapon. Never use it. Instead:
 
 ```css
-.protected-element {
-    min-width: 10ch;
-    /* flex-shrink: 1 is the default — do not override */
+.unbounded-content {
+    min-width: 0;              /* unlocks shrinking — required or overflow-wrap won't fire */
+    overflow-wrap: break-word; /* breaks long strings cleanly */
+    max-width: 100%;
 }
 ```
 
-## 11.6 Flexbox — Fixed Elements
+Bounded strings — predictable maximum length: dates, ratings, status labels, currency. A date can never exceed "September 28, 2026". flex-shrink: 0 is correct and safe here — it hardens the element against compression from a sibling.
+
+```css
+.bounded-content {
+    flex-shrink: 0; /* safe — string has a known maximum width */
+}
+```
+
+Mixed row pattern — one bounded element, one unbounded in the same flex row:
+
+```css
+.row > .bounded   { flex-shrink: 0; }
+.row > .unbounded { min-width: 0; overflow-wrap: break-word; }
+```
+
+The bounded element holds. The unbounded element yields and wraps.
+overflow-wrap: break-word alone does nothing in a flex container. Flex items default to min-width: auto, which prevents shrinking below content width. Always pair with min-width: 0.
+
+
+## 12.6 Flexbox — Fixed Elements
 
 ```css
 flex: 0 0 auto;  /* do not grow, do not shrink, size to content */
 ```
 
-## 11.7 Flexbox — Greedy Space-Filling Elements
+## 12.7 Flexbox — Greedy Space-Filling Elements
 
 ```css
 flex: 1 1 0;  /* grow to fill, shrink if needed, start from zero */
 ```
+    In practice, flex: 1 1 0 is frequently used to create equal-width columns. Because the flex-basis is 0, every item starts with the same "zero" size and grows at the same rate to fill the container, resulting in perfectly equal distribution regardless of content length. This prevents long content from assuming it deserves more space than what remains after fixed elements are placed.
 
-The `0` basis is important — element starts from zero and grows into available space rather
-than starting from its content width.
-
-## 11.8 Flexbox — justify-content: space-between Management Rules
+## 12.8 Flexbox — justify-content: space-between Management Rules
 
 - Every flex child must have `min-width: 0`
 - Use `overflow-wrap: break-word` on any element with user-defined strings
 - Protect fixed-width elements with `min-width` on a specific value, not `flex-shrink: 0`
 
-## 11.9 Flexbox — Scope Rules with :nth-child
+## 12.9 Flexbox — Scope Rules with :nth-child
 
 When a flex container has multiple rows needing different flex behaviour, use `:nth-child`
 to scope rules rather than applying them globally.
@@ -636,7 +792,7 @@ to scope rules rather than applying them globally.
 
 ---
 
-# 12.0 base.html Template Structure
+# 13.0 base.html Template Structure
 
 Nav and footer are written inline inside `base.html` — not as separate partial files.
 
@@ -667,7 +823,7 @@ Nav and footer are written inline inside `base.html` — not as separate partial
 
 ---
 
-# 13.0 Quick Reference — Decision Rules
+# 14.0 Quick Reference — Decision Rules
 
 **Before starting any session**
 - Read the entire relevant file before editing any part of it
@@ -714,7 +870,203 @@ Nav and footer are written inline inside `base.html` — not as separate partial
 
 ---
 
-# 14.0 Security Requirements
+# 15.0 Mobile Card Design Blueprint for Converting Desktop Data Tables
+
+## 15.1 The Fork — Why Two Roadmaps
+
+The single most important question when designing any card component is:
+does this card contain user-submitted strings of unknown length?
+
+This question drives every subsequent layout decision. Fixed-length
+content — badges, prices, dates, status labels — has a known maximum
+width and can be laid out with certainty. User-submitted strings —
+names, descriptions, addresses, review text — have no ceiling and will
+break any layout that assumes known widths. These two card types require
+different rules and are documented separately below.
+
+Row layout tool selection — the right column content decides:
+  Variable or unknown-length content on the right (user strings, names, 
+  descriptions) → Grid.
+  Fixed, bounded content on the right (dates, prices, status labels, 
+  counts) → Flexbox is fine.
+
+
+## 15.2 Shared Foundations — All Cards
+
+Card container is always Grid. Grid does everything a block container
+does and more. Since all cards use two columns, always start with Grid.
+
+Two columns always. Maximize space on every card by using both columns.
+Use them as key-value pairs (label left, value right) or as content
+left with a functional element right. Two columns is the baseline for
+all breakpoints unless content type dictates otherwise.
+
+Row-level tool selection. The card container establishes the grid.
+Each row inside the card independently chooses Grid or Flexbox based
+on what its right column contains. The container has no opinion on
+this. See 15.3 and 15.4.
+
+Full-width rows. Any content important enough to span the full card
+width uses grid-column: 1 / -1. This steps outside the two-column
+track without requiring special markup or a wrapper element.
+
+Spacing between rows. Use gap on the grid container. Gap is set per
+component — never prescribed globally. When a specific row needs
+different spacing from its neighbors, use margin-top on that row to
+override the gap for that row only.
+
+Actions row. Always last in source order. Layout depends on context:
+- Public-facing card: full-width stacked buttons. Maximum touch
+  target, easy for the public to press.
+- Admin-facing card: buttons side by side, equal width AND equal height.
+  The flex container must use ALL THREE of these together — no exceptions:
+
+      .actions-inner {
+          display: flex;
+          flex-wrap: wrap;
+          align-items: stretch;   /* equal height — every button matches the tallest */
+          gap: 0.5rem;
+      }
+      .actions-inner .btn {
+          flex: 1 1 0;            /* equal width — buttons share the row in equal parts */
+          white-space: normal;    /* text wraps within the button rather than expanding it */
+          text-align: center;
+      }
+
+  `flex: 1 1 0` — zero basis means all buttons start from nothing and grow equally.
+  Never use `flex: 1 1 auto` — auto basis causes a lone wrapped button to fill the
+  full row width.
+
+  `align-items: stretch` — every button in the row matches the tallest one's height.
+  Never use `align-items: flex-start` in an admin action button group — it lets each
+  button size independently, producing uneven heights when any button's text wraps.
+
+  `white-space: normal` — allows text to wrap within a constrained button width.
+  This only triggers because `flex: 1 1 0` constrains the width. Without the flex
+  rule, `white-space: normal` alone does nothing — the button just expands.
+
+  Forms wrapping a button must use `display: contents` so the button participates
+  directly in the flex container as if the form element were not there.
+
+## 15.3 Roadmap A — Fixed-Length Card
+
+Use when all content is predictable and bounded: badges, prices,
+dates, statuses, short labels. Content width is known so layout
+can be rigid.
+
+Column collapse: two columns hold at all breakpoints. Content is
+known to fit.
+
+Row layout: Flexbox is appropriate for individual rows since right-
+column content width is known and bounded.
+
+    .row {
+        display: flex;
+        align-items: flex-start;
+        gap: [context-dependent];
+    }
+    .row-left  { flex: 1 1 auto; min-width: 0; }
+    .row-right { flex: 0 0 auto; }
+
+Word-break rules: not required. Fixed strings do not need overflow
+protection.
+
+## 15.4 Roadmap B — User-Submitted String Card
+
+Use when any field accepts user input: names, descriptions, addresses,
+review text, or any string without a known maximum length.
+
+Column collapse: may collapse to a single column at narrow breakpoints
+depending on string length risk. Evaluate per component.
+
+Row layout: use Grid for rows containing user-submitted strings.
+The right column sizes to its content; the left column takes the rest.
+
+    .row {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        gap: [context-dependent];
+    }
+
+Word-break — apply as a set from the start, never retrofit. These
+three properties must be applied together on every user-submitted
+string container when the component is first built. Do not wait for
+a layout break to discover the need for them.
+
+    .user-string {
+        overflow-wrap: break-word;
+        min-width: 0;
+        max-width: 100%;
+    }
+
+## 15.5 Responsive Table-to-Card Pattern
+
+Data tables cannot fit on narrow screens. Collapse them to stacked
+cards at a defined breakpoint using CSS only. Semantic HTML stays
+intact — no duplicate markup is needed. The table is visually
+transformed via display: block on the table elements.
+
+Before writing any CSS — every <td> must have a class name. When a
+table collapses to cards, each cell becomes a block-level element and
+loses its column context. Without a class name there is no way to
+target individual cells for different treatment — for example, giving
+the actions cell a top border and full-width buttons while leaving the
+name cell unstyled. Add class names to all <td> elements before
+writing collapse CSS.
+
+    @media (max-width: 40rem) {
+
+        .your-table thead { display: none; }
+
+        .your-table,
+        .your-table tbody,
+        .your-table tr {
+            display: block;
+            width: 100%;
+        }
+
+        .your-table tr {
+            border: 0.0625rem solid [border-color];
+            border-radius: 0.5rem;
+            margin-top: 1rem;
+            padding: 1rem;
+        }
+
+        .your-table tbody tr td {
+            display: block;
+            padding: 0.25rem 0;
+            border-bottom: none;
+        }
+
+        .your-table__actions {
+            margin-top: 0.75rem;
+            padding-top: 0.75rem;
+            border-top: 0.0625rem solid [border-color];
+        }
+
+        .your-table__actions-inner {
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        .your-table__actions-inner .btn,
+        .your-table__actions-inner form {
+            display: block;
+            width: 100%;
+        }
+
+        .your-table__actions-inner form button {
+            width: 100%;
+        }
+
+    }
+
+Spacing: apply margin-top to the table wrapper — not margin-bottom
+to whatever precedes it. See Spacing Ownership rule.
+
+
+
+# 16.0 Security Requirements
 
 Security decisions affect the model, routes, auth, and session handling.
 Retrofitting security after the fact is painful and error-prone. Every item
@@ -726,7 +1078,7 @@ the first iteration after launch.
 
 ---
 
-## 14.1 Critical — Block Deployment Until Resolved
+## 16.1 Critical — Block Deployment Until Resolved
 
 ### Input Sanitisation
 
@@ -813,7 +1165,7 @@ Stripe handles card processing — the application must never touch raw card dat
 
 ---
 
-## 14.2 High — Resolve Before Public Launch
+## 16.2 High — Resolve Before Public Launch
 
 ### CSRF Protection — Initialise on Day One
 
@@ -922,6 +1274,40 @@ Key headers this sets automatically: `X-Frame-Options: DENY`,
 `X-Content-Type-Options: nosniff`, `Referrer-Policy: strict-origin-when-cross-origin`.
 Adjust the CSP allowlist as external services are added (Stripe, Google Fonts, etc.).
 
+
+### Talisman-Ready Development — Build Standards
+
+Every Flask project is built Talisman-ready from day one. This means CSP compliance is a design
+constraint, not an afterthought.
+
+JavaScript
+
+  All JavaScript lives in external .js files in static/js/ from the first line of code written.
+  Inline <script> blocks are never used under any circumstances. No exceptions. If a script requires
+  server-side data from Jinja2, that data is passed via data- attributes on HTML elements. The
+  external JS file reads from those attributes. The {% block extra_js %}{% endblock %} block must be
+  present in base.html from the start of every project.
+
+CSS
+
+  All styling lives in external CSS files from the first line of code written. Inline style=
+  attributes are never used under any circumstances. No exceptions. If a widget requires complex
+  positioning — such as an overlay button on an input field — the classes are written in the
+  appropriate CSS file first, and those class names are applied in the HTML.
+
+Jinja2
+
+  Every use of | safe and Markup() must be justified in a code comment at the point of use. If
+  user-supplied content touches either, it must pass through bleach.clean() with a strict allowlist
+  before rendering.
+
+Talisman
+
+  Flask-Talisman is installed and initialized in __init__.py at project start — before any templates
+  are written. The initial CSP is strict: script-src: 'self', style-src: 'self', no
+  'unsafe-inline'. It is never relaxed without explicit owner approval.
+
+
 ### Account Enumeration Prevention
 
 Login and registration endpoints must never reveal whether an email address exists
@@ -936,7 +1322,7 @@ in the database. This prevents attackers from harvesting valid accounts.
 
 ---
 
-## 14.3 Medium — Resolve in First Post-Launch Iteration
+## 16.3 Medium — Resolve in First Post-Launch Iteration
 
 ### CORS Policy
 
@@ -1022,7 +1408,7 @@ manually, grant only SELECT, INSERT, UPDATE, DELETE on the application's tables.
 
 ---
 
-## 14.4 Low — Address When Convenient
+## 16.4 Low — Address When Convenient
 
 ### Health Check Endpoint
 
@@ -1036,7 +1422,7 @@ Return only `{"status": "ok"}`. No version numbers, DB details, or internal path
 
 ---
 
-## 14.5 Database Backup Protocol
+## 16.5 Database Backup Protocol
 
 Before any migration or deployment, run a manual backup. For Render PostgreSQL,
 use pg_dump from a local machine:
@@ -1056,7 +1442,7 @@ pg_restore -h [HOST] -U [USER] -d [DB_NAME] backup_file.dump
 
 ---
 
-## 14.6 Security Quick Reference
+## 16.6 Security Quick Reference
 
 | Item | Requirement |
 |---|---|
@@ -1087,44 +1473,6 @@ pg_restore -h [HOST] -U [USER] -d [DB_NAME] backup_file.dump
 **Hosting:** Render (not yet live — setup in separate chat)
 **Database:** PostgreSQL via Render (not yet live — setup in separate chat)
 **Domain:** greenfireglass.com (registered at Namecheap, not yet pointed to Render)
-
-## Colour Palette
-
-```
-GREENS
---color-forest-green:           #3A6B1A    Primary brand, buttons, links
---color-forest-green-hover:     #406932    Forest green hover state
---color-hillside-green:         #8F9783    Mid-tone earthy accent
---color-hillside-green-hover:   #A5AC9C    Hillside green hover state
---color-light-green:            #D8E6C8    Section backgrounds, subtle fills
---color-light-green-hover:      #C8DAB4    Light green hover state
---color-dark-section:           #3E473B    Hero, prodo sections, dark split sections
---color-nav-dark:               #2A302A    Nav bar, footer, dropdown panels
-
-ORANGES
---color-burnt-orange:           #C4622D    Accent, CTA buttons, chat bubble
---color-burnt-orange-hover:     #D4743A    Burnt orange hover state
-
-NAVY & BLUES
---color-navy:                   #2C3E50    Dark UI elements
---color-navy-hover:             #34495E    Navy hover state
---color-blue-dark:              #0047AB    Dark blue accent
---color-blue:                   #3498DB    Standard blue, links
---color-blue-hover:             #2980B9    Blue hover state
---color-blue-light:             #89C0E6    Light blue
---color-blue-light-hover:       #5DADE2    Light blue hover state
-
-BEIGES
---color-beige:                  #F5F0E8    Primary light background
---color-beige-hover:            #EDE8DC    Beige hover state
---color-beige-deep:             #EAE3D2    Deeper beige variant
-
-OTHER
---color-border:                 #D0CBBF    Light borders
---color-border-dark:            #4A5445    Dark borders
---color-error:                  #C0392B    Error states
---color-error-hover:            #A93226    Error hover state
-```
 
 ## Fonts
 
@@ -1201,9 +1549,78 @@ Push commands:
 - `nav.html` in templates was an orphaned file — it has been deleted. Nav lives
   inline in `base.html` only.
 - The owner uses Notepad++ for CSS and VS Code for HTML. VS Code shows color
-  swatches next to hex values — this is why the color dictionary in `base.html`
+  swatches next to hex values — this is why the color dictionary in CLAUDE.md
   must always have accurate hex values.
 - The owner makes direct edits to files and uploads updated versions. Always treat
   uploaded files as ground truth over your own copy.
+
+# ============================================================
+
+## Color Dictionary
+
+Add all new colours here AND in variables.css simultaneously.
+This is the sole reference — removed from base.html to keep deployed HTML clean.
+VS Code shows color swatches next to hex values below.
+
+```
+GREENS
+--color-forest-green:           #3A6B1A    Primary brand, buttons, links
+--color-forest-green-hover:     #406932    Forest green hover state
+--color-hillside-green:         #8F9783    Mid-tone earthy accent
+--color-hillside-green-hover:   #A5AC9C    Hillside green hover state
+--color-light-green:            #D8E6C8    Section backgrounds, subtle fills
+--color-light-green-hover:      #C8DAB4    Light green hover state
+--color-dark-section:           #3E473B    Hero, prodo sections, dark split sections
+--color-nav-dark:               #2A302A    Nav bar, footer, dropdown panels
+
+ORANGES
+--color-burnt-orange:           #C4622D    Primary button, CTAs, chat bubble
+--color-burnt-orange-hover:     #D4743A    Burnt orange hover state
+
+BROWNS
+--color-brown:                  #5C5828    Secondary button, destructive actions
+--color-brown-hover:            #424018    Earthy olive-brown hover state
+
+NAVY & BLUES
+--color-navy:                   #2C3E50    Dark UI, info elements
+--color-navy-hover:             #34495E    Navy hover state
+--color-blue-dark:              #0047AB    Dark blue accent
+--color-blue:                   #3498D8    Tertiary button (edit, view, informational)
+--color-blue-hover:             #2980B9    Blue hover state
+--color-blue-light:             #89C0E6    Light blue
+--color-blue-light-hover:       #5DADE2    Light blue hover state
+
+BEIGES
+--color-beige:                  #F5F0E8    Primary light background
+--color-beige-hover:            #EDE8DC    Beige hover state
+--color-beige-deep:             #EAE3D2    Deeper beige variant
+
+OTHER
+--color-border:                 #D0CBBF    Light borders
+--color-border-dark:            #4A5445    Dark borders
+--color-error:                  #C0392B    Error states
+--color-error-hover:            #A93226    Error hover state
+
+MAROON
+--color-maroon:                 #800000    Turn off / destructive stop action
+--color-maroon-hover:           #3C0008    Maroon hover state
+```
+
+## Z-Index Dictionary
+
+Document all z-index values here when adding or changing them.
+Gaps between values are intentional — room to insert layers if needed.
+
+```
+100   .product-zoom-panel          base.css       Zoom panel beside product image
+100   .nav-dropdown-panel          navigation.css Desktop nav dropdown (64rem+)
+300   .nav                         navigation.css Sticky nav bar
+300   .nav-links                   navigation.css Mobile nav panel (absolute)
+400   .chat-bubble-trigger         components.css Floating chat button
+400   .chat-panel                  components.css Chat message panel
+500   .modal-overlay               components.css Generic modal backdrop
+800   .lightbox                    base.css       Full-screen product image viewer
+900   .age-gate                    components.css Full-screen age gate overlay
+```
 
 # ============================================================

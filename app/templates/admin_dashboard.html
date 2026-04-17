@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+
+{% block title %}Admin Dashboard{% endblock %}
+
+{% block meta_description %}Green Fire admin dashboard.{% endblock %}
+
+{% block robots %}noindex, nofollow{% endblock %}
+
+{% block content %}
+<section class="section">
+    <div class="container container--narrow">
+
+        <div class="admin-page-header">
+            <h1>Admin Dashboard</h1>
+        </div>
+
+        <div class="admin-stat-row">
+            <div class="admin-stat">
+                <p class="admin-stat__number">{{ product_count }}</p>
+                <p class="admin-stat__label">Total Products</p>
+            </div>
+            <div class="admin-stat">
+                <p class="admin-stat__number">{{ active_count }}</p>
+                <p class="admin-stat__label">Active &amp; Available</p>
+            </div>
+            <div class="admin-stat">
+                <p class="admin-stat__number">{{ sold_count }}</p>
+                <p class="admin-stat__label">Sold</p>
+            </div>
+        </div>
+
+        <nav class="admin-nav-links">
+            <a href="{{ url_for('admin.products') }}"
+               class="btn btn-secondary">
+                Manage Products
+            </a>
+        </nav>
+
+    </div>
+</section>
+{% endblock %}

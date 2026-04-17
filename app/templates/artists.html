@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+
+{% block title %}Featured Artist{% endblock %}
+
+{% block meta_description %}
+Featured artist at Green Fire — premium American functional glass,
+University Place, Lincoln Nebraska.
+{% endblock %}
+
+{% block canonical %}{{ url_for('routes.featured_artist', _external=True) }}{% endblock %}
+
+{% block content %}
+<section class="section">
+    <div class="container container--narrow">
+        <h1>Featured Artist</h1>
+        <p class="text-muted">Coming soon.</p>
+    </div>
+</section>
+{% endblock %}

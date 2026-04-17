@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+
+{% block title %}Shipping &amp; Returns{% endblock %}
+
+{% block meta_description %}
+Shipping and returns policy — Green Fire, University Place, Lincoln Nebraska.
+Domestic US shipping only. Must be 21+.
+{% endblock %}
+
+{% block canonical %}{{ url_for('routes.shipping_returns', _external=True) }}{% endblock %}
+
+{% block content %}
+<section class="section">
+    <div class="container container--narrow">
+        <h1>Shipping &amp; Returns</h1>
+        <p class="text-muted">Coming soon.</p>
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+
+{% block title %}Log In{% endblock %}
+
+{% block meta_description %}Log in to your Green Fire account.{% endblock %}
+
+{% block robots %}noindex, nofollow{% endblock %}
+
+{% block content %}
+<section class="section">
+    <div class="container container--narrow">
+
+        <h1>Log In</h1>
+
+        <form action="{{ url_for('routes.login') }}"
+              method="POST"
+              class="auth-form">
+            <input type="hidden"
+                   name="csrf_token"
+                   value="{{ csrf_token() }}">
+
+            <div class="admin-form-group">
+                <label class="admin-form-label" for="email">Email</label>
+                <input type="email"
+                       id="email"
+                       name="email"
+                       class="form-input"
+                       required
+                       autocomplete="email"
+                       autofocus>
+            </div>
+
+            <div class="admin-form-group">
+                <label class="admin-form-label" for="password">
+                    Password
+                </label>
+                <input type="password"
+                       id="password"
+                       name="password"
+                       class="form-input"
+                       required
+                       autocomplete="current-password">
+            </div>
+
+            <button type="submit" class="btn btn-secondary btn-block">
+                Log In
+            </button>
+
+        </form>
+
+    </div>
+</section>
+{% endblock %}

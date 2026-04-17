@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+
+{% block title %}About{% endblock %}
+
+{% block meta_description %}
+About Green Fire — premium American functional glass at 2401 N 48th St,
+University Place, Lincoln Nebraska.
+{% endblock %}
+
+{% block canonical %}{{ url_for('routes.about', _external=True) }}{% endblock %}
+
+{% block content %}
+<section class="section">
+    <div class="container container--narrow">
+        <h1>About Green Fire</h1>
+        <p class="text-muted">Coming soon.</p>
+    </div>
+</section>
+{% endblock %}

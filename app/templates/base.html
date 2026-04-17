@@ -101,9 +101,12 @@
                 </button>
                 <ul class="nav-dropdown list-unstyled">
                     {% if current_user.is_authenticated %}
+                    {% if current_user.is_admin %}
+                    <li><a href="{{ url_for('admin.dashboard') }}" class="nav-dropdown-link">Admin</a></li>
+                    {% endif %}
                     <li><a href="{{ url_for('routes.account_dashboard') }}" class="nav-dropdown-link">My Account</a></li>
                     <li><a href="{{ url_for('routes.account_orders') }}" class="nav-dropdown-link">Order History</a></li>
-                    <li><a href="{{ url_for('routes.account_wishlist') }}" class="nav-dropdown-link">Wishlist</a></li>
+                    <li><a href="{{ url_for('routes.account_wishlist') }}" class="nav-dropdown-link">Wish List</a></li>
                     <li><a href="{{ url_for('routes.logout') }}" class="nav-dropdown-link">Log Out</a></li>
                     {% else %}
                     <li><a href="{{ url_for('routes.login') }}" class="nav-dropdown-link">Log In</a></li>
@@ -190,9 +193,12 @@
                 <h3 class="footer-col-heading">Account</h3>
                 <ul class="list-unstyled footer-links">
                     {% if current_user.is_authenticated %}
+                    {% if current_user.is_admin %}
+                    <li><a href="{{ url_for('admin.dashboard') }}" class="footer-link">Admin</a></li>
+                    {% endif %}
                     <li><a href="{{ url_for('routes.account_dashboard') }}" class="footer-link">My Account</a></li>
                     <li><a href="{{ url_for('routes.account_orders') }}" class="footer-link">Order History</a></li>
-                    <li><a href="{{ url_for('routes.account_wishlist') }}" class="footer-link">Wishlist</a></li>
+                    <li><a href="{{ url_for('routes.account_wishlist') }}" class="footer-link">Wish List</a></li>
                     <li><a href="{{ url_for('routes.logout') }}" class="footer-link">Log Out</a></li>
                     {% else %}
                     <li><a href="{{ url_for('routes.login') }}" class="footer-link">Log In</a></li>
@@ -243,44 +249,6 @@
 <script src="{{ url_for('static', filename='js/nav.js') }}" defer></script>
 
 {% block extra_js %}{% endblock %}
-
-<!-- ====================  COLOR DICTIONARY  ====================
-     Documentation only. Add all new colours here AND in variables.css.
-
-GREENS
---color-forest-green:           #3A6B1A    Primary brand, buttons, links
---color-forest-green-hover:     #406932    Forest green hover state
---color-hillside-green:         #8F9783    Mid-tone earthy accent
---color-hillside-green-hover:   #A5AC9C    Hillside green hover state
---color-light-green:            #D8E6C8    Section backgrounds, subtle fills
---color-light-green-hover:      #C8DAB4    Light green hover state
---color-dark-section:           #3E473B    Hero, prodo sections, dark split sections
---color-nav-dark:               #2A302A    Nav bar, footer, dropdown panels
-
-ORANGES
---color-burnt-orange:           #C4622D    Accent, CTA buttons, chat bubble
---color-burnt-orange-hover:     #D4743A    Burnt orange hover state
-
-NAVY & BLUES
---color-navy:                   #2C3E50    Dark UI, info elements
---color-navy-hover:             #34495E    Navy hover state
---color-blue-dark:              #0047AB    Dark blue accent
---color-blue:                   #3498DB    Standard blue, links
---color-blue-hover:             #2980B9    Blue hover state
---color-blue-light:             #89C0E6    Light blue
---color-blue-light-hover:       #5DADE2    Light blue hover state
-
-BEIGES
---color-beige:                  #F5F0E8    Primary light background
---color-beige-hover:            #EDE8DC    Beige hover state
---color-beige-deep:             #EAE3D2    Deeper beige variant
-
-OTHER
---color-border:                 #D0CBBF    Light borders
---color-border-dark:            #4A5445    Dark borders
---color-error:                  #C0392B    Error states
---color-error-hover:            #A93226    Error hover state
-============================================================== -->
 
 </body>
 </html>

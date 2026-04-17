@@ -1,0 +1,26 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(pip install:*)",
+      "Bash(git:*)",
+      "Bash(grep:*)",
+      "Bash(mkdir -p Amy_Likes_Fire Creep_Ganesh Creep_Totem Emperial_Runtz Emperial_SourPatchKids Ewok Jenkins_Coral Jenkins_Bonzai Merc_Minion_Blue Merc_Minion_Green-Gold Opinicus Jedi_Jack)",
+      "Bash(mv \"Amy_Likes_Fire_Pony.jpg\" \"Amy_Likes_Fire/\")",
+      "Bash(mv \"Creep_Ganesh.jpg\" \"Creep_Ganesh/\")",
+      "Bash(mv \"Creep_Totem.jpg\" \"Creep_Totem/\")",
+      "Bash(mv \"Emperial_Runtz_whitebackdrop.jpg\" \"Emperial_Runtz/\")",
+      "Bash(mkdir -p Josh_Mann_Uptake_Rig)",
+      "Bash(mv \"josh-mann-uptake-rig.jpg\" \"Josh_Mann_Uptake_Rig/Josh_Mann_Uptake_Rig_1.jpg\")",
+      "Bash(mv \"Amy_Likes_Fire/Amy_Likes_Fire_Pony.jpg\" \"Amy_Likes_Fire/Amy_Likes_Fire_1.jpg\")",
+      "Bash(mv \"Creep_Ganesh/Creep_Ganesh.jpg\" \"Creep_Ganesh/Creep_Ganesh_1.jpg\")",
+      "Bash(mv \"Creep_Totem/Creep_Totem.jpg\" \"Creep_Totem/Creep_Totem_1.jpg\")",
+      "Bash(python -c \"from app.products import PRODUCTS; headies = [p for p in PRODUCTS if p['product_type']=='heady']; print\\(f'{len\\(headies\\)} heady pieces loaded'\\); [print\\(f\\\\\"  {p['slug']:45} primary={p['primary_image']}\\\\\"\\) for p in headies]\")",
+      "Bash(mv joshmann_14mm_ground-joint/IMG_3331.jpg joshmann_14mm_ground-joint/joshmann_14mm_ground-joint_1.jpg)",
+      "Bash(mv joshmann_14mm_ground-joint/IMG_3332.jpg joshmann_14mm_ground-joint/joshmann_14mm_ground-joint_2.jpg)",
+      "Bash(mv joshmann_clear_rig/IMG_3333.jpg joshmann_clear_rig/joshmann_clear_rig_1.jpg)",
+      "Bash(mv joshmann_clear_rig/IMG_3334.jpg joshmann_clear_rig/joshmann_clear_rig_2.jpg)",
+      "Bash(mv joshmann_gold_fume/IMG_3327.jpg joshmann_gold_fume/joshmann_gold_fume_1.jpg)",
+      "Bash(python -c ':*)"
+    ]
+  }
+}

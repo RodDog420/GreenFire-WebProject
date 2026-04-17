@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+
+{% block title %}Terms of Service{% endblock %}
+
+{% block meta_description %}
+Terms of service — Green Fire, University Place, Lincoln Nebraska.
+{% endblock %}
+
+{% block canonical %}{{ url_for('routes.terms', _external=True) }}{% endblock %}
+
+{% block content %}
+<section class="section">
+    <div class="container container--narrow">
+        <h1>Terms of Service</h1>
+        <p class="text-muted">Coming soon.</p>
+    </div>
+</section>
+{% endblock %}
