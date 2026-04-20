@@ -3,17 +3,106 @@
 {% block title %}Shipping &amp; Returns{% endblock %}
 
 {% block meta_description %}
-Shipping and returns policy — Green Fire, University Place, Lincoln Nebraska.
-Domestic US shipping only. Must be 21+.
+Shipping and returns policy for Green Fire — Lincoln, Nebraska.
+Domestic US shipping only. All glass sales final. 21+ required.
 {% endblock %}
 
-{% block canonical %}{{ url_for('routes.shipping_returns', _external=True) }}{% endblock %}
+{% block robots %}index, follow{% endblock %}
+
+{% block canonical %}
+{{- url_for('routes.shipping_returns', _external=True) -}}
+{% endblock %}
+
+{% block og_title %}Shipping &amp; Returns — Green Fire{% endblock %}
+
+{% block og_url %}
+{{- url_for('routes.shipping_returns', _external=True) -}}
+{% endblock %}
 
 {% block content %}
 <section class="section">
     <div class="container container--narrow">
-        <h1>Shipping &amp; Returns</h1>
-        <p class="text-muted">Coming soon.</p>
+
+        <h1 class="policy-heading">Shipping &amp; Returns</h1>
+
+        <div class="policy-section">
+            <h2 class="policy-subheading">Shipping Rates</h2>
+            <p class="policy-body">
+                We ship to US addresses only via USPS Priority Mail.
+                Rates are based on order subtotal before tax.
+            </p>
+            <div class="policy-table">
+                <div class="policy-table__row">
+                    <span class="policy-table__label">Under $50</span>
+                    <span class="policy-table__value">$8.00</span>
+                </div>
+                <div class="policy-table__row">
+                    <span class="policy-table__label">$50 – $150</span>
+                    <span class="policy-table__value">$12.00</span>
+                </div>
+                <div class="policy-table__row">
+                    <span class="policy-table__label">Over $150</span>
+                    <span class="policy-table__value policy-table__value--free">
+                        Free
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        <div class="policy-section">
+            <h2 class="policy-subheading">Processing &amp; Delivery</h2>
+            <p class="policy-body">
+                Orders are processed and packed within 1–3 business days.
+                USPS Priority Mail transit is typically 1–3 additional business
+                days depending on destination.
+            </p>
+            <p class="policy-body">
+                You must be 21 or older to purchase. Adult signature is
+                required on delivery. Orders cannot be left unattended.
+            </p>
+        </div>
+
+        <div class="policy-section">
+            <h2 class="policy-subheading">Glass — All Sales Final</h2>
+            <p class="policy-body">
+                All glass sales are final. We do not accept returns or
+                exchanges on any glass item — heady pieces, production glass,
+                or otherwise. This is the standard for functional glass retail
+                and we hold to it without exception.
+            </p>
+            <p class="policy-body">
+                If your order arrives damaged in transit, contact us within
+                48 hours of delivery with photos of the damage and the
+                packaging. We will review and resolve on a case-by-case basis.
+            </p>
+        </div>
+
+        <div class="policy-section">
+            <h2 class="policy-subheading">Non-Glass Items — 14-Day Returns</h2>
+            <p class="policy-body">
+                Vaporizers, non-glass accessories, and tools — including
+                titanium dab tools, carb caps, stainless steel grinders,
+                and all electronic devices — may be returned within 14 days
+                of delivery, provided they are unused and in original
+                packaging.
+            </p>
+            <p class="policy-body">
+                To initiate a return, contact us before sending anything back.
+                Return shipping is the customer's responsibility. Refunds are
+                issued to the original payment method once the item is received
+                and inspected.
+            </p>
+        </div>
+
+        <div class="policy-section">
+            <h2 class="policy-subheading">Questions</h2>
+            <p class="policy-body">
+                If you have questions about an order or a return, reach us
+                through the
+                <a href="{{ url_for('routes.contact') }}">contact page</a>.
+            </p>
+        </div>
+
     </div>
 </section>
 {% endblock %}

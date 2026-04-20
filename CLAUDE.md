@@ -629,18 +629,35 @@ properties to preserve previously set values. See Section 6.5.
    SECTION NAME --- Brief description
    ============================================== */
 ```
-
-## 10.5 No HTML Comments
-
-Do not add HTML comments to templates unless genuine complexity warrants it. Comments belong
-in Python and CSS files.
-
-## 10.6 Container Integrity
+## 10.5 Container Integrity
 
 - Content must never break out of its container
 - Always set `overflow-wrap: break-word` on user-generated content
 - Always set `min-width: 0` on grid and flex children that contain text
 - Test all containers at 320px before considering complete
+
+## 10.6 Button Integrity, Spacing, and Container Safety
+
+Button Spacing and Container Safety
+
+External spacing — buttons own their top margin.
+A button that follows any input, label, or content element must carry margin-top directly on itself. Never rely on the parent container or the preceding element to provide this gap. This
+applies to every button in every context.
+
+Container safety — always paired as a set. Any button placed inside a bounded container must carry all three of the following together:
+    ```css
+    overflow-wrap: break-word;  /* Break long strings */
+    max-width: 100%;           /* Never exceed container */
+    min-width: 0;              /* Allow flex/grid shrinking */
+```
+Never apply only one or two of these. They work as a set. Applying max-width: 100% alone may appear to fix the overflow while leaving the button in an unpredictable state at edge-case widths.
+
+Full-width form buttons — .btn-block.
+A button that should span the full width of its form uses the .btn-block modifier. This
+  class carries both the width declaration and the container safety set so they are
+never separated.
+
+---
 
 ## 10.7 Database & Data Integrity
 
@@ -656,9 +673,7 @@ in Python and CSS files.
 - URL slugs clean and descriptive — never expose raw database IDs
 - Schema.org structured data on product and content pages
 
-## 10.9 HTML Line Length
 
-Keep HTML within 80 characters per line. Write vertically, not horizontally.
 
 ---
 
@@ -674,10 +689,17 @@ In practice: avoid placing sibling elements side by side in raw HTML unless they
 genuinely equivalent in importance and always short in content. If either element could
 ever be long, give each its own vertical block.
 
+## 11.1 HTML Line Length
+
+Keep HTML within 80 characters per line. Write vertically, not horizontally.
+
+## 11.2 No HTML Comments
+
+Do not add HTML comments to templates unless genuine complexity warrants it. Comments belong in A) CLAUDE.md and/or B) owners private notes and/or C) CSS files; ie: within CSS code body and/or at bottom of CSS files.
+
 ---
 
 # 12.0 CSS Layout — Grid and Flexbox Conventions
-
 ## 12.1 Always Pair max-width with width: 100%
 
 Any container element that uses `max-width` must always have `width: 100%` alongside it.
@@ -1064,7 +1086,19 @@ writing collapse CSS.
 Spacing: apply margin-top to the table wrapper — not margin-bottom
 to whatever precedes it. See Spacing Ownership rule.
 
-
+## 15.5 Side-by-side buttons with unequal text lengths if buttons are inside <form> tags: 
+```Align-items: stretch``` on the flex container. Each form wrapper for action butons at bottom of cards gets:
+            ```css  
+            display: flex; 
+            flex-direction: column; 
+            flex: 1 1 0
+            ```
+The button inside gets:
+            ```css 
+            flex: 1 1 0; white-space: 
+            normal; width: 100%. 
+            ```
+The taller button sets the row height; the shorter one stretches to match.
 
 # 16.0 Security Requirements
 

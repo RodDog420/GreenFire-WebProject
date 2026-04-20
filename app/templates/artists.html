@@ -1,19 +1,145 @@
 {% extends 'base.html' %}
 
-{% block title %}Featured Artist{% endblock %}
+{% block title %}Featured Artist — Josh Mann{% endblock %}
 
 {% block meta_description %}
-Featured artist at Green Fire — premium American functional glass,
-University Place, Lincoln Nebraska.
+Josh Mann — Humboldt County glass artist with over thirty years at the torch.
+Spoons, rigs, heady pieces, wig-wag, reticello, and fuming. Featured at Green Fire, Lincoln NE.
 {% endblock %}
 
-{% block canonical %}{{ url_for('routes.featured_artist', _external=True) }}{% endblock %}
+{% block robots %}index, follow{% endblock %}
+
+{% block canonical %}
+{{- url_for('routes.featured_artist', _external=True) -}}
+{% endblock %}
+
+{% block og_title %}Josh Mann — Featured Artist at Green Fire{% endblock %}
+
+{% block og_description %}
+Functional heady glass and production pieces by Josh Mann,
+featured at Green Fire in Lincoln NE.
+{% endblock %}
+
+{% block og_type %}profile{% endblock %}
+
+{% block og_url %}
+{{- url_for('routes.featured_artist', _external=True) -}}
+{% endblock %}
 
 {% block content %}
-<section class="section">
-    <div class="container container--narrow">
-        <h1>Featured Artist</h1>
-        <p class="text-muted">Coming soon.</p>
+
+<section class="section section--dark artist-hero">
+    <div class="container">
+        <div class="artist-hero__inner">
+            <h1 class="artist-hero__name">Josh Mann</h1>
+            <p class="artist-hero__title">Featured Artist</p>
+            <a href="https://www.instagram.com/joshmann_glass/"
+               class="artist-hero__instagram"
+               target="_blank"
+               rel="noopener noreferrer"
+               aria-label="Josh Mann on Instagram">
+                <svg xmlns="http://www.w3.org/2000/svg"
+                     viewBox="0 0 24 24"
+                     fill="none"
+                     stroke="currentColor"
+                     stroke-width="2"
+                     stroke-linecap="round"
+                     stroke-linejoin="round"
+                     aria-hidden="true">
+                    <rect x="2" y="2" width="20" height="20"
+                          rx="5" ry="5"></rect>
+                    <circle cx="12" cy="12" r="4"></circle>
+                    <circle cx="17.5" cy="6.5" r="1"
+                            fill="currentColor"
+                            stroke="none"></circle>
+                </svg>
+                @joshmann_glass
+            </a>
+        </div>
     </div>
 </section>
+
+<section class="section artist-bio">
+    <div class="container">
+        <div class="artist-bio__inner">
+
+            {% if portraits %}
+            <div class="artist-bio__portraits">
+                <img class="artist-bio__portrait-primary"
+                     src="{{ url_for('static', filename=portraits[0]) }}"
+                     alt="Josh Mann"
+                     loading="lazy">
+                {% if portraits | length > 1 %}
+                <div class="artist-bio__portrait-thumbs">
+                    {% for portrait in portraits[1:] %}
+                    <img class="artist-bio__portrait-thumb"
+                         src="{{ url_for('static', filename=portrait) }}"
+                         alt="Josh Mann"
+                         loading="lazy">
+                    {% endfor %}
+                </div>
+                {% endif %}
+            </div>
+            {% endif %}
+
+            <div class="artist-bio__text-block">
+                <p class="artist-bio__text">
+                    Josh Mann grew up outside Arcata, deep in Humboldt County —
+                    one of the original centers of American functional glass. He
+                    has been blowing glass for over thirty years, and it shows in
+                    every piece he makes.
+                </p>
+                <p class="artist-bio__text">
+                    Josh works across the full range of functional forms: spoons,
+                    sherlocks, hammers, rigs, and one-of-a-kind heady pieces. He
+                    is technically accomplished in wig-wag and reticello work —
+                    two of the most demanding patterning techniques in the craft —
+                    and he is an expert at fuming, the process of vaporizing
+                    precious metals onto glass to create color that shifts with
+                    the angle of light.
+                </p>
+                <p class="artist-bio__text">
+                    We have carried Josh's work for ten years. He is available
+                    for custom pieces — if you have something specific in mind,
+                    come in and ask.
+                </p>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+{% if products %}
+<section class="section section--dark artist-work">
+    <div class="container">
+        <h2 class="artist-work__heading">Available Work</h2>
+        <div class="product-grid">
+            {% for product in products %}
+            <a href="{{ url_for('routes.product_detail', slug=product.slug) }}"
+               class="product-card"
+               aria-label="{{ product.name }}">
+                {% if product.primary_image %}
+                <img class="product-card__img"
+                     src="{{ url_for('static', filename=product.primary_image) }}"
+                     alt="{{ product.name }}"
+                     loading="lazy">
+                {% else %}
+                <div class="product-card__img product-card__img--placeholder"
+                     role="img"
+                     aria-label="{{ product.name }} — no image available">
+                </div>
+                {% endif %}
+                <div class="product-card__info">
+                    <p class="product-card__name">{{ product.name }}</p>
+                    <p class="product-card__price">
+                        ${{ "{:,}".format(product.price_cents // 100) }}
+                    </p>
+                </div>
+            </a>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endif %}
+
 {% endblock %}

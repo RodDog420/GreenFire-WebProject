@@ -15,16 +15,18 @@
         <div class="admin-page-header">
             <h1>{{ 'Edit: ' ~ product.name if product else 'Add Product' }}</h1>
             <a href="{{ url_for('admin.products') }}"
-               class="btn btn-ghost btn-sm">
+               class="btn btn-ghost btn-sm mt-2">
                 &larr; All Products
             </a>
         </div>
 
-        <form action="{{ url_for('admin.product_edit', product_id=product.id)
+        <form id="product-form"
+              action="{{ url_for('admin.product_edit', product_id=product.id)
                          if product
                          else url_for('admin.product_new') }}"
               method="POST"
-              enctype="multipart/form-data">
+              enctype="multipart/form-data"
+              class="mt-2">
 
             <input type="hidden"
                    name="csrf_token"
@@ -95,7 +97,12 @@
                             <option value="vape"
                                 {{ 'selected' if product and
                                    product.product_type == 'vape' }}>
-                                Vape / Accessory
+                                Vape
+                            </option>
+                            <option value="tool"
+                                {{ 'selected' if product and
+                                   product.product_type == 'tool' }}>
+                                Tool
                             </option>
                         </select>
                     </div>
@@ -193,6 +200,41 @@
                                {{ 'checked' if product and product.is_sold }}>
                         Sold
                     </label>
+                    <label class="admin-checkbox-label">
+                        <input type="checkbox"
+                               name="is_featured"
+                               {{ 'checked' if product and product.is_featured }}>
+                        Featured Artist
+                    </label>
+                    <div class="admin-featured-order">
+                        <label class="admin-form-label"
+                               for="featured_order">
+                            Position
+                        </label>
+                        <input type="text"
+                               id="featured_order"
+                               name="featured_order"
+                               class="form-input admin-featured-order__input"
+                               inputmode="numeric"
+                               pattern="[0-9]*"
+                               placeholder="1, 2, 3…"
+                               value="{{ product.featured_order
+                                        if product and product.featured_order
+                                        is not none else '' }}">
+                    </div>
+                </div>
+
+                <div class="admin-form-group">
+                    <label class="admin-form-label" for="quantity">
+                        Quantity
+                    </label>
+                    <input type="text"
+                           id="quantity"
+                           name="quantity"
+                           class="form-input"
+                           value="{{ product.quantity if product else 1 }}"
+                           inputmode="numeric"
+                           pattern="[0-9]*">
                 </div>
 
                 <div class="admin-form-row">
@@ -274,7 +316,7 @@
                     <label class="admin-form-label" for="instagram">
                         Instagram URL
                     </label>
-                    <input type="url"
+                    <input type="text"
                            id="instagram"
                            name="instagram"
                            class="form-input"
@@ -532,39 +574,10 @@
 
 
             <!-- ============================================================
-                 IMAGES
+                 UPLOAD IMAGES
                  ============================================================ -->
             <div class="admin-form-section">
-                <h2 class="admin-form-section__heading">Images</h2>
-
-                {% if existing_images %}
-                <div class="admin-image-grid">
-                    {% for img in existing_images %}
-                    <div class="admin-image-item">
-                        <img src="{{ url_for('static',
-                                             filename=img.image_url) }}"
-                             alt="{{ img.alt_text }}"
-                             class="admin-image-thumb">
-                        <form action="{{ url_for(
-                                  'admin.product_image_delete',
-                                  product_id=product.id,
-                                  image_id=img.id) }}"
-                              method="POST"
-                              class="form-inline-action">
-                            <input type="hidden"
-                                   name="csrf_token"
-                                   value="{{ csrf_token() }}">
-                            <button type="submit"
-                                    class="btn btn-sm admin-image-delete"
-                                    onclick="return confirm(
-                                        'Delete this image?')">
-                                Delete
-                            </button>
-                        </form>
-                    </div>
-                    {% endfor %}
-                </div>
-                {% endif %}
+                <h2 class="admin-form-section__heading">Upload Images</h2>
 
                 <div class="admin-form-group">
                     <label class="admin-form-label" for="images">
@@ -601,8 +614,7 @@
                               name="description"
                               class="form-input admin-textarea"
                               rows="4"
-                              placeholder="Shown on the product detail page.
-                              Leave blank to omit.">{{ product.description
+                              placeholder="Shown on the product detail page. Leave blank to omit.">{{ product.description
                                   if product else '' }}</textarea>
                 </div>
 
@@ -615,25 +627,117 @@
                               class="form-input admin-textarea"
                               rows="3"
                               maxlength="155"
-                              placeholder="Leave blank to auto-generate.
-                              Max 155 characters.">{{ product.meta_description
+                              placeholder="Leave blank to auto-generate. Max 155 characters.">{{ product.meta_description
                                   if product else '' }}</textarea>
                 </div>
 
             </div>
 
 
-            <div class="admin-form-actions">
-                <button type="submit" class="btn btn-secondary">
-                    {{ 'Save Changes' if product else 'Add Product' }}
-                </button>
-                <a href="{{ url_for('admin.products') }}"
-                   class="btn btn-ghost">
-                    Cancel
-                </a>
-            </div>
-
         </form>
+
+        <div class="admin-form-actions">
+            <button type="submit"
+                    form="product-form"
+                    class="btn btn-secondary">
+                {{ 'Save Changes' if product else 'Add Product' }}
+            </button>
+            <a href="{{ url_for('admin.products') }}"
+               class="btn btn-brown">
+                Cancel
+            </a>
+            {% if product %}
+            <form action="{{ url_for('admin.product_delete',
+                                    product_id=product.id) }}"
+                  method="POST">
+                <input type="hidden"
+                       name="csrf_token"
+                       value="{{ csrf_token() }}">
+                <button type="submit"
+                        class="btn btn-error"
+                        onclick="return confirm('Delete \u201c{{ product.name }}\u201d? This cannot be undone.')">
+                    Delete Product
+                </button>
+            </form>
+            {% endif %}
+        </div>
+
+        {% if existing_images %}
+        <div class="admin-form-section mt-4">
+            <h2 class="admin-form-section__heading">Manage Images</h2>
+            <div class="admin-image-grid">
+                {% for img in existing_images %}
+                <div class="admin-image-item">
+
+                    <span class="admin-image-badge
+                                 {%- if loop.first %} admin-image-badge--primary{% endif %}">
+                        {{ 'Primary' if loop.first else '#' ~ loop.index }}
+                    </span>
+
+                    <img src="{{ url_for('static', filename=img.image_url) }}"
+                         alt="{{ img.alt_text }}"
+                         class="admin-image-thumb">
+
+                    <div class="admin-image-controls">
+                        {% if not loop.first %}
+                        <form action="{{ url_for('admin.product_image_move_up',
+                                                 product_id=product.id,
+                                                 image_id=img.id) }}"
+                              method="POST"
+                              class="form-inline-action">
+                            <input type="hidden"
+                                   name="csrf_token"
+                                   value="{{ csrf_token() }}">
+                            <button type="submit"
+                                    class="btn btn-sm btn-ghost"
+                                    aria-label="Move up">
+                                &#8593;
+                            </button>
+                        </form>
+                        {% else %}
+                        <span class="admin-image-controls__spacer"></span>
+                        {% endif %}
+
+                        {% if not loop.last %}
+                        <form action="{{ url_for('admin.product_image_move_down',
+                                                 product_id=product.id,
+                                                 image_id=img.id) }}"
+                              method="POST"
+                              class="form-inline-action">
+                            <input type="hidden"
+                                   name="csrf_token"
+                                   value="{{ csrf_token() }}">
+                            <button type="submit"
+                                    class="btn btn-sm btn-ghost"
+                                    aria-label="Move down">
+                                &#8595;
+                            </button>
+                        </form>
+                        {% else %}
+                        <span class="admin-image-controls__spacer"></span>
+                        {% endif %}
+
+                        <form action="{{ url_for('admin.product_image_delete',
+                                                 product_id=product.id,
+                                                 image_id=img.id) }}"
+                              method="POST"
+                              class="form-inline-action">
+                            <input type="hidden"
+                                   name="csrf_token"
+                                   value="{{ csrf_token() }}">
+                            <button type="submit"
+                                    class="btn btn-sm admin-image-delete"
+                                    onclick="return confirm('Delete this image?')">
+                                &times;
+                            </button>
+                        </form>
+                    </div>
+
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
 
     </div>
 </section>

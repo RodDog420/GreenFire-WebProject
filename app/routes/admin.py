@@ -10,6 +10,13 @@ from werkzeug.utils import secure_filename
 from app import db
 from app.models import Product, ProductImage
 
+_BACKUP_PATH = os.environ.get(
+    'INVENTORY_BACKUP_PATH',
+    r'C:\Users\rodkr\GreenFire-WebProject_Support'
+    r'\GreenFireSite_BackUp\GF_Inventory_Backup'
+    r'\gf_inventory_backup.json'
+)
+
 admin_bp = Blueprint('admin', __name__)
 
 _ALLOWED_EXTENSIONS = {'.jpg', '.jpeg', '.png', '.webp'}
@@ -46,6 +53,16 @@ def _parse_price(value):
         return 0
 
 
+def _sync_primary(product_id):
+    """Set product.primary_image to the image with the lowest sort_order."""
+    product = Product.query.get_or_404(product_id)
+    first = (ProductImage.query
+             .filter_by(product_id=product_id)
+             .order_by(ProductImage.sort_order)
+             .first())
+    product.primary_image = first.image_url if first else None
+
+
 def _parse_list_field(value):
     """Convert comma-separated string to JSON, or None if empty."""
     if not value:
@@ -75,6 +92,7 @@ def _apply_form(product, form):
     product.includes         = form.get('includes', '').strip() or None
     product.metal_type       = form.get('metal_type', '').strip() or None
     product.meta_description = form.get('meta_description', '').strip() or None
+    product.quantity         = int(form.get('quantity', 1) or 1)
     product.acquisition_type = form.get('acquisition_type', 'outright')
     product.gemstones        = 'gemstones'   in form
     product.electroform      = 'electroform' in form
@@ -83,6 +101,9 @@ def _apply_form(product, form):
     product.is_premium       = 'is_premium'  in form
     product.is_active        = 'is_active'   in form
     product.is_sold          = 'is_sold'     in form
+    product.is_featured      = 'is_featured' in form
+    fo = form.get('featured_order', '').strip()
+    product.featured_order   = int(fo) if fo.isdigit() else None
     product.variants_json    = _parse_list_field(form.get('variants', ''))
     product.attributes_json  = _parse_list_field(form.get('attributes', ''))
 
@@ -132,6 +153,134 @@ def _save_images(product, files):
 
 
 # ==========================================================================
+# INVENTORY BACKUP & SEED
+# ==========================================================================
+
+def _export_backup():
+    """
+    Write the current DB product state to the inventory backup JSON file.
+    Called after every seed and after every product add/edit/delete.
+    """
+    products = (Product.query
+                .order_by(Product.product_type, Product.name)
+                .all())
+    data = []
+    for p in products:
+        images = (ProductImage.query
+                  .filter_by(product_id=p.id)
+                  .order_by(ProductImage.sort_order)
+                  .all())
+        data.append({
+            'slug':                p.slug,
+            'name':                p.name,
+            'product_type':        p.product_type,
+            'subcategory':         p.subcategory,
+            'series':              p.series,
+            'credit_label':        p.credit_label,
+            'credit':              p.credit,
+            'instagram':           p.instagram,
+            'collab':              p.collab,
+            'price_cents':         p.price_cents,
+            'height':              p.height,
+            'technique':           p.technique,
+            'joint_size':          p.joint_size,
+            'glass_color':         p.glass_color,
+            'glass_color_company': p.glass_color_company,
+            'gemstones':           p.gemstones,
+            'electroform':         p.electroform,
+            'fume':                p.fume,
+            'description':         p.description,
+            'is_sold':             p.is_sold,
+            'is_active':           p.is_active,
+            'is_featured':         p.is_featured,
+            'featured_order':      p.featured_order,
+            'quantity':            p.quantity,
+            'meta_description':    p.meta_description,
+            'perc':                p.perc,
+            'reclaimer':           p.reclaimer,
+            'includes':            p.includes,
+            'variants':            p.variants,
+            'attributes':          p.attributes,
+            'is_premium':          p.is_premium,
+            'metal_type':          p.metal_type,
+            'primary_image':       p.primary_image,
+            'acquisition_type':    p.acquisition_type,
+            'images': [img.image_url for img in images],
+        })
+    os.makedirs(os.path.dirname(_BACKUP_PATH), exist_ok=True)
+    with open(_BACKUP_PATH, 'w', encoding='utf-8') as f:
+        json.dump(data, f, indent=2)
+
+
+def _seed_from_products():
+    """
+    Insert products from the backup JSON into the DB.
+    Skips any slug that already exists.
+    Returns (inserted, skipped) counts.
+    """
+    with open(_BACKUP_PATH, 'r', encoding='utf-8') as f:
+        PRODUCTS = json.load(f)
+    inserted = 0
+    skipped  = 0
+    for p in PRODUCTS:
+        if Product.query.filter_by(slug=p['slug']).first():
+            skipped += 1
+            continue
+        product = Product(
+            slug=                p['slug'],
+            name=                p['name'],
+            product_type=        p['product_type'],
+            subcategory=         p.get('subcategory'),
+            series=              p.get('series'),
+            credit_label=        p.get('credit_label'),
+            credit=              p.get('credit'),
+            instagram=           p.get('instagram'),
+            collab=              p.get('collab'),
+            price_cents=         p['price_cents'],
+            height=              p.get('height'),
+            technique=           p.get('technique'),
+            joint_size=          p.get('joint_size'),
+            glass_color=         p.get('glass_color'),
+            glass_color_company= p.get('glass_color_company'),
+            gemstones=           p.get('gemstones', False),
+            electroform=         p.get('electroform', False),
+            fume=                p.get('fume', False),
+            description=         p.get('description', ''),
+            is_sold=             p.get('is_sold', False),
+            is_active=           p.get('is_active', True),
+            is_featured=         p.get('is_featured', False),
+            featured_order=      p.get('featured_order'),
+            quantity=            p.get('quantity', 1),
+            meta_description=    p.get('meta_description'),
+            perc=                p.get('perc'),
+            reclaimer=           p.get('reclaimer', False),
+            includes=            p.get('includes'),
+            variants_json=       json.dumps(p['variants'])
+                                 if p.get('variants') else None,
+            attributes_json=     json.dumps(p['attributes'])
+                                 if p.get('attributes') else None,
+            is_premium=          p.get('is_premium', False),
+            metal_type=          p.get('metal_type'),
+            primary_image=       p.get('primary_image'),
+            acquisition_type=    p.get('acquisition_type', 'outright'),
+        )
+        db.session.add(product)
+        db.session.flush()
+        # All images in order — backup JSON images list is the
+        # complete ordered set (sort_order 0, 1, 2 ...)
+        for i, img_url in enumerate(p.get('images', [])):
+            db.session.add(ProductImage(
+                product_id= product.id,
+                image_url=  img_url,
+                alt_text=   product.name,
+                sort_order= i,
+            ))
+        inserted += 1
+    db.session.commit()
+    return inserted, skipped
+
+
+# ==========================================================================
 # DASHBOARD
 # ==========================================================================
 
@@ -148,6 +297,27 @@ def dashboard():
         active_count=active_count,
         sold_count=sold_count,
     )
+
+
+# ==========================================================================
+# SEED / RESTORE
+# ==========================================================================
+
+@admin_bp.route('/seed', methods=['POST'])
+@login_required
+@require_role('admin')
+def seed_products():
+    try:
+        inserted, skipped = _seed_from_products()
+        _export_backup()
+        flash(
+            f'Inventory loaded: {inserted} added, {skipped} already existed.',
+            'success'
+        )
+    except Exception as e:
+        db.session.rollback()
+        flash(f'Seed failed: {e}', 'error')
+    return redirect(url_for('admin.dashboard'))
 
 
 # ==========================================================================
@@ -191,6 +361,7 @@ def product_new():
 
         _save_images(product, request.files.getlist('images'))
         db.session.commit()
+        _export_backup()
 
         flash(f'"{product.name}" added.', 'success')
         return redirect(url_for('admin.products'))
@@ -212,6 +383,7 @@ def product_edit(product_id):
         _apply_form(product, request.form)
         _save_images(product, request.files.getlist('images'))
         db.session.commit()
+        _export_backup()
         flash(f'"{product.name}" updated.', 'success')
         return redirect(url_for('admin.products'))
 
@@ -237,6 +409,7 @@ def product_toggle_sold(product_id):
     product = Product.query.get_or_404(product_id)
     product.is_sold = not product.is_sold
     db.session.commit()
+    _export_backup()
     status = 'Marked as sold' if product.is_sold else 'Marked as available'
     flash(f'{status}: {product.name}', 'success')
     return redirect(url_for('admin.products'))
@@ -249,8 +422,42 @@ def product_toggle_active(product_id):
     product = Product.query.get_or_404(product_id)
     product.is_active = not product.is_active
     db.session.commit()
+    _export_backup()
     status = 'Activated' if product.is_active else 'Deactivated'
     flash(f'{status}: {product.name}', 'success')
+    return redirect(url_for('admin.products'))
+
+
+# ==========================================================================
+# DELETE PRODUCT
+# ==========================================================================
+
+@admin_bp.route('/products/<int:product_id>/delete', methods=['POST'])
+@login_required
+@require_role('admin')
+def product_delete(product_id):
+    product = Product.query.get_or_404(product_id)
+    name = product.name
+
+    images = ProductImage.query.filter_by(product_id=product_id).all()
+    for img in images:
+        file_path = os.path.join(
+            current_app.root_path, 'static', img.image_url
+        )
+        if os.path.exists(file_path):
+            os.remove(file_path)
+
+    upload_dir = os.path.join(
+        current_app.root_path, 'static', 'images', 'products', product.slug
+    )
+    if os.path.isdir(upload_dir) and not os.listdir(upload_dir):
+        os.rmdir(upload_dir)
+
+    db.session.delete(product)
+    db.session.commit()
+    _export_backup()
+
+    flash(f'"{name}" deleted.', 'success')
     return redirect(url_for('admin.products'))
 
 
@@ -277,13 +484,53 @@ def product_image_delete(product_id, image_id):
 
     db.session.delete(img)
 
-    product = Product.query.get_or_404(product_id)
-    first = (ProductImage.query
-             .filter_by(product_id=product_id)
-             .order_by(ProductImage.sort_order)
-             .first())
-    product.primary_image = first.image_url if first else None
+    _sync_primary(product_id)
     db.session.commit()
+    _export_backup()
 
     flash('Image deleted.', 'success')
+    return redirect(url_for('admin.product_edit', product_id=product_id))
+
+
+@admin_bp.route(
+    '/products/<int:product_id>/images/<int:image_id>/move-up',
+    methods=['POST'],
+)
+@login_required
+@require_role('admin')
+def product_image_move_up(product_id, image_id):
+    img = ProductImage.query.filter_by(
+        id=image_id, product_id=product_id
+    ).first_or_404()
+    prev = (ProductImage.query
+            .filter_by(product_id=product_id)
+            .filter(ProductImage.sort_order < img.sort_order)
+            .order_by(ProductImage.sort_order.desc())
+            .first())
+    if prev:
+        img.sort_order, prev.sort_order = prev.sort_order, img.sort_order
+        _sync_primary(product_id)
+        db.session.commit()
+    return redirect(url_for('admin.product_edit', product_id=product_id))
+
+
+@admin_bp.route(
+    '/products/<int:product_id>/images/<int:image_id>/move-down',
+    methods=['POST'],
+)
+@login_required
+@require_role('admin')
+def product_image_move_down(product_id, image_id):
+    img = ProductImage.query.filter_by(
+        id=image_id, product_id=product_id
+    ).first_or_404()
+    next_img = (ProductImage.query
+                .filter_by(product_id=product_id)
+                .filter(ProductImage.sort_order > img.sort_order)
+                .order_by(ProductImage.sort_order)
+                .first())
+    if next_img:
+        img.sort_order, next_img.sort_order = next_img.sort_order, img.sort_order
+        _sync_primary(product_id)
+        db.session.commit()
     return redirect(url_for('admin.product_edit', product_id=product_id))

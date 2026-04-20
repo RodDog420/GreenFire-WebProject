@@ -36,6 +36,24 @@
             </a>
         </nav>
 
+        <div class="admin-backup-card">
+            <h2>Inventory Backup</h2>
+            <p>Load all products from the local backup file into
+               the database. Products already in the database
+               (matched by slug) are skipped — this is safe to
+               run more than once.</p>
+            <form action="{{ url_for('admin.seed_products') }}"
+                  method="POST"
+                  class="form-inline-action">
+                <input type="hidden"
+                       name="csrf_token"
+                       value="{{ csrf_token() }}">
+                <button type="submit" class="btn btn-secondary">
+                    Load Inventory from Backup
+                </button>
+            </form>
+        </div>
+
     </div>
 </section>
 {% endblock %}

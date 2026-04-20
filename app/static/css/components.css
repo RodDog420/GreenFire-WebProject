@@ -152,6 +152,30 @@ No non-color variables — all values hardcoded directly.
     text-decoration: none;
 }
 
+/* Error — permanent destructive action (Delete) */
+.btn-error {
+    background-color: var(--color-error);
+    color: var(--color-beige);
+    border-color: var(--color-error);
+}
+
+.btn-error:hover {
+    background-color: var(--color-error-hover);
+    border-color: var(--color-error-hover);
+    color: var(--color-beige);
+    text-decoration: none;
+}
+
+/* Block variant — full-width form buttons */
+.btn-block {
+    display: flex;
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    overflow-wrap: break-word;
+    margin-top: 1.5rem;
+}
+
 /* Size variants */
 .btn-sm {
     font-size: 0.875rem;
@@ -684,6 +708,26 @@ No non-color variables — all values hardcoded directly.
 }
 
 
+/* Archive item wrapper — holds card link + optional admin action button */
+.archive-item {
+    display: flex;
+    flex-direction: column;
+}
+
+.archive-item .product-card {
+    flex: 1 1 auto;
+}
+
+.archive-item__action {
+    margin-top: 0.5rem;
+}
+
+.archive-item__action .btn {
+    display: block;
+    width: 100%;
+    text-align: center;
+}
+
 /* ==============================================
    PRODUCT VARIANTS --- Color/option selector
    ============================================== */
@@ -779,3 +823,12 @@ No non-color variables — all values hardcoded directly.
 .form-input::placeholder {
     color: var(--color-hillside-green);
 }
+
+/* ==============================================
+   SPACING UTILITIES
+   ============================================== */
+
+.mt-1 { margin-top: 0.5rem; }
+.mt-2 { margin-top: 1rem; }
+.mt-3 { margin-top: 1.5rem; }
+.mt-4 { margin-top: 2rem; }

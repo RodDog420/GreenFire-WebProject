@@ -9,8 +9,59 @@
 {% block content %}
 <section class="section">
     <div class="container container--narrow">
-        <h1>Order History</h1>
-        <p class="text-muted">Coming soon.</p>
+
+        <div class="account-header">
+            <h1 class="account-header__name">Orders</h1>
+            <a href="{{ url_for('routes.account_dashboard') }}"
+               class="account-header__back">
+                &larr; My Account
+            </a>
+        </div>
+
+        {% if orders %}
+        <ul class="order-list">
+            {% for order in orders %}
+            <li class="order-card">
+                <div class="order-card__row">
+                    <span class="order-card__label">Order</span>
+                    <span class="order-card__value">#{{ order.id }}</span>
+                </div>
+                <div class="order-card__row">
+                    <span class="order-card__label">Date</span>
+                    <span class="order-card__value">
+                        {{ order.created_at.strftime('%B') }}
+                        {{ order.created_at.day }},
+                        {{ order.created_at.year }}
+                    </span>
+                </div>
+                <div class="order-card__row">
+                    <span class="order-card__label">Status</span>
+                    <span class="order-card__value
+                                 order-card__status
+                                 order-card__status--{{ order.status }}">
+                        {{ order.status | title }}
+                    </span>
+                </div>
+                <div class="order-card__row">
+                    <span class="order-card__label">Total</span>
+                    <span class="order-card__value">
+                        ${{ "{:,.2f}".format(order.total_cents / 100) }}
+                    </span>
+                </div>
+            </li>
+            {% endfor %}
+        </ul>
+
+        {% else %}
+        <div class="wishlist-empty">
+            <p class="wishlist-empty__text">No orders yet.</p>
+            <a href="{{ url_for('routes.headies') }}"
+               class="btn btn-primary">
+                Browse Heady Glass
+            </a>
+        </div>
+        {% endif %}
+
     </div>
 </section>
 {% endblock %}

@@ -1,0 +1,189 @@
+{% extends 'base.html' %}
+
+{% block title %}Checkout{% endblock %}
+
+{% block meta_description %}Complete your Green Fire order.{% endblock %}
+
+{% block robots %}noindex, nofollow{% endblock %}
+
+{% block extra_css %}
+<script src="https://js.stripe.com/v3/" defer></script>
+{% endblock %}
+
+{% block content %}
+<section class="section">
+    <div class="container container--narrow">
+
+        <h1 class="checkout-heading">Checkout</h1>
+
+        <div class="checkout-layout"
+             data-stripe-key="{{ stripe_public_key }}">
+
+            <form class="checkout-form"
+                  id="checkout-form"
+                  action="{{ url_for('routes.checkout_confirm') }}"
+                  method="POST">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <input type="hidden" name="payment_intent_id" id="payment-intent-id">
+
+                <fieldset class="checkout-fieldset">
+                    <legend class="checkout-legend">Shipping Address</legend>
+
+                    <div class="checkout-field">
+                        <label class="checkout-label" for="shipping_name">
+                            Full Name
+                        </label>
+                        <input class="checkout-input"
+                               type="text"
+                               id="shipping_name"
+                               name="shipping_name"
+                               autocomplete="name"
+                               required>
+                    </div>
+
+                    <div class="checkout-field">
+                        <label class="checkout-label" for="shipping_address_1">
+                            Address
+                        </label>
+                        <input class="checkout-input"
+                               type="text"
+                               id="shipping_address_1"
+                               name="shipping_address_1"
+                               autocomplete="address-line1"
+                               required>
+                    </div>
+
+                    <div class="checkout-field">
+                        <label class="checkout-label" for="shipping_address_2">
+                            Apt / Suite
+                            <span class="checkout-label-optional">(optional)</span>
+                        </label>
+                        <input class="checkout-input"
+                               type="text"
+                               id="shipping_address_2"
+                               name="shipping_address_2"
+                               autocomplete="address-line2">
+                    </div>
+
+                    <div class="checkout-field-row">
+                        <div class="checkout-field">
+                            <label class="checkout-label" for="shipping_city">
+                                City
+                            </label>
+                            <input class="checkout-input"
+                                   type="text"
+                                   id="shipping_city"
+                                   name="shipping_city"
+                                   autocomplete="address-level2"
+                                   required>
+                        </div>
+                        <div class="checkout-field checkout-field--state">
+                            <label class="checkout-label" for="shipping_state">
+                                State
+                            </label>
+                            <input class="checkout-input"
+                                   type="text"
+                                   id="shipping_state"
+                                   name="shipping_state"
+                                   autocomplete="address-level1"
+                                   maxlength="2"
+                                   placeholder="NE"
+                                   required>
+                        </div>
+                        <div class="checkout-field checkout-field--zip">
+                            <label class="checkout-label" for="shipping_zip">
+                                ZIP
+                            </label>
+                            <input class="checkout-input"
+                                   type="text"
+                                   id="shipping_zip"
+                                   name="shipping_zip"
+                                   autocomplete="postal-code"
+                                   inputmode="numeric"
+                                   maxlength="10"
+                                   required>
+                        </div>
+                    </div>
+
+                    <p class="checkout-us-note">
+                        Domestic US shipping only. Adult signature required on delivery.
+                    </p>
+                </fieldset>
+
+                <fieldset class="checkout-fieldset">
+                    <legend class="checkout-legend">Payment</legend>
+
+                    <div class="checkout-field">
+                        <label class="checkout-label">Card</label>
+                        <div class="checkout-card-element" id="card-element"></div>
+                        <p class="checkout-card-error" id="card-error" role="alert"></p>
+                    </div>
+                </fieldset>
+
+                <div class="checkout-submit-wrap">
+                    <button class="btn btn-secondary btn-lg checkout-submit"
+                            id="checkout-submit"
+                            type="submit">
+                        Pay ${{ "{:,.2f}".format(total_cents / 100) }}
+                    </button>
+                    <p class="checkout-processing" id="checkout-processing"
+                       aria-live="polite"></p>
+                </div>
+
+            </form>
+
+            <aside class="checkout-summary">
+                <h2 class="checkout-summary__heading">Order Summary</h2>
+                <ul class="checkout-summary__list">
+                    {% for item in cart_items %}
+                    <li class="checkout-summary__item">
+                        <span class="checkout-summary__name">
+                            {{ item.name }}
+                            {% if item.variant %}
+                            <span class="checkout-summary__variant">
+                                — {{ item.variant }}
+                            </span>
+                            {% endif %}
+                            {% if item.qty > 1 %}
+                            <span class="checkout-summary__qty">
+                                &times; {{ item.qty }}
+                            </span>
+                            {% endif %}
+                        </span>
+                        <span class="checkout-summary__price">
+                            ${{ "{:,.2f}".format(item.line_cents / 100) }}
+                        </span>
+                    </li>
+                    {% endfor %}
+                </ul>
+                <div class="checkout-summary__totals">
+                    <div class="checkout-summary__row">
+                        <span>Subtotal</span>
+                        <span>${{ "{:,.2f}".format(subtotal_cents / 100) }}</span>
+                    </div>
+                    <div class="checkout-summary__row">
+                        <span>Shipping</span>
+                        <span>
+                            {% if shipping_cents == 0 %}
+                            Free
+                            {% else %}
+                            ${{ "{:,.2f}".format(shipping_cents / 100) }}
+                            {% endif %}
+                        </span>
+                    </div>
+                    <div class="checkout-summary__row checkout-summary__row--total">
+                        <span>Total</span>
+                        <span>${{ "{:,.2f}".format(total_cents / 100) }}</span>
+                    </div>
+                </div>
+            </aside>
+
+        </div>
+
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/checkout.js') }}" defer></script>
+{% endblock %}

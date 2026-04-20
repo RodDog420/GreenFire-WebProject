@@ -9,8 +9,47 @@
 {% block content %}
 <section class="section">
     <div class="container container--narrow">
-        <h1>My Account</h1>
-        <p class="text-muted">Coming soon.</p>
+
+        <div class="account-header">
+            <h1 class="account-header__name">{{ current_user.username }}</h1>
+            <p class="account-header__email">{{ current_user.email }}</p>
+            <p class="account-header__since">
+                Member since
+                {{ current_user.created_at.strftime('%B') }}
+                {{ current_user.created_at.year }}
+            </p>
+        </div>
+
+        <nav class="account-nav" aria-label="Account sections">
+            <a href="{{ url_for('routes.account_orders') }}"
+               class="account-nav__card">
+                <span class="account-nav__card-title">Orders</span>
+                <span class="account-nav__card-count">
+                    {{ order_count }}
+                    {{ 'order' if order_count == 1 else 'orders' }}
+                </span>
+            </a>
+            <a href="{{ url_for('routes.account_wishlist') }}"
+               class="account-nav__card">
+                <span class="account-nav__card-title">Wish List</span>
+                <span class="account-nav__card-count">
+                    {{ wishlist_count }}
+                    {{ 'item' if wishlist_count == 1 else 'items' }}
+                </span>
+            </a>
+        </nav>
+
+        <form action="{{ url_for('routes.logout') }}"
+              method="POST"
+              class="account-signout">
+            <input type="hidden"
+                   name="csrf_token"
+                   value="{{ csrf_token() }}">
+            <button type="submit" class="btn btn-ghost btn-sm">
+                Sign Out
+            </button>
+        </form>
+
     </div>
 </section>
 {% endblock %}

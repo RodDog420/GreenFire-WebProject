@@ -47,42 +47,62 @@ Green Fire, University Place, Lincoln Nebraska.
                     {% set ns.seen_various = true %}
                 {% endif %}
 
-                <a href="{{ url_for('routes.product_detail', slug=product.slug) }}"
-                   class="product-card"
-                   aria-label="{{ product.name }}
-                               {%- if product.credit %} by {{ product.credit }}{% endif %}
-                               — Sold">
+                <div class="archive-item">
 
-                    <div class="product-card__img-wrap">
-                        {% if product.primary_image %}
-                        <img src="{{ url_for('static', filename=product.primary_image) }}"
-                             alt="{{ product.name }}
-                                  {%- if product.credit %} by {{ product.credit }}{% endif %}"
-                             class="product-card__img"
-                             loading="lazy"
-                             width="400"
-                             height="533">
-                        {% else %}
-                        <div class="product-card__img product-card__img--placeholder"
-                             role="img"
-                             aria-label="{{ product.name }} — no image available">
+                    <a href="{{ url_for('routes.product_detail',
+                                       slug=product.slug) }}"
+                       class="product-card"
+                       aria-label="{{ product.name }}
+                                   {%- if product.credit %} by {{ product.credit }}{% endif %}
+                                   — Sold">
+
+                        <div class="product-card__img-wrap">
+                            {% if product.primary_image %}
+                            <img src="{{ url_for('static',
+                                                 filename=product.primary_image) }}"
+                                 alt="{{ product.name }}
+                                      {%- if product.credit %} by {{ product.credit }}{% endif %}"
+                                 class="product-card__img"
+                                 loading="lazy"
+                                 width="400"
+                                 height="533">
+                            {% else %}
+                            <div class="product-card__img product-card__img--placeholder"
+                                 role="img"
+                                 aria-label="{{ product.name }} — no image available">
+                            </div>
+                            {% endif %}
+
+                            <span class="product-card__sold-badge">Sold</span>
                         </div>
-                        {% endif %}
 
-                        <span class="product-card__sold-badge">Sold</span>
-                    </div>
+                        <div class="product-card__info">
+                            <p class="product-card__name">{{ product.name }}</p>
+                            {% if product.credit %}
+                            <p class="product-card__credit">{{ product.credit }}</p>
+                            {% endif %}
+                            <p class="product-card__price">
+                                ${{ product.price_cents // 100 }}
+                            </p>
+                        </div>
 
-                    <div class="product-card__info">
-                        <p class="product-card__name">{{ product.name }}</p>
-                        {% if product.credit %}
-                        <p class="product-card__credit">{{ product.credit }}</p>
-                        {% endif %}
-                        <p class="product-card__price">
-                            ${{ product.price_cents // 100 }}
-                        </p>
-                    </div>
+                    </a>
 
-                </a>
+                    {% if current_user.is_authenticated and current_user.is_admin %}
+                    <form action="{{ url_for('admin.product_toggle_sold',
+                                            product_id=product.id) }}"
+                          method="POST"
+                          class="archive-item__action">
+                        <input type="hidden"
+                               name="csrf_token"
+                               value="{{ csrf_token() }}">
+                        <button type="submit" class="btn btn-ghost btn-sm">
+                            Move back to inventory
+                        </button>
+                    </form>
+                    {% endif %}
+
+                </div>
 
             {% endfor %}
         </div>

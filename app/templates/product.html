@@ -41,7 +41,7 @@
 {%- else -%}
     {%- set back_url   = url_for('routes.vapes_accessories')
                          ~ '#' ~ (product.subcategory or '') -%}
-    {%- set back_label = 'Vapes &amp; Accessories' -%}
+    {%- set back_label = 'Vapes & Accessories' -%}
 {%- endif -%}
 
 <section class="section">
@@ -132,11 +132,11 @@
 
                 <h1 class="product-info__name">{{ product.name }}</h1>
 
-                {% if product.series %}
+                {% if product.series and product.series != 'None' %}
                 <p class="product-info__series">{{ product.series }}</p>
                 {% endif %}
 
-                {% if product.credit %}
+                {% if product.credit and product.credit != 'None' %}
                 <p class="product-info__credit">
                     <span class="product-info__credit-label">
                         {{ product.credit_label or 'By' }}:
@@ -145,7 +145,7 @@
                 </p>
                 {% endif %}
 
-                {% if product.instagram %}
+                {% if product.instagram and product.instagram != 'None' %}
                 <a href="{{ product.instagram }}"
                    class="product-info__instagram"
                    target="_blank"
@@ -171,7 +171,7 @@
                 {% endif %}
 
                 <div class="product-info__meta">
-                    {% if product.technique %}
+                    {% if product.technique and product.technique != 'None' %}
                     <div class="product-info__meta-row">
                         <span class="product-info__meta-label">
                             Technique
@@ -181,12 +181,13 @@
                         </span>
                     </div>
                     {% endif %}
-                    {% if product.glass_color %}
+                    {% if product.glass_color and product.glass_color != 'None' %}
                     <div class="product-info__meta-row">
                         <span class="product-info__meta-label">Color</span>
                         <span class="product-info__meta-value">
                             {{ product.glass_color }}
                             {%- if product.glass_color_company
+                                  and product.glass_color_company != 'None'
                             %} ({{ product.glass_color_company }}){%- endif %}
                         </span>
                     </div>
@@ -213,7 +214,7 @@
                         <span class="product-info__meta-value">Yes</span>
                     </div>
                     {% endif %}
-                    {% if product.collab %}
+                    {% if product.collab and product.collab != 'None' %}
                     <div class="product-info__meta-row">
                         <span class="product-info__meta-label">
                             Collab
@@ -223,7 +224,7 @@
                         </span>
                     </div>
                     {% endif %}
-                    {% if product.perc %}
+                    {% if product.perc and product.perc != 'None' %}
                     <div class="product-info__meta-row">
                         <span class="product-info__meta-label">Perc</span>
                         <span class="product-info__meta-value">
@@ -241,7 +242,7 @@
                         </span>
                     </div>
                     {% endif %}
-                    {% if product.metal_type %}
+                    {% if product.metal_type and product.metal_type != 'None' %}
                     <div class="product-info__meta-row">
                         <span class="product-info__meta-label">Metal</span>
                         <span class="product-info__meta-value">
@@ -259,7 +260,7 @@
                         </span>
                     </div>
                     {% endif %}
-                    {% if product.includes %}
+                    {% if product.includes and product.includes != 'None' %}
                     <div class="product-info__meta-row">
                         <span class="product-info__meta-label">
                             Includes
@@ -269,7 +270,7 @@
                         </span>
                     </div>
                     {% endif %}
-                    {% if product.height %}
+                    {% if product.height and product.height != 'None' %}
                     <div class="product-info__meta-row">
                         <span class="product-info__meta-label">Height</span>
                         <span class="product-info__meta-value">
@@ -277,7 +278,7 @@
                         </span>
                     </div>
                     {% endif %}
-                    {% if product.joint_size %}
+                    {% if product.joint_size and product.joint_size != 'None' %}
                     <div class="product-info__meta-row">
                         <span class="product-info__meta-label">Joint</span>
                         <span class="product-info__meta-value">
@@ -287,7 +288,7 @@
                     {% endif %}
                 </div>
 
-                {% if product.description %}
+                {% if product.description and product.description != 'None' %}
                 <p class="product-info__description">
                     {{ product.description }}
                 </p>
@@ -332,77 +333,6 @@
                     </div>
                 </form>
 
-                {% else %}
-
-                <div class="product-info__actions">
-                    <form action="{{ url_for('routes.add_to_cart') }}"
-                          method="POST">
-                        <input type="hidden"
-                               name="csrf_token"
-                               value="{{ csrf_token() }}">
-                        <input type="hidden"
-                               name="product_slug"
-                               value="{{ product.slug }}">
-                        <input type="hidden"
-                               name="product_name"
-                               value="{{ product.name }}">
-                        <input type="hidden"
-                               name="price_cents"
-                               value="{{ product.price_cents }}">
-                        {% if product.variants %}
-                        <div class="product-variants">
-                            <p class="product-variants__label">
-                                Select Color
-                            </p>
-                            <div class="product-variants__options"
-                                 role="group"
-                                 aria-label="Select color">
-                                {% for variant in product.variants %}
-                                <label class="product-variant-option">
-                                    <input type="radio"
-                                           name="variant"
-                                           value="{{ variant }}"
-                                           {% if loop.first %}checked{% endif %}>
-                                    <span class="product-variant-option__label">
-                                        {{ variant }}
-                                    </span>
-                                </label>
-                                {% endfor %}
-                            </div>
-                        </div>
-                        {% endif %}
-                        <button type="submit"
-                                class="btn btn-primary">
-                            Add to Cart
-                        </button>
-                    </form>
-
-                    {% if current_user.is_authenticated %}
-                    <form action="{{ url_for('routes.add_to_wishlist') }}"
-                          method="POST">
-                        <input type="hidden"
-                               name="csrf_token"
-                               value="{{ csrf_token() }}">
-                        <input type="hidden"
-                               name="product_slug"
-                               value="{{ product.slug }}">
-                        <button type="submit"
-                                class="btn btn-ghost">
-                            Save to Wish List
-                        </button>
-                    </form>
-                    {% endif %}
-
-                </div>
-
-                {% if not current_user.is_authenticated %}
-                <p class="product-info__wishlist-prompt">
-                    <a href="{{ url_for('routes.login') }}">
-                        Log in
-                    </a> to save to your wish list.
-                </p>
-                {% endif %}
-
                 {% endif %}
 
                 <div class="product-zoom-panel"
@@ -412,6 +342,95 @@
             </div>
 
         </div>
+
+        {% if not (product.product_type == 'heady' and product.is_sold) %}
+
+        {% if product.variants %}
+        <div class="product-variants">
+            <p class="product-variants__label">Select Color</p>
+            <div class="product-variants__options"
+                 role="group"
+                 aria-label="Select color">
+                {% for variant in product.variants %}
+                <label class="product-variant-option">
+                    <input type="radio"
+                           name="variant"
+                           value="{{ variant }}"
+                           form="cart-form"
+                           {% if loop.first %}checked{% endif %}>
+                    <span class="product-variant-option__label">
+                        {{ variant }}
+                    </span>
+                </label>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+
+        <div class="product-actions-bar">
+            <form id="cart-form"
+                  action="{{ url_for('routes.add_to_cart') }}"
+                  method="POST">
+                <input type="hidden"
+                       name="csrf_token"
+                       value="{{ csrf_token() }}">
+                <input type="hidden"
+                       name="product_slug"
+                       value="{{ product.slug }}">
+                <input type="hidden"
+                       name="product_name"
+                       value="{{ product.name }}">
+                <input type="hidden"
+                       name="price_cents"
+                       value="{{ product.price_cents }}">
+                <button type="submit" class="btn btn-primary">
+                    Add to Cart
+                </button>
+            </form>
+
+            {% if current_user.is_authenticated %}
+            <form action="{{ url_for('routes.add_to_wishlist') }}"
+                  method="POST">
+                <input type="hidden"
+                       name="csrf_token"
+                       value="{{ csrf_token() }}">
+                <input type="hidden"
+                       name="product_slug"
+                       value="{{ product.slug }}">
+                <button type="submit" class="btn btn-secondary">
+                    Save to Wish List
+                </button>
+            </form>
+            {% else %}
+            <a href="{{ url_for('routes.login') }}"
+               class="btn btn-secondary">
+                Log In to Save
+            </a>
+            {% endif %}
+        </div>
+        {% endif %}
+
+        {% if current_user.is_authenticated and current_user.is_admin %}
+        <div class="product-admin-bar">
+            <a href="{{ url_for('admin.product_edit',
+                               product_id=product.id) }}"
+               class="btn btn-maroon btn-sm">
+                Edit Product
+            </a>
+            <form action="{{ url_for('admin.product_delete',
+                                    product_id=product.id) }}"
+                  method="POST">
+                <input type="hidden"
+                       name="csrf_token"
+                       value="{{ csrf_token() }}">
+                <button type="submit"
+                        class="btn btn-error btn-sm"
+                        onclick="return confirm('Delete \u201c{{ product.name }}\u201d? This cannot be undone.')">
+                    Delete Product
+                </button>
+            </form>
+        </div>
+        {% endif %}
 
         <div class="product-nav">
             <div class="product-nav__top">
@@ -433,16 +452,20 @@
                 {% if prev_product %}
                 <a href="{{ url_for('routes.product_detail',
                                     slug=prev_product.slug) }}"
-                   class="btn btn-ghost btn-sm">
+                   class="btn btn-brown btn-sm">
                     &larr; Previous
                 </a>
+                {% else %}
+                <span class="product-nav__pager-placeholder"></span>
                 {% endif %}
                 {% if next_product %}
                 <a href="{{ url_for('routes.product_detail',
                                     slug=next_product.slug) }}"
-                   class="btn btn-ghost btn-sm">
+                   class="btn btn-blue btn-sm">
                     Next &rarr;
                 </a>
+                {% else %}
+                <span class="product-nav__pager-placeholder"></span>
                 {% endif %}
             </nav>
             {% endif %}

@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 
-{% block title %}Cart{% endblock %}
+{% block title %}Your Cart{% endblock %}
 
 {% block meta_description %}Your Green Fire shopping cart.{% endblock %}
 
@@ -9,8 +9,101 @@
 {% block content %}
 <section class="section">
     <div class="container container--narrow">
+
         <h1>Your Cart</h1>
-        <p class="text-muted">Coming soon.</p>
+
+        {% if cart_items %}
+
+        <ul class="cart-list">
+            {% for item in cart_items %}
+            <li class="cart-item">
+
+                {% if item.image %}
+                <img class="cart-item__img"
+                     src="{{ url_for('static', filename=item.image) }}"
+                     alt="{{ item.name }}"
+                     width="80"
+                     height="80"
+                     loading="lazy">
+                {% else %}
+                <div class="cart-item__img cart-item__img--placeholder"></div>
+                {% endif %}
+
+                <div class="cart-item__body">
+                    <p class="cart-item__name">{{ item.name }}</p>
+                    {% if item.variant %}
+                    <p class="cart-item__variant">{{ item.variant }}</p>
+                    {% endif %}
+                    <p class="cart-item__price">
+                        ${{ "{:,}".format(item.price_cents // 100) }}
+                        {% if item.qty > 1 %}
+                        &times; {{ item.qty }}
+                        &nbsp;=&nbsp;
+                        ${{ "{:,}".format(item.line_cents // 100) }}
+                        {% endif %}
+                    </p>
+                </div>
+
+                <form action="{{ url_for('routes.remove_from_cart') }}"
+                      method="POST"
+                      class="cart-item__remove-form">
+                    <input type="hidden"
+                           name="csrf_token"
+                           value="{{ csrf_token() }}">
+                    <input type="hidden"
+                           name="product_slug"
+                           value="{{ item.slug }}">
+                    {% if item.variant %}
+                    <input type="hidden"
+                           name="variant"
+                           value="{{ item.variant }}">
+                    {% endif %}
+                    <button type="submit"
+                            class="cart-item__remove"
+                            aria-label="Remove {{ item.name }} from cart">
+                        &times;
+                    </button>
+                </form>
+
+            </li>
+            {% endfor %}
+        </ul>
+
+        <div class="cart-summary">
+            <div class="cart-summary__row">
+                <span class="cart-summary__label">Subtotal</span>
+                <span class="cart-summary__value">
+                    ${{ "{:,}".format(subtotal_cents // 100) }}
+                </span>
+            </div>
+            <p class="cart-summary__note">
+                Shipping calculated at checkout.
+            </p>
+        </div>
+
+        <div class="cart-actions">
+            <a href="{{ url_for('routes.index') }}"
+               class="btn btn-ghost">
+                Continue Shopping
+            </a>
+            <a href="{{ url_for('routes.checkout') }}"
+               class="btn btn-secondary">
+                Checkout
+            </a>
+        </div>
+
+        {% else %}
+
+        <div class="cart-empty">
+            <p class="cart-empty__msg">Your cart is empty.</p>
+            <a href="{{ url_for('routes.index') }}"
+               class="btn btn-secondary">
+                Start Shopping
+            </a>
+        </div>
+
+        {% endif %}
+
     </div>
 </section>
 {% endblock %}

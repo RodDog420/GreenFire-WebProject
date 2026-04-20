@@ -1,10 +1,12 @@
+import os
+import stripe
 from flask import (
     Blueprint, render_template, request, jsonify,
-    redirect, url_for, flash,
+    redirect, url_for, flash, session, current_app,
 )
 from flask_login import login_required, logout_user, login_user, current_user
-from app import limiter, db
-from app.models import User, Product
+from app import limiter, db, csrf
+from app.models import User, Product, WishlistItem, Order, OrderItem
 
 routes_bp = Blueprint('routes', __name__)
 
@@ -37,7 +39,8 @@ def _prodos():
 
 def _vapes():
     return (Product.query
-            .filter_by(product_type='vape', is_active=True)
+            .filter(Product.product_type.in_(['vape', 'tool']),
+                    Product.is_active == True)
             .all())
 
 
@@ -145,8 +148,28 @@ def about():
 def shipping_returns():
     return render_template('shipping_returns.html')
 
-@routes_bp.route('/contact')
+@routes_bp.route('/contact', methods=['GET', 'POST'])
+@limiter.limit('5 per minute')
 def contact():
+    if request.method == 'POST':
+        name    = request.form.get('name', '').strip()
+        email   = request.form.get('email', '').strip()
+        subject = request.form.get('subject', '').strip()
+        message = request.form.get('message', '').strip()
+
+        if not name or not email or not message:
+            flash('Please fill in all required fields.', 'error')
+            return render_template('contact.html',
+                                   name=name,
+                                   email=email,
+                                   subject=subject,
+                                   message=message)
+
+        # Email dispatch goes here when email service is configured
+        flash("Thanks for reaching out \u2014 we\u2019ll get back to you soon.",
+              'success')
+        return redirect(url_for('routes.contact'))
+
     return render_template('contact.html')
 
 @routes_bp.route('/privacy')
@@ -169,7 +192,35 @@ def headies():
 
 @routes_bp.route('/featured-artist')
 def featured_artist():
-    return render_template('artists.html')
+    products = (Product.query
+                .filter(
+                    Product.is_featured == True,
+                    Product.is_active == True,
+                )
+                .order_by(
+                    Product.featured_order.is_(None),
+                    Product.featured_order,
+                    Product.created_at.desc(),
+                )
+                .all())
+
+    portraits_dir = os.path.join(
+        current_app.root_path, 'static',
+        'images', 'featured_artist', 'josh_mann', 'portraits',
+    )
+    portraits = []
+    for i in range(1, 11):
+        for ext in ('png', 'jpg', 'jpeg', 'webp'):
+            path = os.path.join(portraits_dir, f'{i}.{ext}')
+            if os.path.exists(path):
+                portraits.append(
+                    f'images/featured_artist/josh_mann/portraits/{i}.{ext}'
+                )
+                break
+
+    return render_template('artists.html',
+                           products=products,
+                           portraits=portraits)
 
 @routes_bp.route('/archive')
 def archive():
@@ -265,33 +316,178 @@ def logout():
     return render_template('logout.html')
 
 
-@routes_bp.route('/register')
+@routes_bp.route('/register', methods=['GET', 'POST'])
+@limiter.limit('5 per minute')
 def register():
+    if current_user.is_authenticated:
+        return redirect(url_for('routes.index'))
+
+    if request.method == 'POST':
+        email    = request.form.get('email', '').strip().lower()
+        username = request.form.get('username', '').strip()
+        password = request.form.get('password', '')
+        confirm  = request.form.get('confirm_password', '')
+
+        error = None
+
+        if not email or not username or not password or not confirm:
+            error = 'All fields are required.'
+        elif len(username) < 3 or len(username) > 64:
+            error = 'Username must be between 3 and 64 characters.'
+        elif len(password) < 8:
+            error = 'Password must be at least 8 characters.'
+        elif password != confirm:
+            error = 'Passwords do not match.'
+        elif (User.query.filter(db.func.lower(User.email) == email).first() or
+              User.query.filter(db.func.lower(User.username) == username.lower()).first()):
+            # Generic — never reveal whether email or username is taken
+            error = 'Unable to create account. Please check your details and try again.'
+
+        if error:
+            flash(error, 'error')
+            return render_template('register.html',
+                                   email=email,
+                                   username=username)
+
+        user = User(email=email, username=username)
+        user.set_password(password)
+        db.session.add(user)
+        db.session.commit()
+        login_user(user)
+        flash('Welcome to Green Fire!', 'success')
+        return redirect(url_for('routes.index'))
+
     return render_template('register.html')
 
 
 # ==========================================================================
-# CART
+# CART — session-based, no DB
+# session['cart'] = [{'slug', 'name', 'price_cents', 'variant', 'qty'}, ...]
 # ==========================================================================
+
+def _sync_cart_count():
+    cart = session.get('cart', [])
+    session['cart_count'] = sum(item['qty'] for item in cart)
+
 
 @routes_bp.route('/cart')
 def cart():
-    return render_template('cart.html')
+    raw = session.get('cart', [])
+    cart_items = []
+    changed = False
+
+    for item in raw:
+        product = Product.query.filter_by(
+            slug=item['slug'], is_active=True, is_sold=False
+        ).first()
+        if not product:
+            changed = True
+            continue
+        cart_items.append({
+            'slug':        item['slug'],
+            'name':        item['name'],
+            'price_cents': item['price_cents'],
+            'variant':     item.get('variant'),
+            'qty':         item['qty'],
+            'line_cents':  item['price_cents'] * item['qty'],
+            'image':       product.primary_image,
+        })
+
+    if changed:
+        session['cart'] = [{k: v for k, v in i.items()
+                            if k != 'line_cents' and k != 'image'}
+                           for i in cart_items]
+        _sync_cart_count()
+        flash('One or more items were removed because they are no longer available.',
+              'info')
+
+    subtotal_cents = sum(i['line_cents'] for i in cart_items)
+    return render_template('cart.html',
+                           cart_items=cart_items,
+                           subtotal_cents=subtotal_cents)
+
 
 @routes_bp.route('/cart/add', methods=['POST'])
 @limiter.limit('30 per minute')
 def add_to_cart():
-    # Stub — full implementation when cart is built
-    flash('Cart coming soon.', 'info')
+    slug        = request.form.get('product_slug', '').strip()
+    variant     = request.form.get('variant') or None
+
+    product = Product.query.filter_by(
+        slug=slug, is_active=True, is_sold=False
+    ).first()
+    if not product:
+        flash('This item is no longer available.', 'error')
+        return redirect(request.referrer or url_for('routes.index'))
+
+    cart = session.get('cart', [])
+    for item in cart:
+        if item['slug'] == slug and item.get('variant') == variant:
+            if item['qty'] < product.quantity:
+                item['qty'] += 1
+            break
+    else:
+        cart.append({
+            'slug':        product.slug,
+            'name':        product.name,
+            'price_cents': product.price_cents,
+            'variant':     variant,
+            'qty':         1,
+        })
+
+    session['cart'] = cart
+    _sync_cart_count()
+    flash(f'\u201c{product.name}\u201d added to your cart.', 'success')
     return redirect(request.referrer or url_for('routes.index'))
+
+
+@routes_bp.route('/cart/remove', methods=['POST'])
+def remove_from_cart():
+    slug    = request.form.get('product_slug', '').strip()
+    variant = request.form.get('variant') or None
+
+    cart = session.get('cart', [])
+    cart = [i for i in cart
+            if not (i['slug'] == slug and i.get('variant') == variant)]
+    session['cart'] = cart
+    _sync_cart_count()
+    return redirect(url_for('routes.cart'))
+
 
 @routes_bp.route('/cart/wishlist/add', methods=['POST'])
 @limiter.limit('30 per minute')
 @login_required
 def add_to_wishlist():
-    # Stub — full implementation when auth is built
-    flash('Wishlist coming soon.', 'info')
+    slug = request.form.get('product_slug', '').strip()
+    product = Product.query.filter_by(slug=slug, is_active=True).first()
+    if not product:
+        flash('That product is no longer available.', 'error')
+        return redirect(request.referrer or url_for('routes.index'))
+
+    existing = WishlistItem.query.filter_by(
+        user_id=current_user.id, product_id=product.id
+    ).first()
+    if existing:
+        flash(f'\u201c{product.name}\u201d is already in your wish list.', 'info')
+    else:
+        db.session.add(WishlistItem(user_id=current_user.id, product_id=product.id))
+        db.session.commit()
+        flash(f'\u201c{product.name}\u201d saved to your wish list.', 'success')
+
     return redirect(request.referrer or url_for('routes.index'))
+
+
+@routes_bp.route('/wishlist/remove', methods=['POST'])
+@login_required
+def remove_from_wishlist():
+    slug = request.form.get('product_slug', '').strip()
+    product = Product.query.filter_by(slug=slug).first()
+    if product:
+        WishlistItem.query.filter_by(
+            user_id=current_user.id, product_id=product.id
+        ).delete()
+        db.session.commit()
+    return redirect(url_for('routes.account_wishlist'))
 
 
 # ==========================================================================
@@ -316,17 +512,212 @@ def notify_me():
 @routes_bp.route('/account')
 @login_required
 def account_dashboard():
-    return render_template('account_dashboard.html')
+    wishlist_count = WishlistItem.query.filter_by(user_id=current_user.id).count()
+    order_count    = Order.query.filter_by(user_id=current_user.id).count()
+    return render_template('account_dashboard.html',
+                           wishlist_count=wishlist_count,
+                           order_count=order_count)
 
 @routes_bp.route('/account/orders')
 @login_required
 def account_orders():
-    return render_template('account_orders.html')
+    orders = (Order.query
+              .filter_by(user_id=current_user.id)
+              .order_by(Order.created_at.desc())
+              .all())
+    return render_template('account_orders.html', orders=orders)
 
 @routes_bp.route('/account/wishlist')
 @login_required
 def account_wishlist():
-    return render_template('account_wishlist.html')
+    items = (WishlistItem.query
+             .filter_by(user_id=current_user.id)
+             .join(Product)
+             .order_by(WishlistItem.created_at.desc())
+             .all())
+    return render_template('account_wishlist.html', items=items)
+
+
+# ==========================================================================
+# CHECKOUT
+# ==========================================================================
+
+def _shipping_cents(subtotal_cents):
+    if subtotal_cents >= 15000:   # $150+  → free
+        return 0
+    elif subtotal_cents >= 5000:  # $50–$150 → $12
+        return 1200
+    return 800                    # under $50 → $8
+
+
+@routes_bp.route('/checkout')
+@login_required
+def checkout():
+    raw = session.get('cart', [])
+    if not raw:
+        flash('Your cart is empty.', 'info')
+        return redirect(url_for('routes.cart'))
+
+    cart_items = []
+    for item in raw:
+        product = Product.query.filter_by(
+            slug=item['slug'], is_active=True, is_sold=False
+        ).first()
+        if not product:
+            continue
+        cart_items.append({
+            'slug':        item['slug'],
+            'name':        item['name'],
+            'price_cents': item['price_cents'],
+            'variant':     item.get('variant'),
+            'qty':         item['qty'],
+            'line_cents':  item['price_cents'] * item['qty'],
+        })
+
+    if not cart_items:
+        flash('One or more items are no longer available.', 'info')
+        return redirect(url_for('routes.cart'))
+
+    subtotal_cents = sum(i['line_cents'] for i in cart_items)
+    shipping_cents = _shipping_cents(subtotal_cents)
+    total_cents    = subtotal_cents + shipping_cents
+
+    return render_template(
+        'checkout.html',
+        cart_items=cart_items,
+        subtotal_cents=subtotal_cents,
+        shipping_cents=shipping_cents,
+        total_cents=total_cents,
+        stripe_public_key=current_app.config['STRIPE_PUBLIC_KEY'],
+    )
+
+
+@routes_bp.route('/checkout/create-intent', methods=['POST'])
+@login_required
+@limiter.limit('10 per minute')
+@csrf.exempt
+def create_payment_intent():
+    stripe.api_key = current_app.config['STRIPE_SECRET_KEY']
+
+    raw = session.get('cart', [])
+    if not raw:
+        return jsonify({'error': 'Cart is empty'}), 400
+
+    subtotal_cents = sum(i['price_cents'] * i['qty'] for i in raw)
+    total_cents    = subtotal_cents + _shipping_cents(subtotal_cents)
+
+    try:
+        intent = stripe.PaymentIntent.create(
+            amount=total_cents,
+            currency='usd',
+            metadata={
+                'user_id':  str(current_user.id),
+                'username': current_user.username,
+            },
+        )
+        return jsonify({'client_secret': intent.client_secret})
+    except stripe.StripeError as e:
+        return jsonify({'error': str(e)}), 400
+
+
+@routes_bp.route('/checkout/confirm', methods=['POST'])
+@login_required
+@limiter.limit('10 per minute')
+def checkout_confirm():
+    stripe.api_key = current_app.config['STRIPE_SECRET_KEY']
+
+    payment_intent_id = request.form.get('payment_intent_id', '').strip()
+    if not payment_intent_id:
+        flash('Payment information missing. Please try again.', 'error')
+        return redirect(url_for('routes.checkout'))
+
+    # Verify with Stripe — never trust client-side success alone
+    try:
+        intent = stripe.PaymentIntent.retrieve(payment_intent_id)
+    except stripe.StripeError:
+        flash('Could not verify payment. Please contact us.', 'error')
+        return redirect(url_for('routes.checkout'))
+
+    if intent.status != 'succeeded':
+        flash('Payment was not completed. Please try again.', 'error')
+        return redirect(url_for('routes.checkout'))
+
+    # Idempotency — redirect if order already created
+    existing = Order.query.filter_by(
+        stripe_payment_intent_id=payment_intent_id
+    ).first()
+    if existing:
+        return redirect(url_for('routes.checkout_success', order_id=existing.id))
+
+    # Rebuild totals from current cart (source of truth)
+    raw = session.get('cart', [])
+    subtotal_cents = 0
+    order_items    = []
+
+    for item in raw:
+        product = Product.query.filter_by(
+            slug=item['slug'], is_active=True
+        ).first()
+        if not product:
+            continue
+        subtotal_cents += item['price_cents'] * item['qty']
+        order_items.append({
+            'product':     product,
+            'qty':         item['qty'],
+            'price_cents': item['price_cents'],
+        })
+
+    if not order_items:
+        flash('No valid items found. Please contact us.', 'error')
+        return redirect(url_for('routes.cart'))
+
+    shipping_cents = _shipping_cents(subtotal_cents)
+    total_cents    = subtotal_cents + shipping_cents
+
+    order = Order(
+        user_id                  = current_user.id,
+        status                   = 'paid',
+        stripe_payment_intent_id = payment_intent_id,
+        subtotal_cents           = subtotal_cents,
+        shipping_cents           = shipping_cents,
+        total_cents              = total_cents,
+        shipping_name            = request.form.get('shipping_name', '').strip(),
+        shipping_address_1       = request.form.get('shipping_address_1', '').strip(),
+        shipping_address_2       = request.form.get('shipping_address_2', '').strip() or None,
+        shipping_city            = request.form.get('shipping_city', '').strip(),
+        shipping_state           = request.form.get('shipping_state', '').strip(),
+        shipping_zip             = request.form.get('shipping_zip', '').strip(),
+        shipping_country         = 'US',
+    )
+    db.session.add(order)
+    db.session.flush()
+
+    for oi in order_items:
+        db.session.add(OrderItem(
+            order_id    = order.id,
+            product_id  = oi['product'].id,
+            quantity    = oi['qty'],
+            price_cents = oi['price_cents'],
+        ))
+        if oi['product'].product_type == 'heady':
+            oi['product'].is_sold = True
+
+    db.session.commit()
+
+    session.pop('cart', None)
+    session.pop('cart_count', None)
+
+    return redirect(url_for('routes.checkout_success', order_id=order.id))
+
+
+@routes_bp.route('/checkout/success/<int:order_id>')
+@login_required
+def checkout_success(order_id):
+    order = Order.query.filter_by(
+        id=order_id, user_id=current_user.id
+    ).first_or_404()
+    items = order.items.all()
+    return render_template('checkout_success.html', order=order, items=items)
 
 
 # ==========================================================================

@@ -13,7 +13,7 @@
         <div class="admin-page-header">
             <h1>Products</h1>
             <a href="{{ url_for('admin.product_new') }}"
-               class="btn btn-secondary">
+               class="btn btn-secondary mt-2">
                 + Add Product
             </a>
         </div>
@@ -27,6 +27,7 @@
                         <th>Type</th>
                         <th>Price</th>
                         <th>Status</th>
+                        <th>Qty</th>
                         <th>Actions</th>
                     </tr>
                 </thead>
@@ -65,6 +66,9 @@
                             <span class="badge badge-muted">Inactive</span>
                             {% endif %}
                         </td>
+                        <td class="admin-table__qty">
+                            {{ product.quantity }}
+                        </td>
                         <td class="admin-table__actions">
                             <div class="admin-table__actions-inner">
                                 <a href="{{ url_for('admin.product_edit',
@@ -85,7 +89,7 @@
                                                    %} btn-ghost
                                                    {%- else %} btn-secondary
                                                    {%- endif %}">
-                                        {{ 'Unmark Sold' if product.is_sold
+                                        {{ 'Undo Sold' if product.is_sold
                                            else 'Mark Sold' }}
                                     </button>
                                 </form>
@@ -104,6 +108,22 @@
                                                    {%- endif %}">
                                         {{ 'Turn off' if product.is_active
                                            else 'Turn on' }}
+                                    </button>
+                                </form>
+                                <form action="{{ url_for('admin.product_delete',
+                                                        product_id=product.id) }}"
+                                      method="POST"
+                                      class="form-inline-action">
+                                    <input type="hidden"
+                                           name="csrf_token"
+                                           value="{{ csrf_token() }}">
+                                    <button type="submit"
+                                            class="btn btn-sm btn-error"
+                                            onclick="return confirm(
+                                                'Permanently delete \
+{{ product.name }}? \
+This cannot be undone.')">
+                                        Delete
                                     </button>
                                 </form>
                             </div>

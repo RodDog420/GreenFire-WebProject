@@ -95,15 +95,25 @@
                 </ul>
             </li>
 
+            {% if current_user.is_authenticated and current_user.is_admin %}
+            <li class="nav-item nav-item--dropdown">
+                <button class="nav-dropdown-trigger" aria-expanded="false" aria-haspopup="true">
+                    Admin<br>&nbsp;
+                </button>
+                <ul class="nav-dropdown list-unstyled">
+                    <li><a href="{{ url_for('admin.dashboard') }}" class="nav-dropdown-link">Dashboard</a></li>
+                    <li><a href="{{ url_for('admin.products') }}" class="nav-dropdown-link">Manage Products</a></li>
+                    <li><a href="{{ url_for('admin.product_new') }}" class="nav-dropdown-link">Add Product</a></li>
+                </ul>
+            </li>
+            {% endif %}
+
             <li class="nav-item nav-item--dropdown">
                 <button class="nav-link nav-dropdown-trigger" aria-expanded="false" aria-haspopup="true">
                     Account<br>&nbsp;
                 </button>
                 <ul class="nav-dropdown list-unstyled">
                     {% if current_user.is_authenticated %}
-                    {% if current_user.is_admin %}
-                    <li><a href="{{ url_for('admin.dashboard') }}" class="nav-dropdown-link">Admin</a></li>
-                    {% endif %}
                     <li><a href="{{ url_for('routes.account_dashboard') }}" class="nav-dropdown-link">My Account</a></li>
                     <li><a href="{{ url_for('routes.account_orders') }}" class="nav-dropdown-link">Order History</a></li>
                     <li><a href="{{ url_for('routes.account_wishlist') }}" class="nav-dropdown-link">Wish List</a></li>
@@ -175,6 +185,15 @@
                 </ul>
             </div>
             <div class="footer-col">
+                <h3 class="footer-col-heading">Store Info</h3>
+                <ul class="list-unstyled footer-links">
+                    <li><a href="{{ url_for('routes.about') }}" class="footer-link">About</a></li>
+                    <li><a href="{{ url_for('routes.shipping_returns') }}" class="footer-link">Shipping &amp; Returns</a></li>
+                    <li><a href="{{ url_for('routes.contact') }}" class="footer-link">Contact</a></li>
+                    <li><a href="{{ url_for('routes.terms') }}" class="footer-link">Terms of Service</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
                 <h3 class="footer-col-heading">Artist Info</h3>
                 <ul class="list-unstyled footer-links">
                     <li><a href="{{ url_for('routes.featured_artist') }}" class="footer-link">Featured Artist</a></li>
@@ -182,20 +201,9 @@
                 </ul>
             </div>
             <div class="footer-col">
-                <h3 class="footer-col-heading">Store Info</h3>
-                <ul class="list-unstyled footer-links">
-                    <li><a href="{{ url_for('routes.about') }}" class="footer-link">About</a></li>
-                    <li><a href="{{ url_for('routes.shipping_returns') }}" class="footer-link">Shipping &amp; Returns</a></li>
-                    <li><a href="{{ url_for('routes.contact') }}" class="footer-link">Contact</a></li>
-                </ul>
-            </div>
-            <div class="footer-col">
                 <h3 class="footer-col-heading">Account</h3>
                 <ul class="list-unstyled footer-links">
                     {% if current_user.is_authenticated %}
-                    {% if current_user.is_admin %}
-                    <li><a href="{{ url_for('admin.dashboard') }}" class="footer-link">Admin</a></li>
-                    {% endif %}
                     <li><a href="{{ url_for('routes.account_dashboard') }}" class="footer-link">My Account</a></li>
                     <li><a href="{{ url_for('routes.account_orders') }}" class="footer-link">Order History</a></li>
                     <li><a href="{{ url_for('routes.account_wishlist') }}" class="footer-link">Wish List</a></li>
@@ -205,13 +213,12 @@
                     <li><a href="{{ url_for('routes.register') }}" class="footer-link">Create Account</a></li>
                     {% endif %}
                     <li><a href="{{ url_for('routes.privacy') }}" class="footer-link">Privacy Policy</a></li>
-                    <li><a href="{{ url_for('routes.terms') }}" class="footer-link">Terms of Service</a></li>
                 </ul>
             </div>
         </div>
         <div class="footer-bottom">
             <p class="footer-legal">
-                &copy; {{ now.year }} Green Fire Cannabis. All rights reserved.
+                &copy; {{ now.year }} Green Fire. All rights reserved.
                 Domestic US shipping only. Must be 21+ to purchase.
             </p>
         </div>

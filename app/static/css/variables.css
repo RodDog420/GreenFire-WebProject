@@ -15,7 +15,7 @@ Import order: variables.css → base.css → components.css → navigation.css
        ========================================================================== */
 
     /* Forest Green — primary brand colour, buttons, links, key UI */
-    --color-forest-green:           #3A6B1A;
+    --color-forest-green:           #3E473B;
     --color-forest-green-hover:     #406932;
 
     /* Hillside Green — mid-tone earthy accent */

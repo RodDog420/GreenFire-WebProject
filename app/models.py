@@ -76,7 +76,7 @@ class Product(db.Model):
     slug                 = db.Column(db.String(256), unique=True, nullable=False, index=True)
     description          = db.Column(db.Text, nullable=False, default='')
 
-    # heady / prodo / vape
+    # heady / prodo / vape / tool
     product_type         = db.Column(db.String(16), nullable=False, index=True)
 
     # Subcategory — used by prodo and vape to group products into page sections.
@@ -106,7 +106,7 @@ class Product(db.Model):
     # Specs — shared
     technique            = db.Column(db.String(256), nullable=True)
     height               = db.Column(db.String(32), nullable=True)
-    joint_size           = db.Column(db.String(16), nullable=True)
+    joint_size           = db.Column(db.String(64), nullable=True)
     thickness            = db.Column(db.String(32), nullable=True)
 
     # Heady-specific
@@ -146,6 +146,9 @@ class Product(db.Model):
     # Status
     is_sold              = db.Column(db.Boolean, default=False, nullable=False)
     is_active            = db.Column(db.Boolean, default=True, nullable=False)
+    is_featured          = db.Column(db.Boolean, default=False, nullable=False)
+    featured_order       = db.Column(db.Integer, nullable=True)
+    quantity             = db.Column(db.Integer, nullable=False, default=1)
 
     # Primary image path (static-relative) and SEO
     primary_image        = db.Column(db.String(512), nullable=True)

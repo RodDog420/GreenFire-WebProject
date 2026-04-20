@@ -3,17 +3,153 @@
 {% block title %}About{% endblock %}
 
 {% block meta_description %}
-About Green Fire — premium American functional glass at 2401 N 48th St,
-University Place, Lincoln Nebraska.
+Green Fire opened in Seattle in 2013 as an art gallery-style adult-use retailer.
+After a decade in the Pacific Northwest, we came to Lincoln, Nebraska —
+to build the Midwest's premier functional glass gallery.
 {% endblock %}
 
-{% block canonical %}{{ url_for('routes.about', _external=True) }}{% endblock %}
+{% block robots %}index, follow{% endblock %}
+
+{% block canonical %}
+{{- url_for('routes.about', _external=True) -}}
+{% endblock %}
+
+{% block og_title %}About Green Fire{% endblock %}
+
+{% block og_description %}
+Twenty years in the industry. Now in Lincoln, Nebraska —
+bringing the same standard to the Midwest.
+{% endblock %}
+
+{% block og_url %}
+{{- url_for('routes.about', _external=True) -}}
+{% endblock %}
 
 {% block content %}
-<section class="section">
-    <div class="container container--narrow">
-        <h1>About Green Fire</h1>
-        <p class="text-muted">Coming soon.</p>
+
+<section class="about-hero">
+    <div class="about-hero__bg-wrap">
+        <img class="about-hero__bg"
+             src="{{ url_for('static',
+                             filename='images/About_page/interior_shot.png') }}"
+             alt="Green Fire glass gallery interior, Lincoln Nebraska"
+             loading="eager">
+        <div class="about-hero__overlay"></div>
+    </div>
+    <div class="container about-hero__content">
+        <h1 class="about-hero__headline">
+            For twenty years...<br>
+            And still going strong...<br>
+            We know our glass.
+        </h1>
     </div>
 </section>
+
+<section class="section about-section">
+    <div class="container">
+        <div class="about-split">
+            <div class="about-split__text">
+                <h2 class="about-heading">The Story</h2>
+                <p class="about-body">
+                    Green Fire opened in Seattle in 2013 with a clear intention:
+                    build a licensed retail operation to the standards of an art
+                    gallery — not a head shop. We were among the first licensed
+                    adult-use retailers in Washington state and spent a decade
+                    earning a reputation built on curation, craft, and the
+                    quality of the glass on our floor.
+                </p>
+                <p class="about-body">
+                    After ten years, downtown Seattle's deterioration made the
+                    decision for us. We left.
+                </p>
+                <p class="about-body">
+                    We came to Nebraska on purpose. The state is building a new
+                    legal market — the kind of ground-floor moment we've been
+                    part of before. We know what the early years of these
+                    markets look like, and we intend to be part of this one.
+                    We opened Green Fire in Lincoln's University Place
+                    neighborhood and brought the same standard with us.
+                </p>
+            </div>
+            <div class="about-split__img-wrap">
+                <img class="about-split__img"
+                     src="{{ url_for('static',
+                                     filename='images/About_page/street_shot.webp') }}"
+                     alt="Green Fire — Seattle"
+                     loading="lazy">
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="section section--dark about-section">
+    <div class="container">
+        <div class="about-split about-split--reversed">
+            <div class="about-split__text">
+                <h2 class="about-heading">Our Artists</h2>
+                <p class="about-body">
+                    Over twenty years in this industry we've been to the trade
+                    shows, visited the studios, and watched American functional
+                    glass grow from a subculture into a recognized craft
+                    tradition. The artists we carry are people we know
+                    personally — relationships built over decades, not
+                    catalog orders.
+                </p>
+                <p class="about-body">
+                    When a piece by Josh Mann is on our floor, it's there
+                    because we know Josh. That's the standard across our
+                    entire inventory. We don't carry work from artists we
+                    haven't met, and we don't carry glass we haven't held.
+                </p>
+            </div>
+            <div class="about-split__img-wrap">
+                <img class="about-split__img"
+                     src="{{ url_for('static',
+                                     filename='images/About_page/artists.png') }}"
+                     alt="Glass artist at work"
+                     loading="lazy">
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="section about-section">
+    <div class="container">
+        <div class="about-split">
+            <div class="about-split__text">
+                <h2 class="about-heading">What We Carry</h2>
+                <p class="about-body">
+                    Our standard is straightforward: solid glass. Heady pieces
+                    crafted at the highest level of the American glass
+                    tradition. Production pieces with real quality —
+                    consistent, reliable, built with taste and appreciation
+                    for the form.
+                </p>
+                <p class="about-body">
+                    We keep a deliberate floor. That's intentional. It means
+                    we know every piece, we stand behind every piece, and
+                    when you come in, we're happy to talk through any of it.
+                </p>
+                <div class="about-cta">
+                    <a href="{{ url_for('routes.headies') }}"
+                       class="btn btn-primary">
+                        Shop Headies
+                    </a>
+                    <a href="{{ url_for('routes.prodos') }}"
+                       class="btn btn-secondary">
+                        Shop Prodos
+                    </a>
+                </div>
+            </div>
+            <div class="about-split__img-wrap">
+                <img class="about-split__img"
+                     src="{{ url_for('static',
+                                     filename='images/About_page/family_photo.jpg') }}"
+                     alt="American production glass collection"
+                     loading="lazy">
+            </div>
+        </div>
+    </div>
+</section>
+
 {% endblock %}
