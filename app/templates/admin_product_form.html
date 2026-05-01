@@ -1,5 +1,9 @@
 {% extends 'base.html' %}
 
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}">
+{% endblock %}
+
 {% block title %}
     {{ 'Edit: ' ~ product.name if product else 'Add Product' }} — Admin
 {% endblock %}
@@ -209,7 +213,7 @@
                     <div class="admin-featured-order">
                         <label class="admin-form-label"
                                for="featured_order">
-                            Position
+                            Featured Artist Order
                         </label>
                         <input type="text"
                                id="featured_order"
@@ -224,20 +228,88 @@
                     </div>
                 </div>
 
-                <div class="admin-form-group">
-                    <label class="admin-form-label" for="quantity">
-                        Quantity
-                    </label>
-                    <input type="text"
-                           id="quantity"
-                           name="quantity"
-                           class="form-input"
-                           value="{{ product.quantity if product else 1 }}"
-                           inputmode="numeric"
-                           pattern="[0-9]*">
+                <div class="admin-status-layout">
+                    <div class="admin-status-inputs">
+                        <div class="admin-form-group">
+                            <label class="admin-form-label"
+                                   for="display_order">
+                                Display Order
+                            </label>
+                            <input type="text"
+                                   id="display_order"
+                                   name="display_order"
+                                   class="form-input admin-featured-order__input"
+                                   inputmode="numeric"
+                                   pattern="[0-9]*"
+                                   placeholder="1, 2, 3…"
+                                   value="{{ product.display_order
+                                            if product and product.display_order
+                                            is not none else '' }}">
+                        </div>
+                        <div class="admin-form-group">
+                            <label class="admin-form-label" for="quantity">
+                                Quantity
+                            </label>
+                            <input type="text"
+                                   id="quantity"
+                                   name="quantity"
+                                   class="form-input admin-featured-order__input"
+                                   value="{{ product.quantity if product else 1 }}"
+                                   inputmode="numeric"
+                                   pattern="[0-9]*">
+                        </div>
+                        <p class="admin-form-hint">
+                            Numbered products appear first in numeric order.
+                            Un-numbered products follow alphabetically.
+                        </p>
+                    </div>
+
+                    <div class="admin-order-reference-col">
+                        <p class="admin-form-label">Current Display Order</p>
+                        {% for subcat, label in [
+                            ('heady',              'Heady Glass'),
+                            ('dry-pipes',          'Dry Pipes'),
+                            ('bubblers',           'Bubblers'),
+                            ('beakers',            'Beakers'),
+                            ('oil-rigs',           'Oil Rigs'),
+                            ('vaporizers',         'Vaporizers'),
+                            ('flower-accessories', 'Flower Accessories'),
+                            ('oil-accessories',    'Oil Accessories'),
+                        ] %}
+                        <div class="admin-order-reference"
+                             data-ref-subcat="{{ subcat }}"
+                             hidden>
+                            <details>
+                                <summary class="admin-order-reference__summary">
+                                    {{ label }}
+                                </summary>
+                                <ul class="admin-order-list">
+                                    {% for p in ref_products[subcat]['numbered'] %}
+                                    <li>
+                                        <span class="admin-order-num">
+                                            {{ p.display_order }}
+                                        </span>
+                                        {{ p.name }}
+                                    </li>
+                                    {% endfor %}
+                                    {% for p in ref_products[subcat]['unnumbered'] %}
+                                    <li>
+                                        <span class="admin-order-num
+                                                     admin-order-num--unset">
+                                            XX
+                                        </span>
+                                        {{ p.name }}
+                                    </li>
+                                    {% endfor %}
+                                </ul>
+                            </details>
+                        </div>
+                        {% endfor %}
+                    </div>
+
                 </div>
 
-                <div class="admin-form-row">
+                <div class="admin-form-row mt-2">
                     <div class="admin-form-group">
                         <label class="admin-form-label"
                                for="acquisition_type">
@@ -629,6 +701,18 @@
                               maxlength="155"
                               placeholder="Leave blank to auto-generate. Max 155 characters.">{{ product.meta_description
                                   if product else '' }}</textarea>
+                </div>
+
+                <div class="admin-form-group">
+                    <label class="admin-form-label" for="notes">
+                        Internal Notes
+                    </label>
+                    <textarea id="notes"
+                              name="notes"
+                              class="form-input admin-textarea"
+                              rows="3"
+                              placeholder="Staff only — never shown to customers.">{{ product.notes
+                                  if product and product.notes else '' }}</textarea>
                 </div>
 
             </div>

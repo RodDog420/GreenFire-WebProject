@@ -1,5 +1,9 @@
 {% extends 'base.html' %}
 
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}">
+{% endblock %}
+
 {% block title %}Products — Admin{% endblock %}
 
 {% block meta_description %}Admin product management.{% endblock %}
@@ -35,8 +39,9 @@
                     {% for product in products %}
                     <tr>
                         <td class="admin-table__name">
-                            <a href="{{ url_for('admin.product_edit',
-                                               product_id=product.id) }}">
+                            <a href="{{ url_for('routes.product_detail',
+                                               slug=product.slug) }}"
+                               target="_blank">
                                 {{ product.name }}
                             </a>
                             {% if product.credit %}

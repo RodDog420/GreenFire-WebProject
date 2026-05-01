@@ -148,7 +148,11 @@ class Product(db.Model):
     is_active            = db.Column(db.Boolean, default=True, nullable=False)
     is_featured          = db.Column(db.Boolean, default=False, nullable=False)
     featured_order       = db.Column(db.Integer, nullable=True)
+    display_order        = db.Column(db.Integer, nullable=True)
     quantity             = db.Column(db.Integer, nullable=False, default=1)
+
+    # Internal staff notes — never shown to customers
+    notes                = db.Column(db.Text, nullable=True)
 
     # Primary image path (static-relative) and SEO
     primary_image        = db.Column(db.String(512), nullable=True)

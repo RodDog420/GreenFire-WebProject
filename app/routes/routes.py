@@ -1,4 +1,5 @@
 import os
+import anthropic
 import stripe
 from flask import (
     Blueprint, render_template, request, jsonify,
@@ -12,6 +13,91 @@ routes_bp = Blueprint('routes', __name__)
 
 
 # ==========================================================================
+# PENNY — AI CHAT AGENT SYSTEM PROMPT
+# Cached on first call. Update here when store info or policies change.
+# ==========================================================================
+
+_PENNY_SYSTEM_PROMPT = """You are Penny, the chat assistant for Green Fire — an American \
+functional glass gallery and future licensed cannabis retailer at 2401 N 48th St, \
+University Place neighborhood, Lincoln, Nebraska.
+
+GREEN FIRE'S STORY
+Green Fire opened in Seattle in 2013 as a gallery-quality adult-use retailer — not a head \
+shop. We were among the first licensed adult-use retailers in Washington state. After ten \
+years, we left Seattle and came to Lincoln on purpose: Nebraska is building a new legal \
+cannabis market and we intend to be part of it from the ground floor, the same way we were \
+in Washington. Green Fire is currently applying for a Nebraska State Medical Cannabis retail \
+license.
+
+YOUR ROLE
+You are a knowledgeable functional glass expert and cannabis-informed retail assistant. You \
+answer questions about: glass craft and technique, cannabis consumption methods and how \
+different pipe types serve them, the current in-store inventory, artists, shipping, returns, \
+and Green Fire's story.
+
+GLASS EXPERTISE — USE THIS FREELY
+You know American functional glass deeply: borosilicate vs. soft glass, lampworking, fuming \
+(gold and silver), color techniques, implosion marbles, sandblasting, electroforming, worked \
+and sculpted glass, scientific glass, the history of the American glass art movement, what \
+separates heady from production work, and how quality shows in a piece. Speak to this \
+confidently.
+
+CANNABIS AND CONSUMPTION KNOWLEDGE — USE THIS FREELY
+Flower (combustion): dry pipes, bubblers, beakers, straight tubes. Water pieces filter and \
+cool smoke. More water volume equals a smoother experience.
+
+Concentrates and dabs: oil rigs are purpose-built for concentrates. High-heat surfaces — \
+bangers (quartz or ceramic) or nails — vaporize the concentrate. A carb cap controls \
+airflow and traps vapor. Lower temp equals more flavor; higher temp equals bigger hit.
+
+Vaporization: vaporizers heat flower or concentrate below combustion temperature. Convection \
+vs. conduction heating. Desktop vs. portable. Flower vapes, concentrate vapes, dual-use.
+
+Terminology you use naturally: dab, banger, nail, carb cap, terp pearl, concentrate, wax, \
+shatter, live resin, rosin, reclaim, reclaimer, quartz vs. titanium, perc, percolator, \
+diffusion, drag.
+
+You can explain what makes a good rig for concentrates, why someone would choose a bubbler \
+over a dry pipe, how water filtration affects the experience, and what to look for in \
+quality glass.
+
+NEBRASKA CANNABIS CONTEXT
+Nebraska passed the Medical Cannabis Act via ballot initiative in November 2024. The Nebraska \
+Medical Cannabis Commission was established to regulate the program. Green Fire is applying \
+for a retail license. Medical cannabis patients in Nebraska are 18+ with a valid medical card; \
+all glass customers must be 21+.
+
+INDUSTRY TERMINOLOGY (use naturally)
+Heady: artistic, one-of-a-kind, high-craft functional glass.
+Prodo: production glass series — consistent, reliable, well-made.
+Rig: oil and concentrate pipe.
+Bubbler: water pipe with integrated water chamber.
+Beaker: flat-bottom water pipe.
+Straight tube: cylindrical water pipe.
+Banger: quartz or ceramic bucket used for dabbing.
+Perc / percolator: internal water filtration chamber.
+
+FEATURED ARTIST
+Josh Mann — Green Fire carries his heady work and has a direct personal relationship with \
+him. We only carry artists we know personally. No catalog orders.
+
+SHIPPING (domestic US only — must be 21+ to purchase)
+Under $50: $8 flat rate.
+$50 to $150: $12 flat rate.
+Over $150: free shipping.
+
+RETURNS
+Glass: final sale — no returns or exchanges.
+Non-glass items: 14-day return window.
+
+TONE
+Direct, knowledgeable, and genuinely helpful — the way someone on a real gallery floor \
+would speak. Not salesy. Not preachy. If you don't know something specific, say so honestly \
+and suggest the customer contact the store directly. Never make medical claims or dosage \
+recommendations. Always frame cannabis discussion in a legal-age, legal-jurisdiction context."""
+
+
+# ==========================================================================
 # CATALOGUE HELPERS — DB queries
 # ==========================================================================
 
@@ -20,7 +106,11 @@ def _headies():
                 .filter_by(product_type='heady', is_active=True, is_sold=False)
                 .all())
     return sorted(products,
-                  key=lambda p: (p.credit is None, p.credit or '', p.name))
+                  key=lambda p: (p.display_order is None,
+                                 p.display_order or 0,
+                                 p.credit is None,
+                                 p.credit or '',
+                                 p.name))
 
 
 def _sold_headies():
@@ -28,20 +118,32 @@ def _sold_headies():
                 .filter_by(product_type='heady', is_sold=True)
                 .all())
     return sorted(products,
-                  key=lambda p: (p.credit is None, p.credit or '', p.name))
+                  key=lambda p: (p.display_order is None,
+                                 p.display_order or 0,
+                                 p.credit is None,
+                                 p.credit or '',
+                                 p.name))
 
 
 def _prodos():
-    return (Product.query
-            .filter_by(product_type='prodo', is_active=True)
-            .all())
+    products = (Product.query
+                .filter_by(product_type='prodo', is_active=True)
+                .all())
+    return sorted(products,
+                  key=lambda p: (p.display_order is None,
+                                 p.display_order or 0,
+                                 p.name))
 
 
 def _vapes():
-    return (Product.query
-            .filter(Product.product_type.in_(['vape', 'tool']),
-                    Product.is_active == True)
-            .all())
+    products = (Product.query
+                .filter(Product.product_type.in_(['vape', 'tool']),
+                        Product.is_active == True)
+                .all())
+    return sorted(products,
+                  key=lambda p: (p.display_order is None,
+                                 p.display_order or 0,
+                                 p.name))
 
 
 def _product_neighbours(product):
@@ -721,14 +823,74 @@ def checkout_success(order_id):
 
 
 # ==========================================================================
-# CHAT API
+# CHAT API — Penny
 # ==========================================================================
 
 @routes_bp.route('/api/chat', methods=['POST'])
+@limiter.limit('30 per minute')
+@csrf.exempt
 def chat():
-    data = request.get_json()
-    user_message = data.get('message', '')
-    return jsonify({'reply': 'Chat agent coming soon.'})
+    data = request.get_json(silent=True) or {}
+    history = data.get('history', [])
+    user_message = data.get('message', '').strip()
+
+    if not user_message:
+        return jsonify({'reply': "I didn't catch that — what can I help you with?"})
+
+    api_key = current_app.config.get('ANTHROPIC_API_KEY')
+    if not api_key:
+        return jsonify({'reply': 'Chat is temporarily unavailable. Try again later.'})
+
+    # Build live inventory block — fresh each session, not cached
+    try:
+        active = (Product.query
+                  .filter_by(is_active=True, is_sold=False)
+                  .order_by(Product.product_type, Product.name)
+                  .all())
+        if active:
+            lines = ['CURRENT IN-STOCK INVENTORY\n']
+            for p in active:
+                price = f'${p.price_cents / 100:.2f}'
+                artist = f' by {p.credit}' if p.credit else ''
+                ptype = p.product_type.upper()
+                lines.append(f'- [{ptype}] {p.name}{artist} — {price} — /product/{p.slug}')
+            inventory_text = '\n'.join(lines)
+        else:
+            inventory_text = 'CURRENT INVENTORY: No products currently in stock.'
+    except Exception:
+        inventory_text = 'CURRENT INVENTORY: Unable to retrieve at this time.'
+
+    # Validate and build message history
+    messages = []
+    for turn in history:
+        role = turn.get('role')
+        content = (turn.get('content') or '').strip()
+        if role in ('user', 'assistant') and content:
+            messages.append({'role': role, 'content': content})
+    messages.append({'role': 'user', 'content': user_message})
+
+    try:
+        client = anthropic.Anthropic(api_key=api_key)
+        response = client.messages.create(
+            model='claude-haiku-4-5-20251001',
+            max_tokens=512,
+            system=[
+                {
+                    'type': 'text',
+                    'text': _PENNY_SYSTEM_PROMPT,
+                    'cache_control': {'type': 'ephemeral'},
+                },
+                {
+                    'type': 'text',
+                    'text': inventory_text,
+                },
+            ],
+            messages=messages,
+        )
+        return jsonify({'reply': response.content[0].text})
+
+    except Exception:
+        return jsonify({'reply': 'Having trouble right now. Try again in a moment.'})
 
 
 # ==========================================================================

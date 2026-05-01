@@ -104,11 +104,39 @@ def _apply_form(product, form):
     product.is_featured      = 'is_featured' in form
     fo = form.get('featured_order', '').strip()
     product.featured_order   = int(fo) if fo.isdigit() else None
+    do = form.get('display_order', '').strip()
+    product.display_order    = int(do) if do.isdigit() else None
+    product.notes            = form.get('notes', '').strip() or None
     product.variants_json    = _parse_list_field(form.get('variants', ''))
     product.attributes_json  = _parse_list_field(form.get('attributes', ''))
 
     rate = form.get('consignment_rate', '').strip()
     product.consignment_rate = float(rate) if rate else None
+
+
+def _reference_products():
+    """Return products grouped by subcategory for the display-order reference panel."""
+    all_prods = Product.query.order_by(Product.name).all()
+    keys = [
+        'heady',
+        'dry-pipes', 'bubblers', 'beakers', 'oil-rigs',
+        'vaporizers', 'flower-accessories', 'oil-accessories',
+    ]
+    ref = {k: {'numbered': [], 'unnumbered': []} for k in keys}
+    for p in all_prods:
+        if p.product_type == 'heady':
+            key = 'heady'
+        elif p.subcategory and p.subcategory in ref:
+            key = p.subcategory
+        else:
+            continue
+        if p.display_order is not None:
+            ref[key]['numbered'].append(p)
+        else:
+            ref[key]['unnumbered'].append(p)
+    for key in ref:
+        ref[key]['numbered'].sort(key=lambda p: p.display_order)
+    return ref
 
 
 def _save_images(product, files):
@@ -348,11 +376,15 @@ def product_new():
 
         if not name or not slug:
             flash('Name and slug are required.', 'error')
-            return render_template('admin_product_form.html', product=None)
+            return render_template('admin_product_form.html',
+                                   product=None,
+                                   ref_products=_reference_products())
 
         if Product.query.filter_by(slug=slug).first():
             flash(f'Slug "{slug}" is already in use. Choose a different slug.', 'error')
-            return render_template('admin_product_form.html', product=None)
+            return render_template('admin_product_form.html',
+                                   product=None,
+                                   ref_products=_reference_products())
 
         product = Product(slug=slug)
         _apply_form(product, request.form)
@@ -366,7 +398,9 @@ def product_new():
         flash(f'"{product.name}" added.', 'success')
         return redirect(url_for('admin.products'))
 
-    return render_template('admin_product_form.html', product=None)
+    return render_template('admin_product_form.html',
+                           product=None,
+                           ref_products=_reference_products())
 
 
 # ==========================================================================
@@ -395,6 +429,7 @@ def product_edit(product_id):
         'admin_product_form.html',
         product=product,
         existing_images=existing_images,
+        ref_products=_reference_products(),
     )
 
 

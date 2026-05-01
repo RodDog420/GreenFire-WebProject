@@ -1,9 +1,9 @@
 /*
 ==========================================================================
-CHAT.JS
-Handles floating chat bubble open/close and message sending.
-API calls go to /api/chat (Flask route — chat.py blueprint).
-Model selection deferred to build time per project spec.
+CHAT.JS — Penny AI assistant
+Handles chat bubble open/close and message send/receive.
+Conversation history is maintained in memory and sent with each request
+so Penny has context of the full session.
 ==========================================================================
 */
 
@@ -16,6 +16,9 @@ document.addEventListener('DOMContentLoaded', function () {
     const messages = document.getElementById('chat-messages');
 
     if (!trigger || !chatWindow) return;
+
+    // Conversation history — grows with each completed round-trip
+    var conversationHistory = [];
 
     // --- Toggle open/close ---
 
@@ -33,7 +36,6 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    // Close on Escape key
     document.addEventListener('keydown', function (e) {
         if (e.key === 'Escape' && chatWindow.classList.contains('is-open')) {
             chatWindow.classList.remove('is-open');
@@ -42,6 +44,22 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
 
+    // --- Typing indicator ---
+
+    function showTyping() {
+        if (!messages) return null;
+        const div = document.createElement('div');
+        div.className = 'chat-message chat-message-agent chat-message-typing';
+        div.innerHTML = '<span class="dot"></span><span class="dot"></span><span class="dot"></span>';
+        messages.appendChild(div);
+        messages.scrollTop = messages.scrollHeight;
+        return div;
+    }
+
+    function removeTyping(el) {
+        if (el && el.parentNode) el.parentNode.removeChild(el);
+    }
+
     // --- Send message ---
 
     function sendMessage() {
@@ -49,22 +67,31 @@ document.addEventListener('DOMContentLoaded', function () {
         const text = input.value.trim();
         if (!text) return;
 
-        // Render user message
         appendMessage(text, 'user');
         input.value = '';
         input.style.height = 'auto';
 
-        // Send to Flask /api/chat
+        const typingEl = showTyping();
+
         fetch('/api/chat', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ message: text })
+            body: JSON.stringify({
+                message: text,
+                history: conversationHistory
+            })
         })
         .then(function (res) { return res.json(); })
         .then(function (data) {
-            appendMessage(data.reply || 'Something went wrong — please try again.', 'agent');
+            removeTyping(typingEl);
+            const reply = data.reply || 'Something went wrong — please try again.';
+            appendMessage(reply, 'agent');
+            // Push completed round-trip to history for next message
+            conversationHistory.push({ role: 'user', content: text });
+            conversationHistory.push({ role: 'assistant', content: reply });
         })
         .catch(function () {
+            removeTyping(typingEl);
             appendMessage('Having trouble connecting right now. Try again in a moment.', 'agent');
         });
     }
@@ -83,7 +110,6 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     if (input) {
-        // Send on Enter (but not Shift+Enter)
         input.addEventListener('keydown', function (e) {
             if (e.key === 'Enter' && !e.shiftKey) {
                 e.preventDefault();
@@ -91,7 +117,6 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         });
 
-        // Auto-resize textarea
         input.addEventListener('input', function () {
             this.style.height = 'auto';
             this.style.height = Math.min(this.scrollHeight, 120) + 'px';

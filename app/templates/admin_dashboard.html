@@ -1,5 +1,9 @@
 {% extends 'base.html' %}
 
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}">
+{% endblock %}
+
 {% block title %}Admin Dashboard{% endblock %}
 
 {% block meta_description %}Green Fire admin dashboard.{% endblock %}

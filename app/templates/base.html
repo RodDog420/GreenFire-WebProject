@@ -179,7 +179,8 @@
                 <h3 class="footer-col-heading">Shop</h3>
                 <ul class="list-unstyled footer-links">
                     <li><a href="{{ url_for('routes.headies') }}" class="footer-link">Heady Glass</a></li>
-                    <li><a href="{{ url_for('routes.prodos') }}" class="footer-link">Production Glass &amp; Vapes</a></li>
+                    <li><a href="{{ url_for('routes.prodos') }}" class="footer-link">Production Glass</a></li>
+                    <li><a href="{{ url_for('routes.vapes_accessories') }}" class="footer-link">Vaporizers</a></li>
                     <li><a href="{{ url_for('routes.vapes_accessories') }}#flower-accessories" class="footer-link">Flower Accessories</a></li>
                     <li><a href="{{ url_for('routes.vapes_accessories') }}#oil-accessories" class="footer-link">Oil Accessories</a></li>
                 </ul>
@@ -187,6 +188,7 @@
             <div class="footer-col">
                 <h3 class="footer-col-heading">Store Info</h3>
                 <ul class="list-unstyled footer-links">
+                    <li><a href="{{ url_for('routes.index') }}" class="footer-link">Home</a></li>
                     <li><a href="{{ url_for('routes.about') }}" class="footer-link">About</a></li>
                     <li><a href="{{ url_for('routes.shipping_returns') }}" class="footer-link">Shipping &amp; Returns</a></li>
                     <li><a href="{{ url_for('routes.contact') }}" class="footer-link">Contact</a></li>
@@ -236,12 +238,12 @@
 
 <div class="chat-window" id="chat-window" role="dialog" aria-modal="true" aria-label="Green Fire chat assistant">
     <div class="chat-window-header">
-        <span>Ask Green Fire</span>
+        <span>Ask Penny</span>
         <button class="chat-window-header-close" id="chat-close" aria-label="Close chat">&#x2715;</button>
     </div>
     <div class="chat-window-messages" id="chat-messages" role="log" aria-live="polite" aria-label="Chat messages">
         <div class="chat-message chat-message-agent">
-            Hey — I know glass. Ask me about any piece, technique, artist, or how things work. What can I help you with?
+            Hey, I'm Penny, Green Fire's online agent — and I know glass. Ask me about any piece, technique, artist, or how things work. What can I help you with?
         </div>
     </div>
     <div class="chat-window-input-area">
