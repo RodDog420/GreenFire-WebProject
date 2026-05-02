@@ -11,14 +11,12 @@ document.addEventListener('DOMContentLoaded', function () {
     const hamburger = document.getElementById('nav-hamburger');
     const navLinks = document.getElementById('nav-links');
     const dropdownTriggers = document.querySelectorAll('.nav-dropdown-trigger');
+    var lastHamburgerToggle = 0;
 
     // --- Hamburger toggle ---
     if (hamburger && navLinks) {
-        let lastToggleTime = 0;
         hamburger.addEventListener('click', function (e) {
-            const now = Date.now();
-            if (now - lastToggleTime < 500) return;
-            lastToggleTime = now;
+            lastHamburgerToggle = Date.now();
             e.stopPropagation();
             const isOpen = navLinks.classList.toggle('is-open');
             hamburger.classList.toggle('is-active', isOpen);
@@ -52,6 +50,10 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // --- Close on outside tap/click ---
     document.addEventListener('click', function (e) {
+        // iOS Safari fires a synthesized document click even after the hamburger's
+        // stopPropagation() call. Guard against it for 100ms after any toggle.
+        if (Date.now() - lastHamburgerToggle < 100) return;
+
         if (!e.target.closest('.nav-item--dropdown')) {
             document.querySelectorAll('.nav-item--dropdown.is-open').forEach(function (item) {
                 item.classList.remove('is-open');
