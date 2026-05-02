@@ -20,7 +20,6 @@ No non-color variables — all values hardcoded directly.
     width: 100%;
     background-color: var(--color-nav-dark);
     border-bottom: 0.0625rem solid var(--color-border-dark);
-    overflow-x: clip;
 }
 
 .nav-container {

@@ -11,6 +11,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const hamburger = document.getElementById('nav-hamburger');
     const navLinks = document.getElementById('nav-links');
     const dropdownTriggers = document.querySelectorAll('.nav-dropdown-trigger');
+    var menuJustOpened = false;
 
     // --- Hamburger toggle ---
     if (hamburger && navLinks) {
@@ -20,6 +21,10 @@ document.addEventListener('DOMContentLoaded', function () {
             const isOpen = navLinks.classList.toggle('is-open');
             hamburger.classList.toggle('is-active', isOpen);
             hamburger.setAttribute('aria-expanded', isOpen.toString());
+            if (isOpen) {
+                menuJustOpened = true;
+                setTimeout(function () { menuJustOpened = false; }, 500);
+            }
         });
     }
 
@@ -49,6 +54,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // --- Close on outside tap/click ---
     document.addEventListener('click', function (e) {
+        if (menuJustOpened) return;
         if (!e.target.closest('.nav-item--dropdown')) {
             document.querySelectorAll('.nav-item--dropdown.is-open').forEach(function (item) {
                 item.classList.remove('is-open');
