@@ -14,7 +14,11 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // --- Hamburger toggle ---
     if (hamburger && navLinks) {
+        let lastToggleTime = 0;
         hamburger.addEventListener('click', function (e) {
+            const now = Date.now();
+            if (now - lastToggleTime < 500) return;
+            lastToggleTime = now;
             e.stopPropagation();
             const isOpen = navLinks.classList.toggle('is-open');
             hamburger.classList.toggle('is-active', isOpen);
