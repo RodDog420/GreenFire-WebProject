@@ -11,13 +11,31 @@ document.addEventListener('DOMContentLoaded', function () {
     const hamburger = document.getElementById('nav-hamburger');
     const navLinks = document.getElementById('nav-links');
     const dropdownTriggers = document.querySelectorAll('.nav-dropdown-trigger');
-    var lastHamburgerToggle = 0;
+    var touchHandled = false;
 
     // --- Hamburger toggle ---
     if (hamburger && navLinks) {
-        hamburger.addEventListener('click', function (e) {
-            lastHamburgerToggle = Date.now();
+
+        // touchstart: handles mobile toggle. preventDefault suppresses the
+        // synthesized click event iOS Safari generates, preventing the
+        // document click handler from firing for this touch.
+        hamburger.addEventListener('touchstart', function (e) {
+            e.preventDefault();
             e.stopPropagation();
+            touchHandled = true;
+            const isOpen = navLinks.classList.toggle('is-open');
+            hamburger.classList.toggle('is-active', isOpen);
+            hamburger.setAttribute('aria-expanded', isOpen.toString());
+        }, { passive: false });
+
+        // click: handles keyboard (Enter/Space) and desktop mouse clicks.
+        // Skipped if already handled by touchstart.
+        hamburger.addEventListener('click', function (e) {
+            e.stopPropagation();
+            if (touchHandled) {
+                touchHandled = false;
+                return;
+            }
             const isOpen = navLinks.classList.toggle('is-open');
             hamburger.classList.toggle('is-active', isOpen);
             hamburger.setAttribute('aria-expanded', isOpen.toString());
@@ -50,10 +68,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // --- Close on outside tap/click ---
     document.addEventListener('click', function (e) {
-        // iOS Safari fires a synthesized document click even after the hamburger's
-        // stopPropagation() call. Guard against it for 100ms after any toggle.
-        if (Date.now() - lastHamburgerToggle < 100) return;
-
         if (!e.target.closest('.nav-item--dropdown')) {
             document.querySelectorAll('.nav-item--dropdown.is-open').forEach(function (item) {
                 item.classList.remove('is-open');
