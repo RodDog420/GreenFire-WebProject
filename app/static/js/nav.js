@@ -11,31 +11,12 @@ document.addEventListener('DOMContentLoaded', function () {
     const hamburger = document.getElementById('nav-hamburger');
     const navLinks = document.getElementById('nav-links');
     const dropdownTriggers = document.querySelectorAll('.nav-dropdown-trigger');
-    var touchHandled = false;
 
     // --- Hamburger toggle ---
     if (hamburger && navLinks) {
 
-        // touchstart: handles mobile toggle. preventDefault suppresses the
-        // synthesized click event iOS Safari generates, preventing the
-        // document click handler from firing for this touch.
-        hamburger.addEventListener('touchstart', function (e) {
-            e.preventDefault();
-            e.stopPropagation();
-            touchHandled = true;
-            const isOpen = navLinks.classList.toggle('is-open');
-            hamburger.classList.toggle('is-active', isOpen);
-            hamburger.setAttribute('aria-expanded', isOpen.toString());
-        }, { passive: false });
-
-        // click: handles keyboard (Enter/Space) and desktop mouse clicks.
-        // Skipped if already handled by touchstart.
         hamburger.addEventListener('click', function (e) {
             e.stopPropagation();
-            if (touchHandled) {
-                touchHandled = false;
-                return;
-            }
             const isOpen = navLinks.classList.toggle('is-open');
             hamburger.classList.toggle('is-active', isOpen);
             hamburger.setAttribute('aria-expanded', isOpen.toString());
@@ -78,7 +59,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
         // Close mobile nav on outside tap
         if (navLinks && navLinks.classList.contains('is-open')) {
-            if (!e.target.closest('.nav-container')) {
+            if (!navLinks.contains(e.target) && !hamburger.contains(e.target)) {
                 navLinks.classList.remove('is-open');
                 if (hamburger) {
                     hamburger.classList.remove('is-active');
