@@ -44,6 +44,9 @@ class Config:
     # Anthropic — AI chat agent
     ANTHROPIC_API_KEY = os.environ.get('ANTHROPIC_API_KEY')
 
+    # Rate limiter — memory:// is correct for development; override with Redis URL in production
+    RATELIMIT_STORAGE_URI = os.environ.get('RATELIMIT_STORAGE_URI', 'memory://')
+
     # App settings
     ITEMS_PER_PAGE = 12
     MAX_CONTENT_LENGTH = 16 * 1024 * 1024  # 16MB upload limit

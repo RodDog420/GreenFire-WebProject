@@ -6,7 +6,8 @@ from flask import (
     redirect, url_for, flash, session, current_app,
 )
 from flask_login import login_required, logout_user, login_user, current_user
-from app import limiter, db, csrf
+from flask_mail import Message
+from app import limiter, db, csrf, mail
 from app.models import User, Product, WishlistItem, Order, OrderItem
 
 routes_bp = Blueprint('routes', __name__)
@@ -267,9 +268,23 @@ def contact():
                                    subject=subject,
                                    message=message)
 
-        # Email dispatch goes here when email service is configured
-        flash("Thanks for reaching out \u2014 we\u2019ll get back to you soon.",
-              'success')
+        try:
+            msg = Message(
+                subject=f"Green Fire Contact: {subject or 'No subject'}",
+                sender=current_app.config['MAIL_DEFAULT_SENDER'],
+                recipients=[current_app.config['MAIL_DEFAULT_SENDER']],
+                reply_to=email,
+                body=f"Name: {name}\nEmail: {email}\nSubject: {subject}\n\nMessage:\n{message}"
+            )
+            mail.send(msg)
+            flash("Thanks for reaching out \u2014 we\u2019ll get back to you soon.", 'success')
+        except Exception:
+            flash("Something went wrong sending your message. Please try again.", 'error')
+            return render_template('contact.html',
+                                   name=name,
+                                   email=email,
+                                   subject=subject,
+                                   message=message)
         return redirect(url_for('routes.contact'))
 
     return render_template('contact.html')
@@ -599,11 +614,45 @@ def remove_from_wishlist():
 @routes_bp.route('/notify-me', methods=['POST'])
 @limiter.limit('5 per minute')
 def notify_me():
-    # Stub — full implementation when email service is configured
-    flash(
-        "We\u2019ll let you know when this artist has new work.",
-        'success'
-    )
+    email        = request.form.get('email', '').strip()
+    artist       = request.form.get('artist_credit', '').strip()
+    product_slug = request.form.get('product_slug', '').strip()
+
+    if not email:
+        flash('Please enter your email address.', 'error')
+        return redirect(request.referrer or url_for('routes.index'))
+
+    try:
+        store_msg = Message(
+            subject=f"Green Fire — Notify Me: {artist or product_slug}",
+            sender=current_app.config['MAIL_DEFAULT_SENDER'],
+            recipients=[current_app.config['MAIL_DEFAULT_SENDER']],
+            body=(
+                f"Notify request received.\n\n"
+                f"Email: {email}\n"
+                f"Artist: {artist}\n"
+                f"Product: {product_slug}"
+            )
+        )
+        mail.send(store_msg)
+
+        confirm_msg = Message(
+            subject="Green Fire — We'll Keep You Posted",
+            sender=current_app.config['MAIL_DEFAULT_SENDER'],
+            recipients=[email],
+            body=(
+                f"Hi,\n\n"
+                f"Thanks for your interest in {artist}'s work. "
+                f"We'll reach out as soon as new pieces are available.\n\n"
+                f"Green Fire\n"
+                f"2401 N 48th St, Lincoln, Nebraska"
+            )
+        )
+        mail.send(confirm_msg)
+    except Exception:
+        pass
+
+    flash("We'll let you know when this artist has new work.", 'success')
     return redirect(request.referrer or url_for('routes.index'))
 
 
