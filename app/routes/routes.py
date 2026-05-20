@@ -19,7 +19,7 @@ routes_bp = Blueprint('routes', __name__)
 # ==========================================================================
 
 _PENNY_SYSTEM_PROMPT = """You are Penny, the chat assistant for Green Fire — an American \
-functional glass gallery and future licensed cannabis retailer at 2401 N 48th St, \
+functional glass gallery and future licensed cannabis retailer at XXXX N 48th St, \
 University Place neighborhood, Lincoln, Nebraska.
 
 GREEN FIRE'S STORY
@@ -645,7 +645,7 @@ def notify_me():
                 f"Thanks for your interest in {artist}'s work. "
                 f"We'll reach out as soon as new pieces are available.\n\n"
                 f"Green Fire\n"
-                f"2401 N 48th St, Lincoln, Nebraska"
+                f"XXXX N 48th St, Lincoln, Nebraska"
             )
         )
         mail.send(confirm_msg)
