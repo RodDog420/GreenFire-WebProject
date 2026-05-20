@@ -138,17 +138,8 @@ No non-color variables — all values hardcoded directly.
     text-decoration: none;
 }
 
-/* Arrow — left side, rotates when open */
 .nav-dropdown-trigger::before {
-    content: '▸';
-    font-size: 0.75rem;
-    flex-shrink: 0;
-    transition: transform 250ms ease;
-    color: var(--color-hillside-green);
-}
-
-.nav-item--dropdown.is-open > .nav-dropdown-trigger::before {
-    transform: rotate(90deg);
+    display: none;
 }
 
 

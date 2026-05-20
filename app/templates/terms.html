@@ -2,17 +2,52 @@
 
 {% block title %}Terms of Service{% endblock %}
 
-{% block meta_description %}
-Terms of service — Green Fire, University Place, Lincoln Nebraska.
-{% endblock %}
+{% block meta_description %}Terms of service for Green Fire LLC — age requirements, ordering, shipping, returns, and governing law. University Place, Lincoln, Nebraska.{% endblock %}
 
 {% block canonical %}{{ url_for('routes.terms', _external=True) }}{% endblock %}
 
 {% block content %}
 <section class="section">
-    <div class="container container--narrow">
+    <div class="container container--narrow legal-content">
         <h1>Terms of Service</h1>
-        <p class="text-muted">Coming soon.</p>
+        <p class="text-muted">Effective date: May 19, 2026</p>
+
+        <h2>Agreement</h2>
+        <p>By accessing greenfireglass.com or purchasing from Green Fire LLC ("Green Fire," "we," "us"), you agree to these terms. If you do not agree, do not use this site.</p>
+
+        <h2>Age Requirement</h2>
+        <p>You must be 21 years of age or older to purchase from Green Fire. By placing an order or creating an account, you confirm that you meet this requirement. We reserve the right to cancel any order and refuse service if we have reason to believe this requirement has not been met.</p>
+
+        <h2>Products</h2>
+        <p>All products sold by Green Fire are functional glass art, accessories, and related items intended for lawful use by adults. Prices are listed in US dollars and are subject to change without notice. We reserve the right to limit quantities and to decline or cancel any order at our discretion.</p>
+
+        <h2>Orders and Payment</h2>
+        <p>Orders are accepted through our website. Payment is processed through our payment processor at the time of purchase. We also accept payment via PayPal and other agreed methods — contact us if you need to arrange an alternative payment method before placing your order.</p>
+        <p>An order confirmation sent to your email address constitutes acknowledgment that we received your order. It does not guarantee availability. If an item becomes unavailable after your order is placed, we will contact you promptly to resolve it.</p>
+
+        <h2>Shipping</h2>
+        <p>We ship within the United States. Shipping costs and estimated delivery times are shown at checkout. Risk of loss and title for items pass to you upon delivery to the carrier. We are not responsible for delays caused by the carrier once the package has been picked up.</p>
+        <p>It is your responsibility to ensure the shipping address provided is accurate. We are not responsible for packages delivered to an incorrect address provided at the time of order.</p>
+
+        <h2>Returns and Damage Claims</h2>
+        <p>All sales are final unless a product arrives damaged. If your order arrives damaged, you must send us a photograph documenting the damage within 48 hours of delivery. Claims submitted after this window cannot be honored.</p>
+        <p>Once a valid damage claim is received, we will work with you to resolve the situation appropriately. Resolution may include a replacement, store credit, or a refund, depending on the circumstances and product availability. We will make every reasonable effort to make it right.</p>
+        <p>Items that are returned without prior authorization or outside the damage claim window will not be accepted.</p>
+
+        <h2>Warranty Disclaimer</h2>
+        <p>All products are sold as-is. Green Fire makes no warranties, express or implied, including any implied warranty of merchantability or fitness for a particular purpose. Artist pieces are one-of-a-kind works sold without guarantee of future resale value.</p>
+
+        <h2>Limitation of Liability</h2>
+        <p>To the fullest extent permitted by law, Green Fire LLC shall not be liable for any indirect, incidental, special, or consequential damages arising from the use or inability to use our products or services. Our total liability for any claim shall not exceed the amount you paid for the product giving rise to the claim.</p>
+
+        <h2>Governing Law</h2>
+        <p>These terms are governed by the laws of the State of Nebraska and applicable federal law, without regard to conflict of law principles. Any disputes arising from these terms or your use of this site shall be resolved in the courts of Lancaster County, Nebraska.</p>
+
+        <h2>Contact</h2>
+        <p>Questions about these terms can be directed to Green Fire LLC at 2401 N 48th St, Lincoln, NE, or through the <a href="{{ url_for('routes.contact') }}">contact form</a> on this site.</p>
+
+        <h2>Changes to These Terms</h2>
+        <p>We may update these terms at any time. The effective date at the top of this page will reflect the most recent revision. Continued use of the site after a revision constitutes acceptance of the updated terms.</p>
     </div>
 </section>
 {% endblock %}

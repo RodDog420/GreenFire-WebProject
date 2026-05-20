@@ -82,7 +82,7 @@ Green Fire, University Place, Lincoln Nebraska.
                             <p class="product-card__credit">{{ product.credit }}</p>
                             {% endif %}
                             <p class="product-card__price">
-                                ${{ product.price_cents // 100 }}
+                                ${{ "{:,}".format(product.price_cents // 100) }}
                             </p>
                         </div>
 

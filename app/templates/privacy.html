@@ -2,17 +2,63 @@
 
 {% block title %}Privacy Policy{% endblock %}
 
-{% block meta_description %}
-Privacy policy — Green Fire, University Place, Lincoln Nebraska.
-{% endblock %}
+{% block meta_description %}Privacy policy for Green Fire LLC — what information we collect, how we use it, and how we protect it. University Place, Lincoln, Nebraska.{% endblock %}
 
 {% block canonical %}{{ url_for('routes.privacy', _external=True) }}{% endblock %}
 
 {% block content %}
 <section class="section">
-    <div class="container container--narrow">
+    <div class="container container--narrow legal-content">
         <h1>Privacy Policy</h1>
-        <p class="text-muted">Coming soon.</p>
+        <p class="text-muted">Effective date: May 19, 2026</p>
+
+        <h2>Who We Are</h2>
+        <p>Green Fire LLC ("Green Fire," "we," "us") operates a functional glass gallery at 2401 N 48th St, Lincoln, Nebraska, and at greenfireglass.com. This policy describes what personal information we collect, why we collect it, and how we handle it.</p>
+
+        <h2>Information We Collect</h2>
+        <p>We collect only the information necessary to process your order and communicate with you:</p>
+        <ul>
+            <li>Name, shipping address, and email address when you place an order or create an account</li>
+            <li>Email address and message content when you contact us through the contact form</li>
+            <li>Email address when you request a notify-me alert for an out-of-stock product</li>
+        </ul>
+        <p>We do not collect or store payment card information. All payment processing is handled directly by our payment processor. We receive only a transaction confirmation — no card numbers, CVVs, or bank details ever pass through our systems.</p>
+
+        <h2>How We Use Your Information</h2>
+        <p>We use the information we collect solely to:</p>
+        <ul>
+            <li>Fulfill and ship your order</li>
+            <li>Respond to your inquiries</li>
+            <li>Send you a notify-me alert when a requested product becomes available</li>
+            <li>Send order confirmation and shipping information</li>
+        </ul>
+        <p>We do not send marketing emails. We do not add you to any mailing list without your explicit consent.</p>
+
+        <h2>Analytics</h2>
+        <p>We do not currently use any third-party analytics or tracking services. If we add analytics in the future, this policy will be updated before any tracking is active.</p>
+
+        <h2>Data Sharing</h2>
+        <p>We do not sell, rent, or share your personal information with any third party for any purpose, with the following narrow exceptions required to operate the business:</p>
+        <ul>
+            <li>Your shipping address is shared with our shipping carrier to deliver your order</li>
+            <li>Your payment information is processed directly by our payment processor — we never handle it</li>
+        </ul>
+        <p>No data is shared for advertising, marketing, or any commercial purpose outside of fulfilling your order.</p>
+
+        <h2>Data Retention</h2>
+        <p>We retain order and account information for as long as your account is active or as required to fulfill legal obligations. You may request deletion of your account and associated data at any time by contacting us.</p>
+
+        <h2>Your Rights</h2>
+        <p>You have the right to request access to the personal information we hold about you, to correct any inaccuracies, or to request deletion. To exercise any of these rights, contact us at the address below.</p>
+
+        <h2>Age Requirement</h2>
+        <p>Our site and products are intended for adults 21 years of age or older. We do not knowingly collect personal information from anyone under 21. If you believe we have inadvertently collected information from a minor, contact us and we will delete it promptly.</p>
+
+        <h2>Contact</h2>
+        <p>Questions about this policy can be directed to Green Fire LLC at 2401 N 48th St, Lincoln, NE, or through the <a href="{{ url_for('routes.contact') }}">contact form</a> on this site.</p>
+
+        <h2>Changes to This Policy</h2>
+        <p>We may update this policy as our practices change. The effective date at the top of this page will reflect the most recent revision. We will not retroactively reduce your privacy protections without notice.</p>
     </div>
 </section>
 {% endblock %}

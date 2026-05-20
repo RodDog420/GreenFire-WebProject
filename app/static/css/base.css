@@ -422,6 +422,10 @@ button {
     margin-bottom: 2rem;
     max-width: none;
 }
+.tagline-phrase {
+    white-space: nowrap;
+    display: inline-block;
+}
 
 .hero-buttons {
     display: flex;
@@ -2465,4 +2469,13 @@ button {
     width: 100%;
     text-align: center;
     white-space: normal;
+}
+
+
+/* ==============================================
+   LEGAL PAGES — Privacy Policy, Terms of Service
+   ============================================== */
+
+.legal-content h2 {
+    margin-top: 2.5rem;
 }
