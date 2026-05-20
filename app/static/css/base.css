@@ -422,7 +422,8 @@ button {
     margin-bottom: 2rem;
     max-width: none;
 }
-.tagline-phrase {
+.tagline-phrase,
+.subheadline-phrase {
     white-space: nowrap;
     display: inline-block;
 }
