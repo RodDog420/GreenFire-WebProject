@@ -3,7 +3,7 @@ import anthropic
 import stripe
 from flask import (
     Blueprint, render_template, request, jsonify,
-    redirect, url_for, flash, session, current_app,
+    redirect, url_for, flash, session, current_app, Response,
 )
 from flask_login import login_required, logout_user, login_user, current_user
 from flask_mail import Message
@@ -949,3 +949,23 @@ def chat():
 @routes_bp.route('/health')
 def health():
     return jsonify({'status': 'ok'})
+
+
+# ==========================================================================
+# ROBOTS.TXT
+# ==========================================================================
+
+@routes_bp.route('/robots.txt')
+def robots_txt():
+    return Response(
+        "User-agent: *\n"
+        "Allow: /\n"
+        "Disallow: /admin/\n"
+        "Disallow: /account\n"
+        "Disallow: /cart\n"
+        "Disallow: /checkout\n"
+        "Disallow: /login\n"
+        "Disallow: /register\n"
+        "Disallow: /api/chat\n",
+        mimetype='text/plain'
+    )
