@@ -966,6 +966,60 @@ def robots_txt():
         "Disallow: /checkout\n"
         "Disallow: /login\n"
         "Disallow: /register\n"
-        "Disallow: /api/chat\n",
+        "Disallow: /api/chat\n"
+        "Sitemap: https://greenfireglass.com/sitemap.xml\n",
         mimetype='text/plain'
     )
+
+
+# ==========================================================================
+# SITEMAP.XML
+# ==========================================================================
+
+@routes_bp.route('/sitemap.xml')
+def sitemap_xml():
+    static_pages = [
+        ('routes.index', 'weekly', '1.0'),
+        ('routes.headies', 'weekly', '0.9'),
+        ('routes.prodos', 'weekly', '0.9'),
+        ('routes.vapes_accessories', 'weekly', '0.9'),
+        ('routes.archive', 'weekly', '0.5'),
+        ('routes.featured_artist', 'monthly', '0.5'),
+        ('routes.about', 'monthly', '0.5'),
+        ('routes.contact', 'monthly', '0.4'),
+        ('routes.shipping_returns', 'yearly', '0.3'),
+        ('routes.privacy', 'yearly', '0.2'),
+        ('routes.terms', 'yearly', '0.2'),
+    ]
+
+    urls = [
+        {
+            'loc': url_for(endpoint, _external=True),
+            'changefreq': changefreq,
+            'priority': priority,
+        }
+        for endpoint, changefreq, priority in static_pages
+    ]
+
+    products = Product.query.filter_by(is_active=True).all()
+    for product in products:
+        urls.append({
+            'loc': url_for('routes.product_detail', slug=product.slug, _external=True),
+            'lastmod': product.updated_at.strftime('%Y-%m-%d'),
+            'changefreq': 'weekly',
+            'priority': '0.8',
+        })
+
+    xml = ['<?xml version="1.0" encoding="UTF-8"?>',
+           '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">']
+    for entry in urls:
+        xml.append('  <url>')
+        xml.append(f'    <loc>{entry["loc"]}</loc>')
+        if 'lastmod' in entry:
+            xml.append(f'    <lastmod>{entry["lastmod"]}</lastmod>')
+        xml.append(f'    <changefreq>{entry["changefreq"]}</changefreq>')
+        xml.append(f'    <priority>{entry["priority"]}</priority>')
+        xml.append('  </url>')
+    xml.append('</urlset>')
+
+    return Response('\n'.join(xml), mimetype='application/xml')
