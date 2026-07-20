@@ -1557,6 +1557,10 @@ button {
    ARTISTS.HTML — Featured Artist page
    ============================================== */
 
+.artist-hero {
+    padding-block: clamp(2rem, 4vw, 3rem);
+}
+
 .artist-hero__inner {
     display: flex;
     flex-direction: column;
@@ -1652,18 +1656,31 @@ button {
 
 @media (min-width: 48rem) {
     .artist-bio__inner {
-        display: grid;
-        grid-template-columns: 3fr 1fr;
-        align-items: start;
-        gap: 2rem;
+        display: flow-root;
+    }
+
+    .artist-bio__portraits {
+        float: right;
+        flex-direction: row;
+        align-items: flex-start;
+        margin-left: 2rem;
+        margin-bottom: 1rem;
     }
 
     .artist-bio__portrait-primary {
+        width: 28rem;
         height: 36rem;
     }
 
+    .artist-bio__portrait-thumbs {
+        flex-direction: column;
+        flex-wrap: nowrap;
+    }
+
     .artist-bio__text-block {
-        padding: 2rem;
+        background-color: transparent;
+        padding: 0;
+        border-radius: 0;
     }
 }
 
