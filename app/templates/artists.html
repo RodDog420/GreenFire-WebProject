@@ -65,17 +65,34 @@ featured at Green Fire in Lincoln NE.
 
             {% if portraits %}
             <div class="artist-bio__portraits">
-                <img class="artist-bio__portrait-primary"
-                     src="{{ url_for('static', filename=portraits[0]) }}"
-                     alt="Josh Mann"
-                     loading="lazy">
-                {% if portraits | length > 1 %}
-                <div class="artist-bio__portrait-thumbs">
-                    {% for portrait in portraits[1:] %}
-                    <img class="artist-bio__portrait-thumb"
-                         src="{{ url_for('static', filename=portrait) }}"
+                <div class="artist-bio__portrait-primary-wrap"
+                     id="artist-portrait-wrap"
+                     tabindex="0"
+                     role="button"
+                     aria-label="Open full-screen image viewer">
+                    <img class="artist-bio__portrait-primary"
+                         id="artist-portrait-main"
+                         src="{{ url_for('static', filename=portraits[0]) }}"
                          alt="Josh Mann"
                          loading="lazy">
+                </div>
+                {% if portraits | length > 1 %}
+                <div class="artist-bio__portrait-thumbs"
+                     role="list"
+                     aria-label="Josh Mann photos">
+                    {% for portrait in portraits %}
+                    <button class="artist-bio__portrait-thumb-btn
+                                   {%- if loop.first %} artist-bio__portrait-thumb-btn--active{% endif %}"
+                            data-src="{{ url_for('static', filename=portrait) }}"
+                            data-alt="Josh Mann"
+                            aria-pressed="{{ 'true' if loop.first else 'false' }}"
+                            aria-label="Image {{ loop.index }}"
+                            role="listitem">
+                        <img class="artist-bio__portrait-thumb"
+                             src="{{ url_for('static', filename=portrait) }}"
+                             alt=""
+                             loading="lazy">
+                    </button>
                     {% endfor %}
                 </div>
                 {% endif %}
@@ -142,4 +159,52 @@ featured at Green Fire in Lincoln NE.
 </section>
 {% endif %}
 
+<div id="artist-lightbox"
+     class="lightbox"
+     role="dialog"
+     aria-modal="true"
+     aria-label="Josh Mann photo viewer"
+     hidden>
+
+    <button class="lightbox__close"
+            id="artist-lightbox-close"
+            type="button"
+            aria-label="Close image viewer">
+        &times;
+    </button>
+
+    <button class="lightbox__prev"
+            id="artist-lightbox-prev"
+            type="button"
+            aria-label="Previous image">
+        &larr;
+    </button>
+
+    <div class="lightbox__img-wrap" id="artist-lightbox-img-wrap">
+        <img id="artist-lightbox-img"
+             class="lightbox__img"
+             src=""
+             alt=""
+             draggable="false">
+    </div>
+
+    <button class="lightbox__next"
+            id="artist-lightbox-next"
+            type="button"
+            aria-label="Next image">
+        &rarr;
+    </button>
+
+    <p class="lightbox__counter"
+       id="artist-lightbox-counter"
+       aria-live="polite"
+       hidden></p>
+
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/artist.js') }}"
+        defer></script>
 {% endblock %}
