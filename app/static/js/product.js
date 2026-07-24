@@ -165,18 +165,22 @@ document.addEventListener('DOMContentLoaded', function () {
             if (lbClose) { lbClose.focus(); }
         }
 
-        function closeLightbox() {
-            lightbox.setAttribute('hidden', '');
+        function resetZoom() {
             lightbox.classList.remove('lightbox--zoomed');
             lightbox.scrollTop = 0;
+            lightbox.scrollLeft = 0;
+        }
+
+        function closeLightbox() {
+            lightbox.setAttribute('hidden', '');
+            resetZoom();
             document.body.style.overflow = '';
             imgWrap.focus();
         }
 
         function lbGoTo(index) {
             if (index < 0 || index >= lbImages.length) { return; }
-            lightbox.classList.remove('lightbox--zoomed');
-            lightbox.scrollTop = 0;
+            resetZoom();
             lbCurrentIndex = index;
             showLbImage(lbCurrentIndex);
         }
@@ -207,17 +211,59 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         });
 
-        // Click image to toggle zoomed state
+        // Click image to zoom in. Once zoomed, a click no longer zooms
+        // back out — the close button already covers that, and leaving
+        // click free avoids it firing after a drag-to-pan (below) ends.
         if (lbImg) {
             lbImg.addEventListener('click', function (e) {
                 e.stopPropagation();
-                lightbox.classList.toggle('lightbox--zoomed');
                 if (!lightbox.classList.contains('lightbox--zoomed')) {
-                    lightbox.scrollTop = 0;
-                    lightbox.scrollLeft = 0;
+                    lightbox.classList.add('lightbox--zoomed');
+                    // Reading scrollWidth/Height forces the browser to
+                    // apply the transform above before we compute the
+                    // centered scroll position.
+                    lightbox.scrollLeft =
+                        (lightbox.scrollWidth - lightbox.clientWidth) / 2;
+                    lightbox.scrollTop =
+                        (lightbox.scrollHeight - lightbox.clientHeight) / 2;
                 }
             });
         }
+
+        // Drag-to-pan while zoomed. At this zoom level the image is
+        // larger than the viewport in both directions — scrollbars alone
+        // are not a discoverable way to bring the rest of the piece into
+        // view, so support the conventional grab-and-drag pan gesture.
+        var isPanning = false;
+        var panStartX = 0, panStartY = 0;
+        var panScrollStartX = 0, panScrollStartY = 0;
+
+        if (lbImg) {
+            lbImg.addEventListener('mousedown', function (e) {
+                if (!lightbox.classList.contains('lightbox--zoomed')) {
+                    return;
+                }
+                isPanning = true;
+                panStartX = e.clientX;
+                panStartY = e.clientY;
+                panScrollStartX = lightbox.scrollLeft;
+                panScrollStartY = lightbox.scrollTop;
+                lbImg.classList.add('lightbox__img--panning');
+                e.preventDefault();
+            });
+        }
+
+        document.addEventListener('mousemove', function (e) {
+            if (!isPanning) { return; }
+            lightbox.scrollLeft = panScrollStartX - (e.clientX - panStartX);
+            lightbox.scrollTop = panScrollStartY - (e.clientY - panStartY);
+        });
+
+        document.addEventListener('mouseup', function () {
+            if (!isPanning) { return; }
+            isPanning = false;
+            lbImg.classList.remove('lightbox__img--panning');
+        });
 
         // Controls
         if (lbClose) { lbClose.addEventListener('click', closeLightbox); }
@@ -232,9 +278,14 @@ document.addEventListener('DOMContentLoaded', function () {
             });
         }
 
-        // Close on backdrop click
+        // Close on backdrop click. lbImgWrap is included because it's
+        // sized to fill the whole lightbox — without it, e.target is
+        // always the wrap (or a fixed-position button above it), never
+        // the lightbox element itself, so backdrop clicks would never fire.
         lightbox.addEventListener('click', function (e) {
-            if (e.target === lightbox) { closeLightbox(); }
+            if (e.target === lightbox || e.target === lbImgWrap) {
+                closeLightbox();
+            }
         });
 
         // Keyboard navigation (only when lightbox is open)
@@ -243,6 +294,15 @@ document.addEventListener('DOMContentLoaded', function () {
             if (e.key === 'Escape')      { closeLightbox(); }
             if (e.key === 'ArrowLeft')   { lbGoTo(lbCurrentIndex - 1); }
             if (e.key === 'ArrowRight')  { lbGoTo(lbCurrentIndex + 1); }
+        });
+
+        // A resize while zoomed leaves the scroll position centered on the
+        // old viewport size, not the new one — reset so the next click
+        // re-centers correctly rather than showing an off-center crop.
+        window.addEventListener('resize', function () {
+            if (lightbox.classList.contains('lightbox--zoomed')) {
+                resetZoom();
+            }
         });
 
         // Touch swipe — 50px threshold

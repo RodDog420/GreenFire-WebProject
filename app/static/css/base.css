@@ -1310,27 +1310,47 @@ button {
     cursor: zoom-in;
 }
 
+/* Product-detail lightbox (product.js). Deliberately duplicated rather
+   than shared with .artist-lightbox--zoomed below — see SESSION_HISTORY.md
+   for the 2026-07-23 bug where editing one shared class silently broke
+   the other page's zoom unnoticed. Product photos range from ~225px to
+   ~4032px native, so scale() — a multiple of whatever size the browser is
+   currently rendering the contained-to-fit image at, not a fixed pixel
+   or viewport-relative value — is what keeps this correct at both
+   extremes: a tiny photo scales from its natural size, a huge camera photo
+   scales from its already-shrunk-to-fit size (staying well under its
+   native resolution, so it stays sharp). It also never goes stale on
+   resize, since the browser re-derives it from the live box on every
+   layout pass. */
 .lightbox--zoomed {
-    display: block;
     overflow: auto;
 }
 
-.lightbox--zoomed .lightbox__img-wrap {
-    display: block;
-    width: auto;
-    height: auto;
-    padding: 2rem;
-    text-align: center;
-    cursor: zoom-out;
+.lightbox--zoomed .lightbox__img {
+    transform: scale(2);
+    cursor: grab;
 }
 
-.lightbox--zoomed .lightbox__img {
-    width: 180vw;
-    height: auto;
-    max-width: none;
-    max-height: none;
-    object-fit: fill;
-    cursor: zoom-out;
+/* Held during mouse-drag panning — overrides the grab cursor above while
+   the button is actually down. Selector is deliberately as specific as
+   the rule above (two classes) plus one more, so it wins without !important. */
+.lightbox--zoomed .lightbox__img.lightbox__img--panning {
+    cursor: grabbing;
+}
+
+/* Featured Artist page lightbox (artist.js) — see the duplication note
+   above; same scale()/pan mechanism, kept as an independent copy. */
+.artist-lightbox--zoomed {
+    overflow: auto;
+}
+
+.artist-lightbox--zoomed .lightbox__img {
+    transform: scale(2);
+    cursor: grab;
+}
+
+.artist-lightbox--zoomed .lightbox__img.lightbox__img--panning {
+    cursor: grabbing;
 }
 
 .lightbox__close {
