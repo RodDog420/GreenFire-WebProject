@@ -165,8 +165,40 @@ document.addEventListener('DOMContentLoaded', function () {
             if (lbClose) { lbClose.focus(); }
         }
 
+        var ZOOM_MULTIPLIER = 2;
+
+        // Sets the zoomed image to an explicit pixel size, not a CSS
+        // transform: scale(). transform's visual overflow is only
+        // reliably scrollable in the end (bottom/right) direction in
+        // practice — the start (top/left) direction gets silently
+        // truncated, cutting off part of the image no matter how it's
+        // scrolled. An explicit width/height doesn't have this problem,
+        // since it's real layout size, not a paint-only visual effect.
+        //
+        // Clearing the inline size before measuring is what keeps this
+        // resize-safe: it forces the image back to its natural
+        // (object-fit: contain) rendered size for that measurement, so
+        // the doubled target is always derived fresh from the current
+        // viewport rather than from a stale prior zoom size.
+        function applyZoom() {
+            lbImg.style.width = '';
+            lbImg.style.height = '';
+            var rect = lbImg.getBoundingClientRect();
+            lbImg.style.width = (rect.width * ZOOM_MULTIPLIER) + 'px';
+            lbImg.style.height = (rect.height * ZOOM_MULTIPLIER) + 'px';
+        }
+
+        function centerZoomScroll() {
+            lightbox.scrollLeft =
+                (lightbox.scrollWidth - lightbox.clientWidth) / 2;
+            lightbox.scrollTop =
+                (lightbox.scrollHeight - lightbox.clientHeight) / 2;
+        }
+
         function resetZoom() {
             lightbox.classList.remove('lightbox--zoomed');
+            lbImg.style.width = '';
+            lbImg.style.height = '';
             lightbox.scrollTop = 0;
             lightbox.scrollLeft = 0;
         }
@@ -219,13 +251,8 @@ document.addEventListener('DOMContentLoaded', function () {
                 e.stopPropagation();
                 if (!lightbox.classList.contains('lightbox--zoomed')) {
                     lightbox.classList.add('lightbox--zoomed');
-                    // Reading scrollWidth/Height forces the browser to
-                    // apply the transform above before we compute the
-                    // centered scroll position.
-                    lightbox.scrollLeft =
-                        (lightbox.scrollWidth - lightbox.clientWidth) / 2;
-                    lightbox.scrollTop =
-                        (lightbox.scrollHeight - lightbox.clientHeight) / 2;
+                    applyZoom();
+                    centerZoomScroll();
                 }
             });
         }
@@ -296,12 +323,13 @@ document.addEventListener('DOMContentLoaded', function () {
             if (e.key === 'ArrowRight')  { lbGoTo(lbCurrentIndex + 1); }
         });
 
-        // A resize while zoomed leaves the scroll position centered on the
-        // old viewport size, not the new one — reset so the next click
-        // re-centers correctly rather than showing an off-center crop.
+        // A resize while zoomed leaves both the pixel size and the scroll
+        // centering stale relative to the new viewport — recompute both
+        // fresh rather than dropping out of zoom entirely.
         window.addEventListener('resize', function () {
             if (lightbox.classList.contains('lightbox--zoomed')) {
-                resetZoom();
+                applyZoom();
+                centerZoomScroll();
             }
         });
 

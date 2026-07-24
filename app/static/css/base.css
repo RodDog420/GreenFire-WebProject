@@ -1293,8 +1293,15 @@ button {
 
 .lightbox__img-wrap {
     display: flex;
-    align-items: center;
-    justify-content: center;
+    /* "safe" is required, not decorative: plain center is "unsafe" by
+       spec default, meaning a flex child that overflows this container
+       (the zoomed, transform: scale()'d image) stays truly centered even
+       when that leaves part of it permanently unreachable via scroll —
+       "safe" falls back to start-alignment on whichever axis would
+       otherwise strand content, which is exactly what let the top of a
+       zoomed photo go missing here. */
+    align-items: safe center;
+    justify-content: safe center;
     width: 100%;
     height: 100%;
     padding: 1rem;
@@ -1313,21 +1320,21 @@ button {
 /* Product-detail lightbox (product.js). Deliberately duplicated rather
    than shared with .artist-lightbox--zoomed below — see SESSION_HISTORY.md
    for the 2026-07-23 bug where editing one shared class silently broke
-   the other page's zoom unnoticed. Product photos range from ~225px to
-   ~4032px native, so scale() — a multiple of whatever size the browser is
-   currently rendering the contained-to-fit image at, not a fixed pixel
-   or viewport-relative value — is what keeps this correct at both
-   extremes: a tiny photo scales from its natural size, a huge camera photo
-   scales from its already-shrunk-to-fit size (staying well under its
-   native resolution, so it stays sharp). It also never goes stale on
-   resize, since the browser re-derives it from the live box on every
-   layout pass. */
+   the other page's zoom unnoticed.
+   Sizing is an explicit pixel width/height set by JS (applyZoom() in
+   product.js), not transform: scale() — transform's visual overflow is
+   only reliably scrollable in the end (bottom/right) direction; the
+   start (top/left) direction silently can't be scrolled to, cutting off
+   part of the image regardless of centering. max-width/max-height must
+   be released here or the base rule's 100vw/100vh cap simply shrinks
+   the explicit size right back down. */
 .lightbox--zoomed {
     overflow: auto;
 }
 
 .lightbox--zoomed .lightbox__img {
-    transform: scale(2);
+    max-width: none;
+    max-height: none;
     cursor: grab;
 }
 
@@ -1339,13 +1346,14 @@ button {
 }
 
 /* Featured Artist page lightbox (artist.js) — see the duplication note
-   above; same scale()/pan mechanism, kept as an independent copy. */
+   above; same explicit-pixel-size/pan mechanism, kept as an independent copy. */
 .artist-lightbox--zoomed {
     overflow: auto;
 }
 
 .artist-lightbox--zoomed .lightbox__img {
-    transform: scale(2);
+    max-width: none;
+    max-height: none;
     cursor: grab;
 }
 
@@ -1357,6 +1365,12 @@ button {
     position: fixed;
     top: 1rem;
     right: 1rem;
+    /* Required once zoomed: transform: scale() on .lightbox__img creates
+       its own stacking context, which — with no z-index of its own —
+       ties with this button's z-index:auto and wins on DOM order (the
+       image comes later), silently covering it for clicks even though
+       it still renders visibly on top. z-index here breaks that tie. */
+    z-index: 1;
     background: rgba(255, 255, 255, 0.1);
     border: none;
     color: #ffffff;
@@ -1386,6 +1400,8 @@ button {
     position: fixed;
     top: 50%;
     transform: translateY(-50%);
+    /* See .lightbox__close above for why this is required once zoomed. */
+    z-index: 1;
     background: rgba(255, 255, 255, 0.12);
     border: none;
     color: #ffffff;
@@ -1417,6 +1433,8 @@ button {
     bottom: 1.5rem;
     left: 50%;
     transform: translateX(-50%);
+    /* See .lightbox__close above for why this is required once zoomed. */
+    z-index: 1;
     color: rgba(255, 255, 255, 0.6);
     font-size: 0.875rem;
     font-weight: 400;
